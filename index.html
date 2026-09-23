@@ -42,6 +42,27 @@
     display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
   #sound-toggle:hover{border-color:var(--gold);}
+  #changelog-toggle{position:absolute;left:24px;bottom:34px;z-index:3;}
+  #changelog-modal{
+    position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.85);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.35s ease,visibility 0s linear 0.35s;
+  }
+  #changelog-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 0.35s ease,visibility 0s linear 0s;}
+  #changelog-card{
+    position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;
+    max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px 32px;
+    transform:scale(0.9);opacity:0;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;
+  }
+  #changelog-modal.open #changelog-card{transform:scale(1);opacity:1;}
+  #changelog-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #changelog-close:hover{color:var(--gold);}
+  #changelog-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;text-align:center;}
+  #changelog-card .ap-sub{text-align:center;margin-bottom:26px;}
+  .changelog-entry{border-left:2px solid var(--border-c);padding-left:16px;margin-bottom:22px;}
+  .changelog-date{font-family:'Cinzel',serif;color:var(--gold);font-size:12px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;}
+  .changelog-entry ul{margin:0;padding-left:18px;color:var(--parchment);font-size:14.5px;line-height:1.6;}
+  .changelog-entry li{margin-bottom:4px;}
 
   /* ---- Fixed section nav ---- */
   #sectionnav{position:fixed;top:76px;left:24px;z-index:900;display:flex;gap:8px;}
@@ -96,6 +117,37 @@
   #basemap-row{position:absolute;top:66px;right:24px;z-index:600;display:none;gap:6px;pointer-events:auto;}
   #basemap-row.show{display:flex;}
   #basemap-row .pill{font-size:11px;padding:7px 13px;}
+  #poi-tool-btn{position:absolute;top:66px;left:24px;z-index:600;display:none;}
+  #poi-tool-btn.show{display:block;}
+  #poi-tool-btn.active{background:var(--vermillion);color:var(--parchment);border-color:var(--gold);}
+  #poi-tool-panel{
+    position:absolute; top:112px; left:24px; z-index:601; width:250px;
+    background:var(--panel-bg); border:1px solid var(--border-c); border-radius:8px;
+    padding:14px; display:none; font-family:'Cormorant Garamond',serif; color:var(--parchment);
+  }
+  #poi-tool-panel.open{display:block;}
+  #poi-tool-panel h4{font-family:'Cinzel',serif;color:var(--gold);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 10px;}
+  #poi-tool-panel label{display:block;font-size:12px;color:var(--ochre);margin:9px 0 3px;}
+  #poi-tool-panel input[type=text]{width:100%;padding:6px 8px;background:rgba(0,0,0,0.3);border:1px solid var(--border-c);border-radius:4px;color:var(--parchment);font-family:inherit;font-size:14px;box-sizing:border-box;}
+  #poi-tool-panel input[type=range]{width:100%;}
+  #poi-tool-coords{font-size:12.5px;color:var(--gold);font-family:monospace;margin:2px 0;word-break:break-all;}
+  .poi-tool-swatches{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0;}
+  .poi-tool-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;padding:0;}
+  .poi-tool-swatch.selected{border-color:var(--parchment);}
+  #poi-tool-panel .row{display:flex;gap:8px;margin-top:12px;}
+  #poi-tool-panel .row button{flex:1;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.05em;padding:8px;border-radius:6px;cursor:pointer;border:1px solid var(--border-c);background:transparent;color:var(--ochre);}
+  #poi-tool-panel .row button.primary{background:var(--vermillion);color:var(--parchment);border-color:var(--gold);}
+  #poi-tool-panel .hint{font-size:11px;color:var(--ochre);opacity:0.8;margin-top:10px;line-height:1.4;}
+  #poi-tool-list{position:absolute;top:112px;left:286px;z-index:601;width:210px;max-height:320px;overflow-y:auto;
+    background:var(--panel-bg);border:1px solid var(--border-c);border-radius:8px;padding:10px;display:none;}
+  #poi-tool-list.open{display:block;}
+  #poi-tool-list h4{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 8px;}
+  .poi-tool-list-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--parchment);padding:4px 0;border-bottom:1px solid rgba(122,80,20,0.3);}
+  .poi-tool-list-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .poi-tool-list-item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .poi-tool-list-item .del{cursor:pointer;color:var(--ochre);opacity:0.7;}
+  .poi-tool-list-item .del:hover{color:var(--vermillion);opacity:1;}
+  .custom-poi-tooltip{background:var(--panel-bg) !important;color:var(--gold) !important;border:1px solid var(--border-c) !important;font-family:'Cinzel',serif;font-size:12px;}
   .moon-toggle-ctrl a{
     width:30px;height:30px;line-height:30px;text-align:center;display:block;
     background:var(--panel-bg);color:var(--gold);font-size:16px;text-decoration:none;
@@ -548,6 +600,15 @@
     <svg id="icon-muted" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#C9962A"/><line x1="16" y1="9" x2="22" y2="15" stroke="#C9962A" stroke-width="2"/><line x1="22" y1="9" x2="16" y2="15" stroke="#C9962A" stroke-width="2"/></svg>
     <svg id="icon-unmuted" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:none"><path d="M4 9v6h4l5 5V4L8 9H4z" fill="#C9962A"/><path d="M16 8a5 5 0 010 8" stroke="#C9962A" stroke-width="2" fill="none"/><path d="M18.5 5.5a9 9 0 010 13" stroke="#C9962A" stroke-width="2" fill="none"/></svg>
   </button>
+  <button id="changelog-toggle" class="pill">Changelog</button>
+  <div id="changelog-modal">
+    <div id="changelog-card">
+      <button id="changelog-close">✕</button>
+      <h2>Changelog</h2>
+      <div class="ap-sub">What's changed, most recent first</div>
+      <div id="changelog-list"></div>
+    </div>
+  </div>
   <button id="scroll-cue" onclick="document.getElementById('atlas-section').scrollIntoView({behavior:'smooth'})">
     <span>Zur Karte</span>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9l8 8 8-8" stroke="#C9962A" stroke-width="2" stroke-linecap="round"/></svg>
@@ -574,6 +635,30 @@
     <div class="pill active" data-basemap="satellite">Satellite</div>
     <div class="pill" data-basemap="topo">Topographic</div>
     <div class="pill" data-basemap="street">Streets</div>
+  </div>
+
+  <button id="poi-tool-btn" class="pill">📍 POI Tool</button>
+  <div id="poi-tool-panel">
+    <h4>Set a POI</h4>
+    <div id="poi-tool-coords">Click the map to place a point…</div>
+    <label>Name</label>
+    <input type="text" id="poi-tool-name" placeholder="e.g. New Location">
+    <label>Color</label>
+    <div class="poi-tool-swatches" id="poi-tool-swatches"></div>
+    <label>Circle size: <span id="poi-tool-size-val">28</span>px</label>
+    <input type="range" id="poi-tool-size" min="14" max="60" value="28">
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+      <input type="checkbox" id="poi-tool-waypoint-mode" style="width:auto;margin:0;"> Multi-point (waypoints)
+    </label>
+    <div class="row">
+      <button id="poi-tool-cancel">Cancel</button>
+      <button id="poi-tool-save" class="primary">Save</button>
+    </div>
+    <div class="hint">In waypoint mode, keep clicking to add points, then Save. Saved only in this browser — tell Claude the coordinates to add it to the real site for everyone.</div>
+  </div>
+  <div id="poi-tool-list">
+    <h4>My Sketch POIs</h4>
+    <div id="poi-tool-list-body"></div>
   </div>
 
   <div id="map-geo"></div>
@@ -871,6 +956,42 @@
     document.getElementById('icon-muted').style.display = heroMuted ? 'block' : 'none';
     document.getElementById('icon-unmuted').style.display = heroMuted ? 'none' : 'block';
   });
+
+  // ---- Changelog (23.09.): plain-language, dated list of what changed on
+  // the live site, meant for the team to check without needing to read
+  // commit history or technical notes. Update CHANGELOG below (newest
+  // entry first) whenever a round of changes goes live -- keep entries
+  // short and non-technical, this is for a general audience, not a dev log.
+  const CHANGELOG = [
+    { date: "23 September 2026", items: [
+      "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
+      "Renamed a few categories: Interdependence → Dharma, Slice of Life → Life in a Day, Meditative Moments → Meditate; retired the standalone \"Streetlife\" category.",
+      "Added Shesh Narayan Temple as a new sacred-site marker.",
+      "Redesigned the bird circling the Guru Rinpoche statue as a recognisable black kite.",
+      "The landing page video's sound now fades in and out as you scroll to and from the map.",
+      "The map-mode menu (Paubhā / Valley Today / 3D Relief) is now visible on the landing page too.",
+      "Added this changelog, and a tool on the map for sketching your own points of interest."
+    ]},
+    { date: "22 September 2026", items: [
+      "Roads across the whole valley now appear in the 3D wireframe view, not just the Ring Road.",
+      "Reworked the comet effects in the 3D wireframe: a click sends out a burst from the cursor, and the Ring Road itself glows as comets pass along it.",
+      "The scooter routes (Night Festival ⇄ Chilancho, and the new one to Taragaon Museum) now follow the real streets instead of a straight line.",
+      "Clicking an international flight now actually takes you to the right video and place.",
+      "More aircraft in the air on the international routes; the Pokhara flight now uses the same, more accurate runway curve as the others.",
+      "The Dalsingpakha boat crossing has its own \"ticket counter\" now, matching the airport's."
+    ]}
+  ];
+  function renderChangelog(){
+    document.getElementById('changelog-list').innerHTML = CHANGELOG.map(entry =>
+      `<div class="changelog-entry"><div class="changelog-date">${entry.date}</div><ul>${entry.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`
+    ).join('');
+  }
+  renderChangelog();
+  document.getElementById('changelog-toggle').addEventListener('click', () => {
+    document.getElementById('changelog-modal').classList.add('open');
+  });
+  document.getElementById('changelog-close').addEventListener('click', () => document.getElementById('changelog-modal').classList.remove('open'));
+  document.getElementById('changelog-modal').addEventListener('click', e => { if(e.target.id === 'changelog-modal') document.getElementById('changelog-modal').classList.remove('open'); });
   // Crossfade with the map's background music (22.09.): arriving at the
   // hero/landing section fades the hero video's own volume up and ducks
   // bgMusic (reusing the same duckMusic()/unduckMusic() choke point every
@@ -2103,7 +2224,7 @@
   }
   function closeInfoBar(){ infobar.classList.remove('open'); }
   document.getElementById('ib-close').addEventListener('click', closeInfoBar);
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); } });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); } });
 
   // ============ Map 1: Original Paubhā — fixed master ============
   // No blurred backdrop anymore (didn't read well, felt distracting).
@@ -2279,6 +2400,149 @@
   eventLayer.addTo(mapGeo); archiveLayer.addTo(mapGeo); scholarlyLayerGeo.addTo(mapGeo);
   document.getElementById('map-geo').style.display = 'none';
   mapGeo.on('click', closeInfoBar);
+
+  // ============ POI Sketch Tool (23.09.) ============
+  // A personal, browser-local scratchpad for sketching new POI ideas
+  // directly on the "Kathmandu Valley Today" map: click to read exact
+  // coordinates, place a coloured/sized circle, name it, optionally chain
+  // several clicks into a multi-point (waypoint) shape. Saved to
+  // localStorage only -- this is NOT synced to the real site or visible
+  // to anyone else; it's for figuring out coordinates/looks fast, then
+  // telling Claude what to actually add permanently. 2D map only for now
+  // (see to-do list for 3D).
+  const poiToolBtn = document.getElementById('poi-tool-btn');
+  const poiToolPanel = document.getElementById('poi-tool-panel');
+  const poiToolList = document.getElementById('poi-tool-list');
+  const poiToolCoords = document.getElementById('poi-tool-coords');
+  const poiToolName = document.getElementById('poi-tool-name');
+  const poiToolSize = document.getElementById('poi-tool-size');
+  const poiToolSizeVal = document.getElementById('poi-tool-size-val');
+  const poiToolWaypointMode = document.getElementById('poi-tool-waypoint-mode');
+  const poiToolSwatchesEl = document.getElementById('poi-tool-swatches');
+  const POI_TOOL_COLORS = ['#C9962A','#8B1A0E','#9B7EC2','#8FA05C','#E0C34A','#5FA8D3','#7CA8A0','#E08FA5'];
+  let poiToolSelectedColor = POI_TOOL_COLORS[0];
+  POI_TOOL_COLORS.forEach((c, i) => {
+    const sw = document.createElement('button');
+    sw.type = 'button'; sw.className = 'poi-tool-swatch' + (i === 0 ? ' selected' : '');
+    sw.style.background = c; sw.dataset.color = c;
+    sw.addEventListener('click', () => {
+      poiToolSelectedColor = c;
+      poiToolSwatchesEl.querySelectorAll('.poi-tool-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+    });
+    poiToolSwatchesEl.appendChild(sw);
+  });
+  poiToolSize.addEventListener('input', () => { poiToolSizeVal.textContent = poiToolSize.value; });
+
+  let poiToolActive = false;
+  let poiToolPoints = []; // [{lat,lng}] currently being placed
+  let poiToolTempLayer = null; // preview markers/line for the in-progress point(s)
+  const customPois = []; // {id, name, color, size, points:[[lat,lng],...], layer}
+  const CUSTOM_POI_STORAGE_KEY = 'sacredAtlasCustomPois';
+
+  function poiToolClearTemp(){
+    if(poiToolTempLayer){ mapGeo.removeLayer(poiToolTempLayer); poiToolTempLayer = null; }
+  }
+  function poiToolDrawTemp(){
+    poiToolClearTemp();
+    if(poiToolPoints.length === 0) return;
+    const size = parseInt(poiToolSize.value, 10);
+    const group = L.layerGroup();
+    poiToolPoints.forEach(p => {
+      L.circleMarker([p.lat, p.lng], { radius: size/2, color: poiToolSelectedColor, weight: 2, fillColor: poiToolSelectedColor, fillOpacity: 0.55 }).addTo(group);
+    });
+    if(poiToolPoints.length > 1){
+      L.polyline(poiToolPoints.map(p => [p.lat, p.lng]), { color: poiToolSelectedColor, weight: 2, dashArray: '4,5' }).addTo(group);
+    }
+    group.addTo(mapGeo);
+    poiToolTempLayer = group;
+  }
+  function poiToolUpdateCoordsReadout(){
+    if(poiToolPoints.length === 0){ poiToolCoords.textContent = 'Click the map to place a point…'; return; }
+    poiToolCoords.textContent = poiToolPoints.map(p => `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`).join('  →  ');
+  }
+  function poiToolMapClick(e){
+    poiToolPoints.push({ lat: e.latlng.lat, lng: e.latlng.lng });
+    if(!poiToolWaypointMode.checked) poiToolPoints = poiToolPoints.slice(-1); // single-point mode: replace, don't accumulate
+    poiToolUpdateCoordsReadout();
+    poiToolDrawTemp();
+  }
+  function poiToolReset(){
+    poiToolPoints = [];
+    poiToolClearTemp();
+    poiToolName.value = '';
+    poiToolUpdateCoordsReadout();
+  }
+  function poiToolSetActive(on){
+    poiToolActive = on;
+    poiToolBtn.classList.toggle('active', on);
+    poiToolPanel.classList.toggle('open', on);
+    poiToolList.classList.toggle('open', on);
+    document.getElementById('map-geo').style.cursor = on ? 'crosshair' : '';
+    if(on){ mapGeo.on('click', poiToolMapClick); renderPoiToolList(); }
+    else { mapGeo.off('click', poiToolMapClick); poiToolReset(); }
+  }
+  poiToolBtn.addEventListener('click', () => poiToolSetActive(!poiToolActive));
+  document.getElementById('poi-tool-cancel').addEventListener('click', poiToolReset);
+  document.getElementById('poi-tool-save').addEventListener('click', () => {
+    if(poiToolPoints.length === 0) return;
+    const name = poiToolName.value.trim() || 'Untitled POI';
+    const size = parseInt(poiToolSize.value, 10);
+    saveCustomPoi({ id: 'custom-' + Date.now(), name, color: poiToolSelectedColor, size, points: poiToolPoints.map(p => [p.lat, p.lng]) });
+    poiToolReset();
+  });
+
+  function renderCustomPoi(cp){
+    const group = L.layerGroup();
+    cp.points.forEach((pt, i) => {
+      const m = L.circleMarker(pt, { radius: cp.size/2, color: cp.color, weight: 2, fillColor: cp.color, fillOpacity: 0.55 }).addTo(group);
+      if(i === 0) m.bindTooltip(cp.name, { direction:'top', offset:[0,-cp.size/2], className:'custom-poi-tooltip', opacity:0.97 });
+    });
+    if(cp.points.length > 1){
+      L.polyline(cp.points, { color: cp.color, weight: 2, dashArray: '4,5' }).addTo(group);
+    }
+    group.addTo(mapGeo);
+    cp.layer = group;
+  }
+  function saveCustomPoi(cp){
+    customPois.push(cp);
+    renderCustomPoi(cp);
+    persistCustomPois();
+    renderPoiToolList();
+  }
+  function deleteCustomPoi(id){
+    const idx = customPois.findIndex(c => c.id === id);
+    if(idx === -1) return;
+    if(customPois[idx].layer) mapGeo.removeLayer(customPois[idx].layer);
+    customPois.splice(idx, 1);
+    persistCustomPois();
+    renderPoiToolList();
+  }
+  function persistCustomPois(){
+    try {
+      const plain = customPois.map(c => ({ id:c.id, name:c.name, color:c.color, size:c.size, points:c.points }));
+      localStorage.setItem(CUSTOM_POI_STORAGE_KEY, JSON.stringify(plain));
+    } catch(e) {}
+  }
+  function loadCustomPois(){
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(CUSTOM_POI_STORAGE_KEY) || '[]'); } catch(e) {}
+    if(!Array.isArray(saved)) saved = []; // defensive: ignore corrupted/unexpected localStorage content
+    saved.forEach(cp => { customPois.push(cp); renderCustomPoi(cp); });
+  }
+  function renderPoiToolList(){
+    const body = document.getElementById('poi-tool-list-body');
+    if(customPois.length === 0){ body.innerHTML = '<div style="font-size:12px;color:var(--ochre);opacity:0.7;">None yet</div>'; return; }
+    body.innerHTML = '';
+    customPois.forEach(cp => {
+      const row = document.createElement('div');
+      row.className = 'poi-tool-list-item';
+      row.innerHTML = `<span class="dot" style="background:${cp.color}"></span><span class="lbl">${cp.name}</span><span class="del">✕</span>`;
+      row.querySelector('.del').addEventListener('click', () => deleteCustomPoi(cp.id));
+      body.appendChild(row);
+    });
+  }
+  loadCustomPois();
   mapImage.on('click', closeInfoBar);
 
   // ---- Legend toggles ----
@@ -3852,6 +4116,7 @@
       featuredWidget.classList.add('show');
       positionFeaturedWidget();
       document.getElementById('basemap-row').classList.add('show');
+      poiToolBtn.classList.add('show');
       btnScholarlyImage.style.display = 'none';
       btnSketchToggle.style.display = 'none';
       btnSketchToggle.classList.remove('active');
@@ -3872,6 +4137,7 @@
     featuredWidget.classList.remove('show');
     document.getElementById('return-ktm-btn').style.display = 'none';
     document.getElementById('basemap-row').classList.remove('show');
+    poiToolBtn.classList.remove('show'); poiToolSetActive(false);
     btnScholarlyImage.style.display = 'block';
     btnSketchToggle.style.display = 'block';
     musicBtn.style.display = 'none';
@@ -3916,6 +4182,7 @@
     featuredWidget.classList.remove('show');
     document.getElementById('return-ktm-btn').style.display = 'none';
     document.getElementById('basemap-row').classList.remove('show');
+    poiToolBtn.classList.remove('show'); poiToolSetActive(false);
     btnScholarlyImage.style.display = 'none';
     btnSketchToggle.style.display = 'none';
     btnSketchToggle.classList.remove('active');
