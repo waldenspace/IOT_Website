@@ -329,11 +329,18 @@
   #cal-month-label{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.05em;font-size:14px;}
   #cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:14px;}
   .cal-dow{font-family:'Cinzel',serif;font-size:9.5px;color:var(--ochre);text-align:center;letter-spacing:0.04em;opacity:0.75;padding-bottom:4px;}
-  .cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12.5px;color:var(--parchment);border-radius:5px;}
+  .cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12.5px;color:var(--parchment);border-radius:5px;overflow:hidden;}
   .cal-day.other-month{opacity:0.25;}
   .cal-day.today{border:1px solid var(--gold);}
-  .cal-day .cal-dots{display:flex;gap:2px;margin-top:2px;}
+  .cal-day .cal-moon-tint{position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:0;}
+  .cal-day .cal-daynum, .cal-day .cal-moon-icon{position:relative;z-index:1;}
+  .cal-day .cal-moon-icon{font-size:9px;line-height:1;margin-top:1px;}
+  .cal-day .cal-dots{display:flex;gap:2px;margin-top:2px;position:relative;z-index:1;}
   .cal-dot{width:5px;height:5px;border-radius:50%;}
+  #cal-filters{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px;}
+  .cal-filter-chip{display:flex;align-items:center;gap:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.03em;color:var(--ochre);background:transparent;border:1px solid var(--border-c);border-radius:12px;padding:4px 10px;cursor:pointer;opacity:0.5;transition:opacity 0.2s ease;}
+  .cal-filter-chip.on{opacity:1;}
+  .cal-filter-chip .cal-dot{width:7px;height:7px;}
   #cal-legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;font-size:11px;color:var(--ochre);}
   #cal-legend span{display:flex;align-items:center;gap:4px;}
   #cal-events-list{border-top:1px solid var(--border-c);padding-top:12px;}
@@ -341,6 +348,7 @@
   .cal-event-row.clickable{cursor:pointer;}
   .cal-event-row.clickable:hover .cal-event-name{color:var(--gold);}
   .cal-event-date{font-family:'Cinzel',serif;font-size:10.5px;color:var(--ochre);flex:0 0 62px;}
+  .cal-event-icon{flex:0 0 auto;font-size:12px;}
   .cal-event-name{font-size:13px;color:var(--parchment);}
   #featured-widget .fw-eyebrow{font-family:'Cinzel',serif;color:var(--gold);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:9px;}
   #fw-slide{display:flex;gap:10px;align-items:flex-start;}
@@ -733,12 +741,17 @@
         <span id="cal-month-label"></span>
         <button id="cal-next">Next ›</button>
       </div>
+      <div id="cal-filters">
+        <div class="cal-filter-chip on" data-tradition="buddhist"><span class="cal-dot" style="background:#C9962A"></span>☸ Buddhist</div>
+        <div class="cal-filter-chip on" data-tradition="newar"><span class="cal-dot" style="background:#A13A3A"></span>🛕 Newar</div>
+        <div class="cal-filter-chip on" data-tradition="hindu"><span class="cal-dot" style="background:#7CA8A0"></span>🕉 Hindu</div>
+        <div class="cal-filter-chip on" data-tradition="tibetan"><span class="cal-dot" style="background:#9B7EC2"></span>📿 Tibetan</div>
+      </div>
       <div id="cal-grid"></div>
       <div id="cal-legend">
-        <span><span class="cal-dot" style="background:#C9962A"></span>Buddhist</span>
-        <span><span class="cal-dot" style="background:#A13A3A"></span>Newar</span>
-        <span><span class="cal-dot" style="background:#7CA8A0"></span>Hindu</span>
-        <span><span class="cal-dot" style="background:#9B7EC2"></span>Tibetan</span>
+        <span>🌑 New moon</span>
+        <span>🌕 Full moon</span>
+        <span style="opacity:0.8;">— background tint = moon's brightness that night</span>
       </div>
       <div id="cal-events-list"></div>
     </div>
@@ -1162,7 +1175,28 @@
       blurb:"New Year for Nepal's Gurung community, the first of the winter's three separate Himalayan new years — village gatherings, traditional Gurung songs and dance, and the start of the Gurung calendar's own year count." }
   ];
   const CAL_COLORS = { buddhist:"#C9962A", newar:"#A13A3A", hindu:"#7CA8A0", tibetan:"#9B7EC2" };
+  const CAL_ICONS = { buddhist:"☸", newar:"🛕", hindu:"🕉", tibetan:"📿" };
+  const calActiveTraditions = new Set(Object.keys(CAL_COLORS));
   let calViewYear = 2026, calViewMonth = 0; // 0-indexed, starts on January 2026
+
+  // ---- Moon phase (23.09.): real astronomy, not tied to any one culture's
+  // calendar -- a known reference new moon (2000-01-06 18:14 UTC) plus the
+  // synodic month (29.53058867 days) gives phase 0=new, 0.5=full for any
+  // date. Checked against five independently-sourced 2026 new/full moon
+  // dates before trusting it (all matched within the same day). Deliberately
+  // NOT the same thing as a Tibetan/Newar lunisolar calendar (which layers
+  // cultural conventions -- leap months, skipped/doubled days -- on top of
+  // the raw astronomy) -- this is just where the moon actually is.
+  const MOON_REF_MS = Date.UTC(2000,0,6,18,14,0);
+  const SYNODIC_DAYS = 29.530588853;
+  function moonPhaseFrac(dateUTCms){
+    const days = (dateUTCms - MOON_REF_MS) / 86400000;
+    let f = (days % SYNODIC_DAYS) / SYNODIC_DAYS;
+    if(f < 0) f += 1;
+    return f; // 0 = new moon, 0.5 = full moon
+  }
+  function moonIllumination(frac){ return (1 - Math.cos(2*Math.PI*frac)) / 2; } // 0..1, 0=new 1=full
+
   function calRenderGrid(){
     const grid = document.getElementById('cal-grid');
     const label = document.getElementById('cal-month-label');
@@ -1184,9 +1218,26 @@
       const dateStr = calViewYear + '-' + String(calViewMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
       const el = document.createElement('div');
       el.className = 'cal-day' + (dateStr === todayStr ? ' today' : '');
-      el.innerHTML = `<span>${d}</span>`;
-      const evs = eventsByDate[dateStr];
-      if(evs){
+      const noonMs = Date.UTC(calViewYear, calViewMonth, d, 12, 0, 0);
+      const illumToday = moonIllumination(moonPhaseFrac(noonMs));
+      const illumPrev = moonIllumination(moonPhaseFrac(noonMs - 86400000));
+      const illumNext = moonIllumination(moonPhaseFrac(noonMs + 86400000));
+      // Background tint: cream-white, opacity scaled so full moon reads as
+      // a soft glow rather than a solid block (0.04 new -> 0.4 full).
+      const tint = document.createElement('div'); tint.className = 'cal-moon-tint';
+      tint.style.background = `rgba(242,230,201,${(0.04 + illumToday*0.36).toFixed(3)})`;
+      el.appendChild(tint);
+      const daynum = document.createElement('span'); daynum.className = 'cal-daynum'; daynum.textContent = d;
+      el.appendChild(daynum);
+      if(illumToday < illumPrev && illumToday < illumNext){
+        const moonIcon = document.createElement('span'); moonIcon.className = 'cal-moon-icon'; moonIcon.title = 'New moon'; moonIcon.textContent = '🌑';
+        el.appendChild(moonIcon);
+      } else if(illumToday > illumPrev && illumToday > illumNext){
+        const moonIcon = document.createElement('span'); moonIcon.className = 'cal-moon-icon'; moonIcon.title = 'Full moon'; moonIcon.textContent = '🌕';
+        el.appendChild(moonIcon);
+      }
+      const evs = (eventsByDate[dateStr] || []).filter(ev => calActiveTraditions.has(ev.tradition));
+      if(evs.length){
         const dots = document.createElement('div'); dots.className = 'cal-dots';
         evs.forEach(ev => { const dot = document.createElement('span'); dot.className = 'cal-dot'; dot.style.background = CAL_COLORS[ev.tradition]; dots.appendChild(dot); });
         el.appendChild(dots);
@@ -1199,7 +1250,7 @@
     const body = document.getElementById('cal-events-list');
     const monthEvents = CALENDAR_EVENTS.filter(ev => {
       const [y,m] = ev.date.split('-').map(Number);
-      return y === calViewYear && (m - 1) === calViewMonth;
+      return y === calViewYear && (m - 1) === calViewMonth && calActiveTraditions.has(ev.tradition);
     });
     if(monthEvents.length === 0){ body.innerHTML = '<div style="font-size:12px;color:var(--ochre);opacity:0.7;text-align:center;">No marked dates this month</div>'; return; }
     body.innerHTML = '';
@@ -1207,7 +1258,7 @@
       const day = parseInt(ev.date.split('-')[2], 10);
       const row = document.createElement('div');
       row.className = 'cal-event-row clickable';
-      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-name">${ev.name} →</span>`;
+      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-icon">${CAL_ICONS[ev.tradition]}</span><span class="cal-event-name">${ev.name} →</span>`;
       row.addEventListener('click', () => {
         document.getElementById('calendar-modal').classList.remove('open');
         if(ev.poi && allPoisByName[ev.poi]){
@@ -1219,6 +1270,14 @@
       body.appendChild(row);
     });
   }
+  document.querySelectorAll('.cal-filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const t = chip.dataset.tradition;
+      if(calActiveTraditions.has(t)){ calActiveTraditions.delete(t); chip.classList.remove('on'); }
+      else { calActiveTraditions.add(t); chip.classList.add('on'); }
+      calRenderGrid();
+    });
+  });
   document.getElementById('cal-prev').addEventListener('click', () => { calViewMonth--; if(calViewMonth < 0){ calViewMonth = 11; calViewYear--; } calRenderGrid(); });
   document.getElementById('cal-next').addEventListener('click', () => { calViewMonth++; if(calViewMonth > 11){ calViewMonth = 0; calViewYear++; } calRenderGrid(); });
   document.getElementById('calendar-toggle').addEventListener('click', () => {
