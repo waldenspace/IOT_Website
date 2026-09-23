@@ -386,6 +386,7 @@
   }
   .ap-ticket:hover{background:rgba(201,150,42,0.1);border-color:var(--gold);transform:translateY(-4px);}
   .ap-ticket .ap-icon{font-size:24px;display:block;margin-bottom:12px;}
+  .ap-ticket .ap-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-bottom:12px;border:1px solid var(--border-c);}
   .ap-ticket .ap-title{font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
   .ap-ticket .ap-desc{font-size:13.5px;line-height:1.45;color:var(--ochre);}
 
@@ -427,6 +428,28 @@
   #taragaon-ticket-close:hover{color:var(--gold);}
   #taragaon-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
   #taragaon-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
+
+  /* ---- Chilancho Ritual "ticket counter" -- same chrome again, three
+     choices: two parts of the ritual film plus a third about the place
+     itself (not the ritual). ---- */
+  #chilancho-ticket-modal{
+    position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.85);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.35s ease,visibility 0s linear 0.35s;
+  }
+  #chilancho-ticket-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 0.35s ease,visibility 0s linear 0s;}
+  #chilancho-ticket-card{
+    position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;
+    max-width:760px;width:100%;padding:36px 32px;text-align:center;
+    transform:scale(0.9);opacity:0;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;
+  }
+  #chilancho-ticket-modal.open #chilancho-ticket-card{transform:scale(1);opacity:1;}
+  #chilancho-ticket-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #chilancho-ticket-close:hover{color:var(--gold);}
+  #chilancho-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
+  #chilancho-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
+  #chilancho-tickets{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+  #chilancho-tickets .ap-ticket{max-width:210px;}
   #boat-tickets{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
 
   #paubha-lightbox{
@@ -921,14 +944,39 @@
       <div class="ap-sub">Choose your film</div>
       <div id="taragaon-tickets">
         <div class="ap-ticket" data-choice="portrait">
-          <span class="ap-icon">🎞</span>
+          <img class="ap-thumb" src="https://i.vimeocdn.com/video/2204290597-79192981712355c80977aca0354e6500c342d6ebf0226dab4d274696f8691e77-d_295x166?region=us" alt="">
           <div class="ap-title">A Day with Rojan</div>
           <div class="ap-desc">A portrait: a day alongside Roshan "Rojan" Mishra, director of the Taragaon Museum.</div>
         </div>
         <div class="ap-ticket" data-choice="restitution">
-          <span class="ap-icon">🏛</span>
+          <img class="ap-thumb" src="https://i.vimeocdn.com/video/2204293320-0aad4ed1b19a1c76878d61a151b12afccda6d45db858094f01df6718e5cb682d-d_295x166?region=us" alt="">
           <div class="ap-title">Museums, Art Theft &amp; Restitution</div>
           <div class="ap-desc">Rojan on museums, art theft, and restitution — the questions this atlas keeps returning to.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chilancho-ticket-modal">
+    <div id="chilancho-ticket-card">
+      <button id="chilancho-ticket-close">✕</button>
+      <h2>Chilancho Vihar, Kirtipur</h2>
+      <div class="ap-sub">Choose your film</div>
+      <div id="chilancho-tickets">
+        <div class="ap-ticket" data-choice="partI">
+          <img class="ap-thumb" src="https://i.vimeocdn.com/video/2204391339-6f3f37320f68cf4f4f3c49b1066dfa80f927a2bf6d79c7c96e38e6760c913fd9-d_295x166?region=us" alt="">
+          <div class="ap-title">Before the Trance</div>
+          <div class="ap-desc">How the ritual begins — the performers arriving and preparing.</div>
+        </div>
+        <div class="ap-ticket" data-choice="partII">
+          <img class="ap-thumb" src="https://i.vimeocdn.com/video/1515721348-f46911127b5393ffc48cb8c6b88b4d288d8ac4d2c2f43f1953f290591462468f-d_295x166?region=us" alt="">
+          <div class="ap-title">The Trance Dance</div>
+          <div class="ap-desc">The devī pyākhaṃ itself — hours of trance dance at the heart of the ritual.</div>
+        </div>
+        <div class="ap-ticket" data-choice="partIII">
+          <span class="ap-icon">🏯</span>
+          <div class="ap-title">Chilancho Vihar Itself</div>
+          <div class="ap-desc">The stupa and monastery on their own, apart from the ritual — footage still being edited.</div>
         </div>
       </div>
     </div>
@@ -1353,6 +1401,12 @@
       sources: [{label:"Himalayan Dream", url:"https://www.himalayandream.team/blog/patan-durbar-square"}, {label:"Backpack to Nepal", url:"https://backpacktonepal.com/patan-durbar-square-history-and-guide/"}],
       related: ["Golden Temple (Hiranya Varna Mahavihar)", "Kutumba Rehearsal — Sarangi with Kilian Nepali", "Kathmandu Durbar Square"],
       media:{ kind:"image", id:"Still_2026-05-19_212940_2.25.1", verified:false } },
+    { name:"Kumbheshwor Temple (Patan)", type:"pagoda", category:"sacred_places", related: ["Patan Durbar Square"],
+      lat:27.676518572009027, lng:85.32604856396334,
+      blurb:"A five-tiered pagoda just north of Patan Durbar Square, one of only two free-standing five-storey temples in the valley (the other is Bhaktapur's Nyatapola). Its sacred ponds are believed to draw water from Gosaikunda, the high-altitude lake a week's walk to the north — bathing here during Janai Purnima is said to carry the same merit as making that pilgrimage.",
+      readMore: "Dedicated to Shiva as Kumbheshwor Mahadev, the temple began as a two-storey shrine under King Jayasthiti Malla around 1392, with the upper three tiers added nearly three centuries later by King Srinivasa Malla. A large stone Nandi bull kneels facing the sanctuary. The complex's two hiti (sunken stone water spouts/ponds) — fed by a spring local tradition traces all the way to Gosaikunda — turn Janai Purnima into the temple's busiest day of the year, when thousands come to bathe rather than make the multi-day trek into the mountains.",
+      sources: [{label:"Wikipedia", url:"https://en.wikipedia.org/wiki/Kumbheshwar_Temple"}, {label:"Lonely Planet", url:"https://www.lonelyplanet.com/pois/1432432"}],
+      media:{ kind:"image", id:"kumbheshwor-temple-placeholder", verified:false } },
     { name:"Kathmandu Durbar Square", nameNp:"काठमाडौं दरबार क्षेत्र (हनुमानढोका)", type:"pagoda", category:"sacred_places", lat:27.7042737, lng:85.3074630, px:2668, py:4247,
       blurb:"Former royal palace complex, seat of the Kumari, UNESCO World Heritage Site.",
       readMore: "Also known as Hanuman Dhoka, after the statue of the monkey-god guarding its entrance, this was the seat of the Malla and then Shah kings until 1886, when the royal household moved to the newer Narayanhiti Palace — after which the square gradually shifted from a seat of power to a public, sacred civic space. It's also home to the Kumari Ghar, where a young girl selected through a centuries-old process lives as the living goddess Kumari, occasionally appearing at her window.\n\nThe 2015 earthquake hit this square harder than almost anywhere else in the valley: the Kasthamandap — the pagoda so old it's said to have given Kathmandu its name — collapsed entirely, along with the Trailokya Mohan Narayan and Maju Dega temples. Roughly a third of the square's structures were destroyed or badly damaged in under a minute of shaking.\n\nWalking through today means walking through visible absence as much as presence: empty plinths where temples once stood, scaffolding around others still being rebuilt, alongside the temples that did survive — Taleju, the Kumari Ghar, Kal Bhairab. Reconstruction is proceeding structure by structure using the same Newar carving and carpentry traditions that built the originals.",
@@ -1417,6 +1471,11 @@
     { name:"Chilancho Ritual", type:"stupa", category:"rituals", featured:true, related: ["Swayambhunath", "Honey & Sweetie"],
       lat:27.67693, lng:85.2779224,
       blurb:"Chilancho Stupa, Kirtipur. Scenes from a devī pyākhaṃ ('goddess dance') held under the full moon at this hilltop stupa — the dance tells of a girl whose beloved was turned into a sheep, later restored by goddesses appearing in a forest, rooted in Newar ritual and myth. We joined by invitation of Newar priest and scholar Bajramuni Bajracharya.",
+      // Own "ticket counter" (openChilanchoTicketCounter): choose between
+      // the ritual's two filmed parts, or the site itself apart from the
+      // ritual. media below is just a fallback for any path that opens
+      // this POI directly without going through the counter.
+      chilanchoTicketCounter:true,
       media:{ kind:"vimeo", id:"754334993", h:"375a311935", verified:true } },
     { name:"Community Flute Workshop, Kirtipur", type:"landmark-minor", category:"music_culture", related: ["Chilancho Ritual", "Project Sarangi"],
       lat:27.67685326788032, lng:85.27899072285297,
@@ -1557,7 +1616,7 @@
     { name:"Rato Machhindranath Jatra (Patan)", lat:27.6782363, lng:85.3168528,
       blurb:"The oldest and longest chariot festival in the Kathmandu Valley, traditionally beginning at Pulchok, Lalitpur, with the building of an 18-metre chariot. In 2026 the festival ran from April through the Bhoto Jatra ceremony on 16 July; the next date, set by the Nepal Sambat lunar calendar, falls around April 2027.",
       link:"https://diplomatnepal.com/art-culture/bhoto-jatra-ancient-vest-ceremony-concludes-rato-machhindranath-jatra/" },
-    { name:"Bisket Jatra (Bhaktapur)", lat:27.6720700, lng:85.4282951,
+    { name:"Bisket Jatra (Bhaktapur)", lat:27.6718200, lng:85.4286500,
       blurb:"Newar New Year festival with a chariot procession of Bhairabnath around Bhaktapur Durbar Square; in 2026 it began on 15 April. Next date around mid-April 2027.",
       link:"https://diplomatnepal.com/category/photo-feature/" },
   ];
@@ -1576,7 +1635,7 @@
     { name:"Buddha-Statue (13. Jh., Om Bahal)", lat:27.70250, lng:85.30900,
       blurb:"Stolen from Bajradhatu Bihar (Om Bahal, Kathmandu) in the 1980s, recovered from New York in 2022; formally reinstalled on 1 May 2026 to mark Buddha Jayanti.",
       link:"https://www.aljazeera.com/news/2026/5/2/nepal-celebrates-return-of-stolen-13th-century-buddha-statue-from-new-york" },
-    { name:"Uma-Maheshwor (16. Jh., Brooklyn Museum)", lat:27.6726981, lng:85.3253211,
+    { name:"Uma-Maheshwor (16. Jh., Brooklyn Museum)", lat:27.6730500, lng:85.3250000,
       blurb:"Stolen four decades ago, resurfaced at the Brooklyn Museum; returned in January 2024, celebrated with a procession in Patan.",
       link:"https://fortune.com/2024/02/15/nepal-sculptures-art-theft-brooklyn-museum" },
   ];
@@ -1593,7 +1652,7 @@
       blurb:"Field 1 in the scholarly grid key (Bijeshwari/Vidhyeshvari Vajra Yogini Temple)." },
     { field:2, name:"Sobhā Bhagavatī", lat:27.7150628, lng:85.3013105, px:5003, py:4342,
       blurb:"Field 2 in the scholarly grid key (Shova Bhagwati Temple, Bishnumati riverbank)." },
-    { field:3, name:"Pulchok", lat:27.6782363, lng:85.3168528, px:1698, py:5431,
+    { field:3, name:"Pulchok", lat:27.6779000, lng:85.3173000, px:1698, py:5431,
       blurb:"Field 3 in the scholarly grid key (Pulchowk, Lalitpur)." },
     { field:7, name:"Tham-bahil", lat:null, lng:null, px:5704, py:5431,
       blurb:"Field 7 in the scholarly grid key — modern equivalent not confidently identified; painting position only." },
@@ -1632,6 +1691,7 @@
       if(target.airport) openAirportChooser(target);
       else if(target.boatTicketCounter) openBoatTicketCounter(target);
       else if(target.taragaonTicketCounter) openTaragaonTicketCounter(target);
+      else if(target.chilanchoTicketCounter) openChilanchoTicketCounter(target);
       else if(target.intlInterview) openInternationalPoi(target);
       else openSiteModal(target);
     }, 450);
@@ -2370,6 +2430,48 @@
   document.getElementById('taragaon-ticket-close').addEventListener('click', () => taragaonTicketModal.classList.remove('open'));
   taragaonTicketModal.addEventListener('click', e => { if(e.target === taragaonTicketModal) taragaonTicketModal.classList.remove('open'); });
 
+  // ---- Chilancho Vihar "ticket counter": same pattern, three choices --
+  // two parts of the devī pyākhaṃ ritual film plus a third about the site
+  // itself, apart from the ritual.
+  const chilanchoTicketModal = document.getElementById('chilancho-ticket-modal');
+  function openChilanchoTicketCounter(poi){
+    if(smMediaClearTimer){ clearTimeout(smMediaClearTimer); smMediaClearTimer = null; }
+    if(closeReturnFlyTimer){ clearTimeout(closeReturnFlyTimer); closeReturnFlyTimer = null; }
+    flyMapToward(poi, 1.2, 3.0);
+    chilanchoTicketModal.classList.add('open');
+    document.querySelectorAll('#chilancho-tickets .ap-ticket').forEach(t => {
+      t.onclick = () => {
+        chilanchoTicketModal.classList.remove('open');
+        const choice = t.dataset.choice;
+        if(choice === 'partI'){
+          openSiteModal(Object.assign({}, poi, {
+            name: "Chilancho Ritual — Before the Trance",
+            blurb: "How the devī pyākhaṃ ritual begins: the performers arriving at Chilancho Stupa and preparing, before the trance dance itself takes over.",
+            media: { kind:"vimeo", id:"1229674021", h:"7771e79d8d", verified:true },
+            skipFlyToward:true
+          }));
+        } else if(choice === 'partII'){
+          openSiteModal(Object.assign({}, poi, {
+            name: "Chilancho Ritual — The Trance Dance",
+            blurb: poi.blurb,
+            media: { kind:"vimeo", id:"754334993", h:"375a311935", verified:true },
+            skipFlyToward:true
+          }));
+        } else if(choice === 'partIII'){
+          openSiteModal(Object.assign({}, poi, {
+            name: "Chilancho Vihar",
+            blurb: "The white stupa and monastery complex on Kirtipur's eastern hilltop, apart from the ritual filmed here — an ancient Buddhist site (local tradition traces it to Ashoka) that this particular devī pyākhaṃ dance just happens to take place at. Held annually, on the full moon night of Ashwin (September) -- not a rare event, despite how it might look on film.",
+            media: { kind:"image", id:"chilancho-vihar-place-placeholder", verified:false },
+            sources: [{label:"Kirtipur Municipality", url:"https://www.heritage.kirtipurmun.gov.np/chilancho-stupa/"}],
+            skipFlyToward:true
+          }));
+        }
+      };
+    });
+  }
+  document.getElementById('chilancho-ticket-close').addEventListener('click', () => chilanchoTicketModal.classList.remove('open'));
+  chilanchoTicketModal.addEventListener('click', e => { if(e.target === chilanchoTicketModal) chilanchoTicketModal.classList.remove('open'); });
+
   // Smoothly ramps a Vimeo player's volume instead of the hard cut of
   // setVolume() called once -- used both when a video starts (fade in)
   // and right before we tear the iframe down (fade out).
@@ -2461,7 +2563,7 @@
         }
         // Video finished on its own (not manually closed): fade out and
         // close, which also triggers the usual zoom-back-to-overview.
-        smPlayer.on('ended', () => { fadeVimeoVolume(smPlayer, 1, 0, 500, () => closeSiteModal()); });
+        smPlayer.on('ended', () => { fadeVimeoVolume(smPlayer, 1, 0, 500, () => { closeSiteModal(); if(poi.onEnded) poi.onEnded(); }); });
       });
       duckMusic();
     } else if(poi.media.kind === 'audio'){
@@ -2562,7 +2664,7 @@
   }
   function closeInfoBar(){ infobar.classList.remove('open'); }
   document.getElementById('ib-close').addEventListener('click', closeInfoBar);
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('taragaon-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); document.getElementById('calendar-modal').classList.remove('open'); } });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('taragaon-ticket-modal').classList.remove('open'); document.getElementById('chilancho-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); document.getElementById('calendar-modal').classList.remove('open'); } });
 
   // ============ Map 1: Original Paubhā — fixed master ============
   // No blurred backdrop anymore (didn't read well, felt distracting).
@@ -2713,7 +2815,7 @@
   pois.concat(productionPois).forEach(p => {
     const marker = L.marker([p.lat, p.lng], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color, p.featured) })
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
-      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.pokharaReturn ? flyBackToKathmandu() : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
+      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.chilanchoTicketCounter ? openChilanchoTicketCounter(p) : p.pokharaReturn ? flyBackToKathmandu() : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
     if(categoryLayers[p.category]) marker.addTo(categoryLayers[p.category]);
   });
   Object.values(categoryLayers).forEach(l => l.addTo(mapGeo));
@@ -3880,6 +3982,109 @@
     openSiteModal(Object.assign({}, rojanPhotosPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
   });
 
+  // ---- Reusable fade-cycle marker factory (23.09.): generalises the
+  // Rojan-photos pattern above (appear at one of N spots, stay visible,
+  // fade out, wait, respawn -- possibly somewhere else) for several new
+  // one-off temporary POIs at once instead of hand-copying that block
+  // again each time. Doesn't touch/replace the Rojan-photos POI itself
+  // (already deployed and working) -- only used for the new ones below.
+  const fadeCycleMarkers = [];
+  function createFadeCycleMarker(cfg){
+    const cycleS = cfg.visibleS + cfg.waitS;
+    let t = Math.random() * cycleS; // stagger multiple instances so they don't all pulse in sync
+    let visible = true;
+    let spot = cfg.spots[Math.floor(Math.random() * cfg.spots.length)];
+    const marker = L.marker([spot.lat, spot.lng], {
+      icon: L.divIcon({ className: cfg.iconClass || 'rojan-photos-icon', html: cfg.iconHtml, iconSize:[26,26], iconAnchor:[13,13] })
+    }).bindTooltip(cfg.tooltipText, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
+    marker.on('click', function(){
+      if(!visible) return;
+      const ll = this.getLatLng();
+      openSiteModal(Object.assign({}, cfg.poi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
+    });
+    const entry = {
+      tick(dtSec){
+        t += dtSec;
+        if(t >= cycleS){
+          t -= cycleS;
+          spot = cfg.spots[Math.floor(Math.random() * cfg.spots.length)];
+          marker.setLatLng([spot.lat, spot.lng]);
+        }
+        if(t < cfg.visibleS){
+          const fadeStartT = cfg.visibleS - cfg.fadeS;
+          if(t >= fadeStartT){ visible = false; marker.setOpacity(Math.max(0, 1 - (t - fadeStartT) / cfg.fadeS)); }
+          else { visible = true; marker.setOpacity(1); }
+        } else {
+          visible = false; marker.setOpacity(0);
+        }
+      }
+    };
+    fadeCycleMarkers.push(entry);
+    return entry;
+  }
+  // "Social Media Moment" -- fixed spot, no video yet.
+  createFadeCycleMarker({
+    spots: [{ lat: 27.682245, lng: 85.287337 }],
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">📱</div>',
+    tooltipText: "Social Media Moment",
+    poi: { name: "Social Media Moment", blurb: "A passing social-media moment, caught on camera. Footage not yet matched here.", media:{ kind:"image", id:"social-media-moment-placeholder", verified:false } }
+  });
+  // "University Campus" -- fixed spot, no video yet.
+  createFadeCycleMarker({
+    spots: [{ lat: 27.682374, lng: 85.286533 }],
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🎓</div>',
+    tooltipText: "University Campus",
+    poi: { name: "University Campus", blurb: "A moment on a university campus in the valley. Footage not yet matched here.", media:{ kind:"image", id:"university-campus-placeholder", verified:false } }
+  });
+  // "KTM Viewpoints" -- cycles between three real elevated viewpoints
+  // already used elsewhere on the site (Champadevi ridge, the hillside
+  // above the Mingyur Rinpoche interview, Shivapuri) -- same DEM-verified
+  // coordinates as the Timelapse Clouds hotspots, reused here rather than
+  // guessing new ones. No video yet.
+  createFadeCycleMarker({
+    spots: [
+      { lat: 27.64346, lng: 85.25124 },
+      { lat: 27.72913, lng: 85.26444 },
+      { lat: 27.80183, lng: 85.39942 }
+    ],
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🏔️</div>',
+    tooltipText: "KTM Viewpoints",
+    poi: { name: "KTM Viewpoints", blurb: "A view over the Kathmandu Valley from one of its high points. Footage not yet matched here.", media:{ kind:"image", id:"ktm-viewpoints-placeholder", verified:false } }
+  });
+
+  // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
+  // Ghat on the real road (23.09.) -- same road-routing technique as the
+  // Night Festival<->Chilancho scooter (small local-area Overpass query,
+  // node graph, Dijkstra shortest path; this stretch needed track-class
+  // ways included too, or Pharping and Dalsingpakha simply weren't
+  // connected in the graph -- real winding hill road, ~23.7km one-way,
+  // checked visually before use). Continuous back-and-forth like the Ring
+  // Road car and the Night Festival scooter (not a fade-cycle) -- and
+  // deliberately the SAME small "car" icon/size as the Ring Road car
+  // (`makeIcon('car', ...)`), per the instruction that all these moving
+  // car/scooter icons should read as one visual family.
+  const PHARPING_DALSINGPAKHA_ROUTE = [[27.612842,85.264504],[27.612124,85.264728],[27.612241,85.263811],[27.611487,85.263957],[27.610698,85.263463],[27.610121,85.261708],[27.609102,85.259706],[27.60934,85.259279],[27.609458,85.258229],[27.609333,85.257785],[27.610255,85.257111],[27.610931,85.256885],[27.611061,85.256634],[27.610704,85.255934],[27.60963,85.255917],[27.609767,85.254857],[27.608771,85.256015],[27.608989,85.254845],[27.608358,85.253996],[27.608245,85.252991],[27.607515,85.251031],[27.607603,85.250614],[27.606881,85.250944],[27.606771,85.25035],[27.606245,85.249901],[27.606615,85.249123],[27.606545,85.248084],[27.607444,85.247246],[27.607885,85.247222],[27.607982,85.246784],[27.608781,85.246179],[27.609071,85.245582],[27.608386,85.245208],[27.607589,85.245204],[27.607905,85.244976],[27.607567,85.244743],[27.608032,85.244643],[27.608282,85.244382],[27.607753,85.244362],[27.608211,85.244041],[27.607839,85.244124],[27.607581,85.243947],[27.607332,85.243363],[27.606414,85.242368],[27.606811,85.242436],[27.606187,85.241775],[27.60587,85.241726],[27.605478,85.242033],[27.605048,85.24172],[27.605079,85.241],[27.60529,85.240909],[27.605321,85.24064],[27.605684,85.240612],[27.6058,85.240307],[27.605446,85.239955],[27.605424,85.239389],[27.604719,85.238822],[27.604088,85.237607],[27.604546,85.236936],[27.605147,85.236783],[27.604975,85.236221],[27.605456,85.236079],[27.605124,85.234954],[27.605703,85.234842],[27.605942,85.234568],[27.605442,85.23378],[27.60594,85.23365],[27.605786,85.232812],[27.606934,85.233516],[27.606047,85.232366],[27.605977,85.231992],[27.605157,85.231105],[27.605929,85.230477],[27.6067,85.231068],[27.607092,85.230953],[27.606765,85.230305],[27.607501,85.230191],[27.607986,85.229647],[27.607665,85.229377],[27.607649,85.228878],[27.607169,85.229045],[27.606749,85.228864],[27.606433,85.229049],[27.606138,85.228454],[27.605677,85.228389],[27.605511,85.228081],[27.605757,85.227472],[27.606568,85.226743],[27.607091,85.225728],[27.606873,85.225683],[27.605693,85.226456],[27.605061,85.22653],[27.604781,85.226135],[27.604125,85.226474],[27.603885,85.226242],[27.603592,85.226502],[27.603296,85.226477],[27.603094,85.226117],[27.603124,85.225204],[27.602259,85.225768],[27.602068,85.22543],[27.601497,85.22507],[27.601419,85.224773],[27.600814,85.225107],[27.600004,85.224611],[27.599821,85.223974],[27.599412,85.223473],[27.599447,85.223213],[27.599956,85.22273],[27.599403,85.222346],[27.599234,85.220723],[27.598865,85.220539],[27.598451,85.219865],[27.598053,85.219978],[27.597918,85.219752],[27.598105,85.219215],[27.598911,85.218963],[27.599761,85.217232],[27.600205,85.21748],[27.600628,85.218199],[27.601099,85.218288],[27.600762,85.216776],[27.600958,85.216482],[27.601451,85.216591],[27.601753,85.216321],[27.601638,85.215741],[27.601907,85.215397],[27.602035,85.214228],[27.602369,85.214377],[27.602523,85.214853],[27.603182,85.214906],[27.603311,85.214719],[27.602926,85.214042],[27.603078,85.213475],[27.603745,85.213055],[27.604528,85.213036],[27.60504,85.212557],[27.604833,85.211507],[27.605375,85.210999],[27.606041,85.209816],[27.606027,85.209384],[27.606497,85.208722],[27.608047,85.204323],[27.607335,85.201791],[27.607515,85.200857],[27.607392,85.199792],[27.607755,85.198328],[27.607023,85.197484],[27.606165,85.19709],[27.606445,85.196076],[27.605916,85.195228],[27.605585,85.19312],[27.605195,85.192593],[27.604623,85.192563],[27.604565,85.192086],[27.604829,85.191691],[27.604555,85.19157],[27.604312,85.190978],[27.60369,85.190732],[27.603483,85.190124],[27.603542,85.1893],[27.602446,85.188102],[27.601971,85.18712],[27.600996,85.18679],[27.600279,85.187147],[27.599411,85.185855],[27.599423,85.185487],[27.59858,85.185208],[27.59863,85.184105],[27.598427,85.183596],[27.598979,85.183218],[27.598892,85.182766],[27.598036,85.181637],[27.597902,85.181001],[27.597092,85.179838],[27.596997,85.178814],[27.596332,85.178096],[27.596246,85.176873],[27.595972,85.176346],[27.596252,85.175815],[27.595588,85.175366],[27.595068,85.174668],[27.595188,85.173476],[27.594143,85.172195],[27.594037,85.171605],[27.593014,85.170258],[27.59325,85.169928],[27.593728,85.169871],[27.595357,85.170817],[27.59571,85.170668],[27.595603,85.170281],[27.5942,85.168654],[27.593501,85.168249],[27.593334,85.167067],[27.593577,85.166604],[27.594163,85.166757],[27.594791,85.166434],[27.595303,85.166581],[27.595764,85.166284],[27.596503,85.166892],[27.597035,85.166545],[27.598346,85.166839],[27.599018,85.166263],[27.599757,85.166858],[27.599914,85.16627],[27.600789,85.164846],[27.600843,85.163956],[27.601468,85.163376],[27.602121,85.163494],[27.602343,85.162979],[27.602208,85.162462],[27.602443,85.162066],[27.60308,85.162194],[27.603291,85.162053],[27.60329,85.161437],[27.603662,85.161318],[27.604126,85.160432],[27.604072,85.159592],[27.605023,85.159464],[27.605337,85.159711],[27.606976,85.163156],[27.607227,85.163985],[27.607261,85.16505],[27.607475,85.165275],[27.608087,85.164349],[27.607956,85.162456],[27.607438,85.160771],[27.607941,85.160325],[27.608446,85.160454],[27.608817,85.160274],[27.609464,85.160552],[27.610915,85.160581],[27.610968,85.16029],[27.609409,85.159928],[27.609263,85.159636],[27.610479,85.159117],[27.611479,85.158272],[27.611968,85.156691],[27.61242,85.156725],[27.612742,85.15641],[27.614311,85.156584],[27.614896,85.155662],[27.61533,85.155478],[27.615907,85.155763],[27.617184,85.155761],[27.617551,85.156122],[27.618911,85.156094],[27.619464,85.155677],[27.620119,85.156427],[27.620984,85.157016],[27.621393,85.157017],[27.621371,85.156507],[27.620681,85.155951],[27.620556,85.15527],[27.620053,85.154481],[27.618753,85.154147],[27.618415,85.153507],[27.617565,85.152855],[27.61812,85.152355],[27.619597,85.151613],[27.616847,85.152923],[27.617243,85.153027]];
+  const PHARPING_DALSINGPAKHA_CUM = cumulativeDistances(PHARPING_DALSINGPAKHA_ROUTE);
+  const PHARPING_DALSINGPAKHA_TOTAL_M = PHARPING_DALSINGPAKHA_CUM[PHARPING_DALSINGPAKHA_CUM.length - 1];
+  let pharpingCarProgressM = 0, pharpingCarDir = 1;
+  const PHARPING_CAR_ONE_WAY_S = 90;
+  const pharpingCarPoi = {
+    name: "Pharping ⇄ Dalsingpakha Ghat",
+    blurb: "A ride on the real road between Pharping and the Dalsingpakha Ghat boat crossing. Footage not yet matched here.",
+    media:{ kind:"image", id:"pharping-dalsingpakha-car-placeholder", verified:false }
+  };
+  const pharpingCarMarker = L.marker([PHARPING_DALSINGPAKHA_ROUTE[0][0], PHARPING_DALSINGPAKHA_ROUTE[0][1]],
+      { icon: makeIcon('car', 'moving-poi', categoryMeta.sliceoflife.color) })
+    .bindTooltip("Pharping ⇄ Dalsingpakha Ghat", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
+    .addTo(movingPoiLayer);
+  pharpingCarMarker.on('click', function(){
+    const ll = this.getLatLng();
+    openSiteModal(Object.assign({}, pharpingCarPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
+  });
+
   // ---- Temporary: scooter driving from the crossing west of Taragaon
   // Museum to the museum itself (22.09., second rebuild after feedback):
   // leg 1 (crossing -> turn-in) now follows the actual main road instead
@@ -3934,13 +4139,19 @@
   let taragaonRollerT = 0; // seconds elapsed in the current drive-then-wait cycle
   let taragaonRollerVisible = true;
   const taragaonRollerPoi = {
-    name: "Roller to Taragaon Museum",
+    name: "Scooter to Taragaon",
     blurb: "A short ride through traffic on a scooter, ending at Taragaon Museum.",
-    media: { kind:"vimeo", id:"1229130549", h:"26581c0397", verified:true }
+    media: { kind:"vimeo", id:"1229130549", h:"26581c0397", verified:true },
+    // After the ride video finishes on its own, open the Taragaon Museum
+    // ticket counter right away -- the scooter's whole point is arriving
+    // there, so the natural next step is choosing which of the two real
+    // films to watch, exactly like arriving at the airport leads straight
+    // into its own ticket counter.
+    onEnded: () => { const dest = allPoisByName["Taragaon Museum"]; if(dest) openTaragaonTicketCounter(dest); }
   };
   const taragaonRollerMarker = L.marker([TARAGAON_LEG1_PATH[0][0], TARAGAON_LEG1_PATH[0][1]], {
     icon: L.divIcon({ className:'scooter-icon', html: iconSvg.scooter, iconSize:[26,26], iconAnchor:[13,13] })
-  }).bindTooltip("Roller to Taragaon Museum", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
+  }).bindTooltip("Scooter to Taragaon", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
   taragaonRollerMarker.on('click', function(){
     if(!taragaonRollerVisible) return; // can't click what's currently faded/waiting
     const ll = this.getLatLng();
@@ -4022,6 +4233,12 @@
     if(hike3Progress <= 0){ hike3Progress = 0; hike3Dir = 1; }
     const hike3Pos = interpolatePath(PEACE_BUDDHA_SWAYAMBHU_TRAIL, flightProgress(hike3Progress, 0.12));
     hiker3Marker.setLatLng([hike3Pos.lat, hike3Pos.lng]);
+    pharpingCarProgressM += (PHARPING_DALSINGPAKHA_TOTAL_M / PHARPING_CAR_ONE_WAY_S) * pharpingCarDir * dtSec;
+    if(pharpingCarProgressM >= PHARPING_DALSINGPAKHA_TOTAL_M){ pharpingCarProgressM = PHARPING_DALSINGPAKHA_TOTAL_M; pharpingCarDir = -1; }
+    else if(pharpingCarProgressM <= 0){ pharpingCarProgressM = 0; pharpingCarDir = 1; }
+    const pharpingCarPos = pointAtDistance(PHARPING_DALSINGPAKHA_ROUTE, PHARPING_DALSINGPAKHA_CUM, pharpingCarProgressM);
+    pharpingCarMarker.setLatLng([pharpingCarPos.lat, pharpingCarPos.lng]);
+    fadeCycleMarkers.forEach(m => m.tick(dtSec));
     rojanPhotosT += dtSec;
     if(rojanPhotosT >= ROJAN_PHOTOS_CYCLE_S){
       rojanPhotosT -= ROJAN_PHOTOS_CYCLE_S;
@@ -4273,6 +4490,9 @@
     { icon:'🙂', label:'Street Faces', blurb:'A face glimpsed on the street — footage for this theme is still being edited into short vignettes.' },
     { icon:'🚦', label:'Traffic', blurb:'A moment of the valley\'s traffic — footage for this theme is still being edited into short vignettes.' },
     { icon:'☁️', label:'Cloudwatching', badgeColor:'#7CA8A0', blurb:'A slow timelapse of clouds over one of the valley\'s hillsides — no narrative, just cloudwatching, for meditation. Footage for this theme is still being edited into short vignettes.' },
+    { icon:'🌙', label:'Moon Fever', blurb:'A restless night under the full moon.', media:{ kind:"vimeo", id:"1229665735", h:"773483704a", verified:true } },
+    { icon:'🪑', label:'Pati', blurb:'A pati — one of the valley\'s open-sided public rest platforms, built into temples and street corners for travellers and neighbours to sit a while — footage for this theme is still being edited into short vignettes.' },
+    { icon:'🌅', label:'Sunrise', blurb:'The valley waking up — footage for this theme is still being edited into short vignettes.' },
     { svg:'<svg viewBox="0 0 24 24" width="15" height="15"><circle cx="11" cy="4.3" r="2.1" fill="#F2E6C9"/><path d="M11 6.8 L8.8 12 L12.8 13.8 L14.8 19.5 L16.8 18.7 L14.3 12.2 L12.8 8.3 Z" fill="#F2E6C9"/><path d="M8.8 12 L4.8 14.6 L6 16.2 L9.8 13.4 Z" fill="#F2E6C9"/><circle cx="4" cy="16.5" r="2.1" fill="#F2E6C9"/></svg>',
       label:'Football', blurb:'An open field/football pitch in Pharping, just northeast of the scholarly grid\'s field 14 — kids playing football, an ordinary afternoon alongside the valley\'s sacred sites.' },
     { svg:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M12 3a7 7 0 0 0-7 7v5.5a2 2 0 0 0 2 2h1a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H6.2A5.8 5.8 0 0 1 17.8 10.5H16a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1a2 2 0 0 0 2-2V10a7 7 0 0 0-7-7z" fill="#F2E6C9"/></svg>',
@@ -4390,6 +4610,8 @@
             blurb: 'A field recording captured with a handheld Tascam: ' + FIELD_RECORDING_LOCATION_TEXT[bucket] + '. Playing now.',
             media:{ kind:'audio' }
           });
+        } else if(theme.media){
+          openSiteModal({ name: theme.label, blurb: theme.blurb, media: theme.media });
         } else {
           openSiteModal({ name: theme.label, blurb: theme.blurb, media:{ kind:'image', id:`spawn-${theme.label}-placeholder`, verified:false } });
         }
@@ -4693,6 +4915,7 @@ const ICON_SVG = {
     if (poi.srcPoi && poi.srcPoi.airport){ openAirportChooser(poi.srcPoi); return; }
     if (poi.srcPoi && poi.srcPoi.boatTicketCounter){ openBoatTicketCounter(poi.srcPoi); return; }
     if (poi.srcPoi && poi.srcPoi.taragaonTicketCounter){ openTaragaonTicketCounter(poi.srcPoi); return; }
+    if (poi.srcPoi && poi.srcPoi.chilanchoTicketCounter){ openChilanchoTicketCounter(poi.srcPoi); return; }
     pauseAutoRotate(); // otherwise globalTick's per-frame auto-rotate setBearing()/theta update fights the camera move below and cancels it almost immediately
     if (currentMode === 'wire') panWireCameraTo(poi.lat, poi.lng);
     else if (currentMode === 'live' && mapLoaded) {
