@@ -1108,30 +1108,58 @@
   // it here. Weekly auto-update explicitly deferred by the user -- static
   // list for now, update by hand next year.
   const CALENDAR_EVENTS = [
-    { date:"2026-01-14", name:"Maghe Sankranti", tradition:"hindu", note:"Winter-solstice harvest festival; holy bathing at river confluences." },
-    { date:"2026-01-18", name:"Sonam Lhosar", tradition:"tibetan", note:"Tamang New Year." },
-    { date:"2026-02-15", name:"Maha Shivaratri", tradition:"hindu", note:"The Great Night of Shiva — major gathering at Pashupatinath." },
-    { date:"2026-02-18", name:"Gyalpo Losar", tradition:"tibetan", note:"Tibetan/Sherpa New Year, start of the Fire Horse year — biggest public gathering of the year at Boudhanath." },
-    { date:"2026-03-18", name:"Ghode Jatra", tradition:"newar", note:"Horse-racing festival at Tundikhel, marking the defeat of a legendary demon." },
-    { date:"2026-04-14", name:"Nepali New Year", tradition:"hindu", note:"Bikram Sambat New Year 2083." },
-    { date:"2026-04-15", name:"Bisket Jatra (Bhaktapur)", tradition:"newar", note:"Newar New Year chariot festival.", poi:"Bisket Jatra (Bhaktapur)" },
-    { date:"2026-05-01", name:"Buddha Jayanti", tradition:"buddhist", note:"Birth, enlightenment and passing of the Buddha — Swayambhunath, Boudhanath and Lumbini." },
-    { date:"2026-07-16", name:"Bhoto Jatra (Rato Machhindranath)", tradition:"newar", note:"Culminating vest ceremony of the valley's oldest, longest chariot festival.", poi:"Rato Machhindranath Jatra (Patan)" },
-    { date:"2026-08-28", name:"Raksha Bandhan / Janai Purnima", tradition:"hindu", note:"Sacred-thread renewal; siblings tie protective threads." },
-    { date:"2026-08-29", name:"Gai Jatra", tradition:"newar", note:"Cow procession commemorating the dead — satire and street comedy." },
-    { date:"2026-09-14", name:"Haritalika Teej", tradition:"hindu", note:"Women's fasting festival for marital wellbeing." },
-    { date:"2026-09-16", name:"Rishi Panchami", tradition:"hindu", note:"Women's purification rite closing out Teej." },
-    { date:"2026-09-23", name:"Indra Jatra begins", tradition:"newar", note:"Eight-day festival, Kumari procession, Lakhey mask dance.", poi:"Indra Jatra 2026" },
-    { date:"2026-10-11", name:"Ghatasthapana", tradition:"hindu", note:"Dashain begins." },
-    { date:"2026-10-20", name:"Vijayadashami", tradition:"hindu", note:"Main day of Dashain — Durga's victory over evil." },
-    { date:"2026-10-24", name:"Kojagrat Purnima", tradition:"hindu", note:"Full moon closing Dashain, night-long Lakshmi worship." },
-    { date:"2026-11-07", name:"Tihar begins", tradition:"hindu", note:"Five-day festival of lights." },
-    { date:"2026-11-08", name:"Laxmi Puja", tradition:"hindu", note:"Tihar — worship of the goddess of wealth, homes lit with diyas." },
-    { date:"2026-11-10", name:"Govardhan Puja", tradition:"hindu", note:"Tihar." },
-    { date:"2026-11-11", name:"Bhai Tika", tradition:"hindu", note:"Tihar ends — siblings' day." },
-    { date:"2026-11-15", name:"Chhath Puja", tradition:"hindu", note:"Sun worship, mainly the Terai region." },
-    { date:"2026-12-24", name:"Yomari Punhi", tradition:"newar", note:"Newar rice-flour sweet festival marking the winter harvest." },
-    { date:"2026-12-30", name:"Tamu Lhosar", tradition:"tibetan", note:"Gurung New Year." }
+    { date:"2026-01-14", name:"Maghe Sankranti", tradition:"hindu",
+      blurb:"Marks the winter solstice and the sun's turn northward — one of the few major Nepali festivals fixed to the solar calendar rather than the lunar one, so its date barely moves year to year. Marked with holy bathing at river confluences (especially the Sankhamul ghats on the Bagmati) and the eating of til (sesame) and chaku (molasses) for warmth and good health through the rest of winter.",
+      link:"https://en.wikipedia.org/wiki/Makar_Sankranti" },
+    { date:"2026-01-18", name:"Sonam Lhosar", tradition:"tibetan",
+      blurb:"New Year for Nepal's Tamang community, one of three separate Himalayan new years celebrated across the winter (alongside Tamu and Gyalpo Lhosar). Marked with family feasts, traditional song and dance, and gatherings at Tamang gumbas (monasteries) around the valley." },
+    { date:"2026-02-15", name:"Maha Shivaratri", tradition:"hindu",
+      blurb:"The \"Great Night of Shiva\" — Nepal's biggest single gathering at Pashupatinath, drawing hundreds of thousands of pilgrims and sadhus (some travelling from India) for an all-night vigil of fasting, chanting and bonfires on the temple's cremation ghats along the Bagmati.",
+      link:"https://en.wikipedia.org/wiki/Maha_Shivaratri" },
+    { date:"2026-02-18", name:"Gyalpo Losar", tradition:"tibetan",
+      blurb:"Tibetan and Sherpa New Year, start of the Fire Horse year (2153) — the single biggest public gathering of the year at Boudhanath, where the stupa is restrung with thousands of fresh prayer flags. Homes are cleaned top to bottom beforehand to sweep out the old year's misfortune, followed by three days of feasting, monastery visits and Cham mask dances.",
+      link:"https://en.wikipedia.org/wiki/Losar" },
+    { date:"2026-03-18", name:"Ghode Jatra", tradition:"newar",
+      blurb:"\"Horse festival\" — a full day of army horse-racing and stunt displays at Kathmandu's Tundikhel parade ground, rooted in a legend of trampling down the spirit of a defeated demon (Tundal) before it could rise again. Also marks Kathmandu's own local new year in some tellings." },
+    { date:"2026-04-14", name:"Nepali New Year", tradition:"hindu",
+      blurb:"The Bikram Sambat calendar's own New Year, 2083 BS — a national public holiday, though a much quieter affair than the Gregorian New Year in most of the valley, marked mainly with family visits and (in Bhaktapur) blending directly into Bisket Jatra." },
+    { date:"2026-04-15", name:"Bisket Jatra (Bhaktapur)", tradition:"newar",
+      blurb:"Newar New Year chariot festival.", poi:"Bisket Jatra (Bhaktapur)" },
+    { date:"2026-05-01", name:"Buddha Jayanti", tradition:"buddhist",
+      blurb:"The most sacred day of the Buddhist calendar — Baisakh Purnima, the full moon marking the Buddha's birth, enlightenment and parinirvana all on the same date. Butter lamps and circumambulation at Swayambhunath and Boudhanath, with the largest ceremonies at Lumbini itself, his birthplace in Nepal's western Terai.",
+      link:"https://en.wikipedia.org/wiki/Vesak" },
+    { date:"2026-07-16", name:"Bhoto Jatra (Rato Machhindranath)", tradition:"newar",
+      blurb:"Culminating vest ceremony of the valley's oldest, longest chariot festival.", poi:"Rato Machhindranath Jatra (Patan)" },
+    { date:"2026-08-28", name:"Raksha Bandhan / Janai Purnima", tradition:"hindu",
+      blurb:"Two festivals on the same full moon: Janai Purnima, when high-caste Hindu men renew the sacred thread (janai) worn across the chest, with ritual bathing at Kumbheshwar and Gosaikunda; and Raksha Bandhan, when sisters tie a protective thread (rakhi) on their brothers' wrists in exchange for a promise of protection." },
+    { date:"2026-08-29", name:"Gai Jatra", tradition:"newar",
+      blurb:"\"Cow festival\" — families who lost someone in the past year lead a cow (or a boy dressed as one) through the streets, believed to help guide the dead to the afterlife. What began as mourning has grown into Kathmandu's day for satire: costumed processions, political mockery and street comedy, instituted centuries ago by a Malla king to make a grieving queen laugh." },
+    { date:"2026-09-14", name:"Haritalika Teej", tradition:"hindu",
+      blurb:"The great festival of Nepali women — three days of fasting and feasting, dancing in red saris, and prayers at Pashupatinath for marital happiness and a husband's long life, commemorating the goddess Parvati's own fast to win Shiva." },
+    { date:"2026-09-16", name:"Rishi Panchami", tradition:"hindu",
+      blurb:"Closing rite of the Teej season — women bathe and perform a purification ritual (often involving datiwan twigs) said to atone for any transgressions during menstruation over the past year, then break their fast." },
+    { date:"2026-09-23", name:"Indra Jatra begins", tradition:"newar",
+      blurb:"Eight-day Newar festival (23-30 September 2026) centred on Kathmandu Durbar Square: Kumari procession, Lakhey mask dance, the Aakash Bhairab mask. One of the oldest continuously celebrated festivals in the world.", poi:"Indra Jatra 2026" },
+    { date:"2026-10-11", name:"Ghatasthapana", tradition:"hindu",
+      blurb:"Dashain begins: barley seeds are sown in sand in a small clay pot kept in the household prayer room, kept in the dark and watered daily. By the tenth day it will have grown into pale yellow shoots (jamara), tucked behind the ear as a blessing." },
+    { date:"2026-10-20", name:"Vijayadashami", tradition:"hindu",
+      blurb:"The main day of Dashain — Nepal's grandest festival, marking the goddess Durga's nine-night battle and victory over the buffalo-demon Mahishasura. Elders bless younger family members with tika (a paste of rice, yoghurt and vermilion) and jamara shoots on the forehead; families reunite from across the country and the world." },
+    { date:"2026-10-24", name:"Kojagrat Purnima", tradition:"hindu",
+      blurb:"Full moon closing out the Dashain season with a night-long vigil and gambling in honour of Lakshmi, goddess of wealth, believed to visit homes that stay awake to welcome her." },
+    { date:"2026-11-07", name:"Tihar begins", tradition:"hindu",
+      blurb:"Five days of lights, each honouring a different figure in turn: crows (messengers of death) on day one, dogs (loyalty, guardians of the afterlife) on day two, cows (day three, alongside Laxmi Puja) and finally the bond between brothers and sisters." },
+    { date:"2026-11-08", name:"Laxmi Puja", tradition:"hindu",
+      blurb:"Tihar's third day — homes are lit with rows of oil lamps (diyo) and decorated with rangoli to welcome Lakshmi, goddess of wealth, across the threshold; the valley's own version of Diwali." },
+    { date:"2026-11-10", name:"Govardhan Puja", tradition:"hindu",
+      blurb:"Tihar's fourth day, honouring oxen and (in the Newar calendar) also Mha Puja — a ritual of self-worship marking the Newar New Year (Nepal Sambat), where each family member's own body and spirit is blessed for the year ahead." },
+    { date:"2026-11-11", name:"Bhai Tika", tradition:"hindu",
+      blurb:"Tihar's final and most emotional day — sisters apply a multicoloured seven-ringed tika to their brothers' foreheads and garland them with makhamali flowers (which don't wilt, symbolising a bond that doesn't fade), in exchange for gifts and a promise of lifelong protection." },
+    { date:"2026-11-15", name:"Chhath Puja", tradition:"hindu",
+      blurb:"Sun worship centred on the Terai and the Madhesi community — devotees stand waist-deep in rivers or ponds at sunrise and sunset over four days, offering fruit and thanks to the sun god Surya for sustaining life." },
+    { date:"2026-12-24", name:"Yomari Punhi", tradition:"newar",
+      blurb:"Newar harvest festival named for the yomari itself — a steamed rice-flour dumpling shaped like a fig, filled with molasses or sesame, made fresh from the year's new rice and shared between families and left as offerings to Annapurna, goddess of grain." },
+    { date:"2026-12-30", name:"Tamu Lhosar", tradition:"tibetan",
+      blurb:"New Year for Nepal's Gurung community, the first of the winter's three separate Himalayan new years — village gatherings, traditional Gurung songs and dance, and the start of the Gurung calendar's own year count." }
   ];
   const CAL_COLORS = { buddhist:"#C9962A", newar:"#A13A3A", hindu:"#7CA8A0", tibetan:"#9B7EC2" };
   let calViewYear = 2026, calViewMonth = 0; // 0-indexed, starts on January 2026
@@ -1178,18 +1206,16 @@
     monthEvents.forEach(ev => {
       const day = parseInt(ev.date.split('-')[2], 10);
       const row = document.createElement('div');
-      row.className = 'cal-event-row' + (ev.poi ? ' clickable' : '');
-      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-name">${ev.name}${ev.poi ? ' →' : ''}</span>`;
-      row.title = ev.note;
-      if(ev.poi){
-        row.addEventListener('click', () => {
-          const target = allPoisByName[ev.poi];
-          if(target){
-            document.getElementById('calendar-modal').classList.remove('open');
-            openInfoBar(target, 'event');
-          }
-        });
-      }
+      row.className = 'cal-event-row clickable';
+      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-name">${ev.name} →</span>`;
+      row.addEventListener('click', () => {
+        document.getElementById('calendar-modal').classList.remove('open');
+        if(ev.poi && allPoisByName[ev.poi]){
+          openInfoBar(allPoisByName[ev.poi], 'event');
+        } else {
+          openInfoBar({ name: ev.name, blurb: ev.blurb, link: ev.link }, 'event');
+        }
+      });
       body.appendChild(row);
     });
   }
