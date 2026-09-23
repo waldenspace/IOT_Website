@@ -360,6 +360,25 @@
   #boat-ticket-close:hover{color:var(--gold);}
   #boat-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
   #boat-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
+
+  /* ---- Taragaon Museum "ticket counter" -- same chrome again, two films
+     to choose from instead of one straight-in video. ---- */
+  #taragaon-ticket-modal{
+    position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.85);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.35s ease,visibility 0s linear 0.35s;
+  }
+  #taragaon-ticket-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 0.35s ease,visibility 0s linear 0s;}
+  #taragaon-ticket-card{
+    position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;
+    max-width:640px;width:100%;padding:36px 32px;text-align:center;
+    transform:scale(0.9);opacity:0;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;
+  }
+  #taragaon-ticket-modal.open #taragaon-ticket-card{transform:scale(1);opacity:1;}
+  #taragaon-ticket-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #taragaon-ticket-close:hover{color:var(--gold);}
+  #taragaon-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
+  #taragaon-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
   #boat-tickets{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
 
   #paubha-lightbox{
@@ -816,8 +835,26 @@
         </div>
         <div class="ap-ticket" data-choice="pharping">
           <span class="ap-icon">🛵</span>
-          <div class="ap-title">Ride Back to Pharping</div>
-          <div class="ap-desc">The road home, climbing away from the reservoir and back up into the hills toward Pharping.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="taragaon-ticket-modal">
+    <div id="taragaon-ticket-card">
+      <button id="taragaon-ticket-close">✕</button>
+      <h2>Taragaon Museum</h2>
+      <div class="ap-sub">Choose your film</div>
+      <div id="taragaon-tickets">
+        <div class="ap-ticket" data-choice="portrait">
+          <span class="ap-icon">🎞</span>
+          <div class="ap-title">A Day with Rojan</div>
+          <div class="ap-desc">A portrait: a day alongside Roshan "Rojan" Mishra, director of the Taragaon Museum.</div>
+        </div>
+        <div class="ap-ticket" data-choice="restitution">
+          <span class="ap-icon">🏛</span>
+          <div class="ap-title">Museums, Art Theft &amp; Restitution</div>
+          <div class="ap-desc">Rojan on museums, art theft, and restitution — the questions this atlas keeps returning to.</div>
         </div>
       </div>
     </div>
@@ -1049,7 +1086,7 @@
       readMore: "Two origin stories are told side by side here, one Newar and one Tibetan, and neither cancels the other out. In the Newar version, a poultry-keeper named Jyājhimā and her sons built the stupa after a king's self-sacrifice failed to make a fountain flow; in the Tibetan telling, the same woman buried the relics of the Kassapa Buddha on this exact spot. Both agree the structure dates to roughly the 14th century.\n\nBoudhanath's modern character was set in 1959: after the Tibetan uprising and the Dalai Lama's exile, thousands of Tibetan refugees settled around the stupa, and more than fifty monasteries grew up in its immediate surroundings — enough that Boudhanath is often called ‘Little Lhasa’. It is simultaneously an 8th-century pilgrimage site and a living exile community.\n\nThe 2015 earthquake cracked the spire so badly that the entire structure above the dome had to be dismantled. What happened next is one of the valley's genuine post-earthquake success stories: funded almost entirely by private Buddhist donors ($2.1 million, over 30kg of gold), Boudhanath reopened within 14 months — the first of the valley's major earthquake-damaged monuments to be fully restored.",
       sources: [{label:"Study.com — Boudhanath history", url:"https://study.com/academy/lesson/boudhanath-stupa-history-earthquake-renovation.html"}, {label:"Malay Mail / AFP", url:"https://malaymail.com/news/life/2016/11/22/nepals-quake-damaged-boudhanath-stupa-reopens/1256007"}],
       related: ["Swayambhunath", "Mingyur Rinpoche Interview", "Bodhicharya Berlin"],
-      media:{ kind:"image", id:"Still_2026-05-19_212940_2.22.1", verified:false } },
+      media:{ kind:"vimeo", id:"1229592958", h:"4bb97f5d1b", verified:true } },
     { name:"Patan Durbar Square", nameNp:"पाटन दरबार क्षेत्र", type:"pagoda", category:"sliceoflife", lat:27.6726981, lng:85.3253211, px:1063, py:5273,
       blurb:"Royal square of Lalitpur with Newar architecture — place of origin of the 1565 paubhā donation.",
       readMore: "Patan — Yala in Newar, Lalitpur (‘city of beauty’) formally — has roots reaching to the Licchavi period, but the square as it stands is overwhelmingly the work of one 17th-century king, Siddhi Narsingh Malla, who is said to have built the Krishna Mandir in 1637 after dreaming of Krishna and Radha standing before his palace. It's carved entirely from stone, unusually for the valley's mostly brick-and-wood temples, in the shikhara style imported from northern India.\n\nThe Mallas who ruled here practised Hindu and Buddhist traditions side by side, often within the same rituals, and the square reflects that: Buddhist monasteries and Hindu shrines sit within a few steps of each other, and the Golden Temple (Hiranya Varna Mahavihar) — a working monastery, not a museum piece — is a short walk north.\n\nToday the square is both a UNESCO World Heritage Site and home to the Patan Museum, but it hasn't stopped being a working neighbourhood: metalworkers, wood carvers and paubhā painters still practise their trades in the surrounding lanes, using techniques that haven't fundamentally changed since the Malla era.",
@@ -1159,6 +1196,12 @@
       blurb:"Interview with Roshan Mishra, director of the Taragaon Museum — housed in a 1970s hostel-turned-gallery on the Hyatt Regency grounds near Boudhanath, built to document five decades of foreign artists', photographers' and scholars' engagement with the Kathmandu Valley's heritage.",
       readMore: "The building itself is as much the subject as anything inside it. In 1970, the scholar Angur Baba Joshi commissioned Austrian architect Carl Pruscha — then a UN/UNESCO consultant advising the Nepalese government — to design a \"cultural village\" that would house foreign artists and scientists visiting the valley. What resulted, inaugurated in 1974, is a striking fusion of Newar brick vernacular and European modernist form: seven vaulted arches, laid out like a small hill village.\\n\\nThe hostel closed in the 1990s and sat unused for two decades before reopening in 2014 as a museum, now run by the Saraf Foundation under director Roshan Mishra. Its core holding is an archive most visitors never think to look for: fifty years of maps, architectural surveys, and photographs — including Erwin Schneider's pioneering first map of the Kathmandu Valley — made by the outside researchers who first documented (and in many cases helped preserve) the valley's temples and cities, seen here from the other side of the lens.\\n\\nThat makes it a natural counterpart to this project's own concern with who gets to record a place, and how: the museum's entire holding is evidence of foreigners looking in, the same question this atlas keeps returning to from a different angle.",
       sources: [{label:"Wikipedia", url:"https://en.wikipedia.org/wiki/Taragaon_Museum"}, {label:"Kathmandu Post", url:"https://kathmandupost.com/art-entertainment/2018/05/20/a-new-home-for-art-20180520073254"}],
+      // Own "ticket counter" (openTaragaonTicketCounter): two real films to
+      // choose between instead of one video straight in, same pattern as
+      // the airport/boat counters. media below is now just a fallback for
+      // any code path that opens this POI directly without going through
+      // the counter (e.g. a "related" chip elsewhere).
+      taragaonTicketCounter:true,
       media:{ kind:"image", id:"taragaon-museum-rojan-placeholder", verified:false } },
     { name:"Cremation Blessings", type:"shrine", category:"rituals", featured:true, related: ["Mingyur Rinpoche Interview", "Pashupatinath", "A Day at Rigon Tashi Choeling Monastery"],
       lat:27.6214301, lng:85.2566859,
@@ -1328,6 +1371,7 @@
     setTimeout(() => {
       if(target.airport) openAirportChooser(target);
       else if(target.boatTicketCounter) openBoatTicketCounter(target);
+      else if(target.taragaonTicketCounter) openTaragaonTicketCounter(target);
       else if(target.intlInterview) openInternationalPoi(target);
       else openSiteModal(target);
     }, 450);
@@ -2032,6 +2076,40 @@
   document.getElementById('boat-ticket-close').addEventListener('click', () => boatTicketModal.classList.remove('open'));
   boatTicketModal.addEventListener('click', e => { if(e.target === boatTicketModal) boatTicketModal.classList.remove('open'); });
 
+  // ---- Taragaon Museum "ticket counter": same pattern again, two real
+  // films to choose from (a portrait of Rojan, and Rojan on museums/art
+  // theft/restitution) instead of one film straight in.
+  const taragaonTicketModal = document.getElementById('taragaon-ticket-modal');
+  function openTaragaonTicketCounter(poi){
+    if(smMediaClearTimer){ clearTimeout(smMediaClearTimer); smMediaClearTimer = null; }
+    if(closeReturnFlyTimer){ clearTimeout(closeReturnFlyTimer); closeReturnFlyTimer = null; }
+    flyMapToward(poi, 1.2, 3.0);
+    taragaonTicketModal.classList.add('open');
+    document.querySelectorAll('#taragaon-tickets .ap-ticket').forEach(t => {
+      t.onclick = () => {
+        taragaonTicketModal.classList.remove('open');
+        const choice = t.dataset.choice;
+        if(choice === 'portrait'){
+          openSiteModal(Object.assign({}, poi, {
+            name: "A Day with Rojan at Taragaon",
+            blurb: "A portrait: a day alongside Roshan \"Rojan\" Mishra, director of the Taragaon Museum.",
+            media: { kind:"vimeo", id:"1229593719", h:"aa609683f2", verified:true },
+            skipFlyToward:true
+          }));
+        } else if(choice === 'restitution'){
+          openSiteModal(Object.assign({}, poi, {
+            name: "Rojan on Museums, Art Theft & Restitution",
+            blurb: "Rojan on museums, art theft, and restitution — the questions this atlas keeps returning to.",
+            media: { kind:"vimeo", id:"1229595778", h:"7af8abd26d", verified:true },
+            skipFlyToward:true
+          }));
+        }
+      };
+    });
+  }
+  document.getElementById('taragaon-ticket-close').addEventListener('click', () => taragaonTicketModal.classList.remove('open'));
+  taragaonTicketModal.addEventListener('click', e => { if(e.target === taragaonTicketModal) taragaonTicketModal.classList.remove('open'); });
+
   // Smoothly ramps a Vimeo player's volume instead of the hard cut of
   // setVolume() called once -- used both when a video starts (fade in)
   // and right before we tear the iframe down (fade out).
@@ -2224,7 +2302,7 @@
   }
   function closeInfoBar(){ infobar.classList.remove('open'); }
   document.getElementById('ib-close').addEventListener('click', closeInfoBar);
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); } });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('taragaon-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); } });
 
   // ============ Map 1: Original Paubhā — fixed master ============
   // No blurred backdrop anymore (didn't read well, felt distracting).
@@ -2375,7 +2453,7 @@
   pois.concat(productionPois).forEach(p => {
     const marker = L.marker([p.lat, p.lng], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color, p.featured) })
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
-      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.pokharaReturn ? flyBackToKathmandu() : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
+      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.pokharaReturn ? flyBackToKathmandu() : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
     if(categoryLayers[p.category]) marker.addTo(categoryLayers[p.category]);
   });
   Object.values(categoryLayers).forEach(l => l.addTo(mapGeo));
@@ -3510,6 +3588,38 @@
     openSiteModal(Object.assign({}, hike3Poi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
   });
 
+  // ---- Temporary: Rojan showing 1970s photographs of Patan & Bhaktapur
+  // (23.09.). Just the 3:04-4:33 excerpt of "A Day with Rojan" (184s-273s)
+  // -- no movement, unlike the roller POIs: appears at one of the two
+  // cities (picked at random each time it respawns, since the clip covers
+  // both), stays up, fades out, waits, respawns -- same fade/wait timing
+  // idea as the Taragaon roller, just without a drive in between.
+  const ROJAN_PHOTOS_SPOTS = [
+    { lat: 27.6726981, lng: 85.3253211, label: "Patan" },
+    { lat: 27.6720700, lng: 85.4282951, label: "Bhaktapur" }
+  ];
+  const ROJAN_PHOTOS_VISIBLE_S = 50;
+  const ROJAN_PHOTOS_FADE_S = 1.5;
+  const ROJAN_PHOTOS_WAIT_S = 70;
+  const ROJAN_PHOTOS_CYCLE_S = ROJAN_PHOTOS_VISIBLE_S + ROJAN_PHOTOS_WAIT_S;
+  let rojanPhotosT = 0;
+  let rojanPhotosVisible = true;
+  let rojanPhotosSpot = ROJAN_PHOTOS_SPOTS[Math.random() < 0.5 ? 0 : 1];
+  const rojanPhotosPoi = {
+    name: "Rojan: Patan & Bhaktapur in the 1970s",
+    blurb: "Rojan leafs through photographs of Patan and Bhaktapur from the 1970s.",
+    media: { kind:"vimeo", id:"1229593719", h:"aa609683f2", verified:true },
+    videoStart: 184, videoStop: 273
+  };
+  const rojanPhotosMarker = L.marker([rojanPhotosSpot.lat, rojanPhotosSpot.lng], {
+    icon: L.divIcon({ className:'rojan-photos-icon', html:'<div style="font-size:20px;line-height:26px;text-align:center;">📷</div>', iconSize:[26,26], iconAnchor:[13,13] })
+  }).bindTooltip("Rojan: Patan & Bhaktapur, 1970s", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
+  rojanPhotosMarker.on('click', function(){
+    if(!rojanPhotosVisible) return;
+    const ll = this.getLatLng();
+    openSiteModal(Object.assign({}, rojanPhotosPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
+  });
+
   // ---- Temporary: scooter driving from the crossing west of Taragaon
   // Museum to the museum itself (22.09., second rebuild after feedback):
   // leg 1 (crossing -> turn-in) now follows the actual main road instead
@@ -3652,6 +3762,25 @@
     if(hike3Progress <= 0){ hike3Progress = 0; hike3Dir = 1; }
     const hike3Pos = interpolatePath(PEACE_BUDDHA_SWAYAMBHU_TRAIL, flightProgress(hike3Progress, 0.12));
     hiker3Marker.setLatLng([hike3Pos.lat, hike3Pos.lng]);
+    rojanPhotosT += dtSec;
+    if(rojanPhotosT >= ROJAN_PHOTOS_CYCLE_S){
+      rojanPhotosT -= ROJAN_PHOTOS_CYCLE_S;
+      rojanPhotosSpot = ROJAN_PHOTOS_SPOTS[Math.random() < 0.5 ? 0 : 1];
+      rojanPhotosMarker.setLatLng([rojanPhotosSpot.lat, rojanPhotosSpot.lng]);
+    }
+    if(rojanPhotosT < ROJAN_PHOTOS_VISIBLE_S){
+      const fadeStartT = ROJAN_PHOTOS_VISIBLE_S - ROJAN_PHOTOS_FADE_S;
+      if(rojanPhotosT >= fadeStartT){
+        rojanPhotosVisible = false;
+        rojanPhotosMarker.setOpacity(Math.max(0, 1 - (rojanPhotosT - fadeStartT) / ROJAN_PHOTOS_FADE_S));
+      } else {
+        rojanPhotosVisible = true;
+        rojanPhotosMarker.setOpacity(1);
+      }
+    } else {
+      rojanPhotosVisible = false;
+      rojanPhotosMarker.setOpacity(0);
+    }
     taragaonRollerT += dtSec;
     if(taragaonRollerT >= TARAGAON_ROLLER_CYCLE_S) taragaonRollerT -= TARAGAON_ROLLER_CYCLE_S;
     if(taragaonRollerT < TARAGAON_LEG1_S){
@@ -4300,6 +4429,7 @@ const ICON_SVG = {
   function openReliefPoi(poi){
     if (poi.srcPoi && poi.srcPoi.airport){ openAirportChooser(poi.srcPoi); return; }
     if (poi.srcPoi && poi.srcPoi.boatTicketCounter){ openBoatTicketCounter(poi.srcPoi); return; }
+    if (poi.srcPoi && poi.srcPoi.taragaonTicketCounter){ openTaragaonTicketCounter(poi.srcPoi); return; }
     pauseAutoRotate(); // otherwise globalTick's per-frame auto-rotate setBearing()/theta update fights the camera move below and cancels it almost immediately
     if (currentMode === 'wire') panWireCameraTo(poi.lat, poi.lng);
     else if (currentMode === 'live' && mapLoaded) {
