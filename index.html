@@ -307,6 +307,48 @@
      same bottom-left corner, same show/hide pattern. ---- */
   #calendar-toggle{position:absolute;left:24px;bottom:64px;z-index:600;display:none;}
   #calendar-toggle.show{display:block;}
+
+  /* ---- Nepal, Now and Then (24.09.): before/after satellite comparison,
+     same modal chrome as the calendar. Two display modes per pair: 'align'
+     (a real drag-to-reveal slider, for the 3 of 5 pairs whose framing lines
+     up well enough after a manual scale+offset fit) and 'sidebyside' (the
+     honest fallback for the 2 pairs whose source crops cover visibly
+     different extents -- forcing those into a slider would just look
+     wrong). See NOW_THEN_PAIRS below for the per-pair numbers. ---- */
+  #nnt-modal{
+    position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.9);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.35s ease,visibility 0s linear 0.35s;
+  }
+  #nnt-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 0.35s ease,visibility 0s linear 0s;}
+  #nnt-card{
+    position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;
+    max-width:820px;width:100%;max-height:92vh;overflow-y:auto;padding:30px 28px;
+    transform:scale(0.9);opacity:0;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;
+  }
+  #nnt-modal.open #nnt-card{transform:scale(1);opacity:1;}
+  #nnt-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #nnt-close:hover{color:var(--gold);}
+  #nnt-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:17px;margin:0 0 4px;text-align:center;}
+  #nnt-card .ap-sub{text-align:center;margin-bottom:16px;font-size:13px;}
+  #nnt-stage{position:relative;width:100%;border-radius:6px;overflow:hidden;background:#000;user-select:none;}
+  #nnt-stage img{display:block;max-width:none;}
+  .nnt-align-stage{position:relative;overflow:hidden;}
+  .nnt-align-stage .nnt-img-a, .nnt-align-stage .nnt-img-b{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:fill;}
+  .nnt-align-stage .nnt-img-b-wrap{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;}
+  .nnt-align-stage .nnt-img-b-wrap img{position:absolute;}
+  .nnt-slider-handle{position:absolute;top:0;bottom:0;width:3px;background:var(--gold);cursor:ew-resize;z-index:5;box-shadow:0 0 8px rgba(0,0,0,0.6);}
+  .nnt-slider-handle::after{content:'↔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--gold);color:#2a1810;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .nnt-tag{position:absolute;top:10px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,0.55);padding:3px 9px;border-radius:3px;z-index:4;pointer-events:none;}
+  .nnt-tag.then{left:10px;}
+  .nnt-tag.now{right:10px;}
+  .nnt-sidebyside{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .nnt-sidebyside figure{margin:0;position:relative;}
+  .nnt-sidebyside img{width:100%;display:block;border-radius:4px;}
+  .nnt-sidebyside figcaption{position:absolute;bottom:8px;left:8px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,0.55);padding:3px 9px;border-radius:3px;}
+  #nnt-caption{font-size:13px;line-height:1.55;margin:16px 0 6px;color:var(--parchment);}
+  #nnt-source{font-size:11px;opacity:0.6;}
+  #nnt-source a{color:var(--ochre);}
   #calendar-modal{
     position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.85);
     display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
@@ -779,6 +821,16 @@
       <div id="cal-events-list"></div>
     </div>
   </div>
+  <div id="nnt-modal">
+    <div id="nnt-card">
+      <button id="nnt-close">✕</button>
+      <h2 id="nnt-title">Nepal, Now and Then</h2>
+      <div class="ap-sub" id="nnt-sub">Satellite views, 60 years apart</div>
+      <div id="nnt-stage"></div>
+      <p id="nnt-caption"></p>
+      <div id="nnt-source"></div>
+    </div>
+  </div>
   <div id="map-image"></div>
   <button id="music-toggle" style="display:none;">♪ Music: off</button>
   <div id="relief-wrap">
@@ -1134,7 +1186,8 @@
       "Calendar: each day now shows a small moon-phase icon instead of a background tint, and there's a new \"Practice Days\" layer marking the recurring Tibetan Buddhist lunar observance days (Medicine Buddha, Guru Rinpoche, Dakini and others), each with its Tibetan-language date name.",
       "Fixed a few markers (Yeshi Tsogyal Cave, University Campus, Social Media Moment) that had no background badge and were hard to see — every marker icon now has one.",
       "Added the video to the bird circling the Guru Rinpoche statue.",
-      "Added three new spots: Tal Barahi Mandir (the lake temple on Phewa Lake), Shanti Ban Batika, and a temporary Karate/sports pop-up."
+      "Added three new spots: Tal Barahi Mandir (the lake temple on Phewa Lake), Shanti Ban Batika, and a temporary Karate/sports pop-up.",
+      "New \"Nepal, Now and Then\" pop-up: satellite views of five spots across the valley, decades apart, with a drag-to-reveal comparison slider (or a side-by-side view where the two source images don't line up closely enough for a slider)."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -1395,6 +1448,104 @@
   });
   document.getElementById('calendar-close').addEventListener('click', () => document.getElementById('calendar-modal').classList.remove('open'));
   document.getElementById('calendar-modal').addEventListener('click', e => { if(e.target.id === 'calendar-modal') document.getElementById('calendar-modal').classList.remove('open'); });
+
+  // ---- Nepal, Now and Then (24.09.) ----
+  // Source: 5 image pairs on the iqldiwsm Cloudinary account (public ids
+  // "1A".."5B", A=archival/~1960s-70s, B=recent satellite), following the
+  // nepalitimes.com "Kathmandu from space, 60 years apart" piece. These are
+  // NOT geo-registered files -- no coordinates, no shared projection -- so
+  // the alignment below is a manual, eyeballed fit (grid-overlay + 2 shared
+  // landmarks per pair, plain similarity transform: uniform scale + offset,
+  // no rotation correction), not a surveyed one. For 3 of the 5 pairs the
+  // source crops already covered close to the same real-world extent, so
+  // this fit is solid enough for a real drag-to-reveal slider:
+  //   - Pair 1: a lakeside town (Pokhara/Phewa Lake), landmarks = the small
+  //     forest patch + the river/road crossing near it
+  //   - Pair 3: Kathmandu's Tribhuvan Airport, landmarks = the two runway
+  //     thresholds (about as reliable an anchor as this site has)
+  //   - Pair 5: the Narayanhiti Palace grounds in Kathmandu, landmarks =
+  //     the palace building + the river bend/bridge south of it
+  // Pairs 2 and 4 cover visibly different extents in A vs B (a tight crop
+  // vs a wide one) -- forcing a slider on those would misrepresent them, so
+  // they use the honest side-by-side fallback instead, exactly as planned.
+  const NNT_BASE = "https://res.cloudinary.com/iqldiwsm/image/upload/";
+  const NOW_THEN_PAIRS = [
+    { id:1, lat:28.2131, lng:83.9589, mode:"align", base:"a",
+      title:"Lakeside, Pokhara", caption:"Phewa Lake's shoreline, decades apart — the small forested patch above the town is one of the few things that hasn't moved.",
+      a:{ src:NNT_BASE+"1A.jpg" },
+      b:{ src:NNT_BASE+"1B.jpg", width:100.29, height:93.48, left:-5.81, top:-8.25 } },
+    { id:2, lat:27.6550, lng:85.3400, mode:"sidebyside",
+      title:"Valley hillside", caption:"Terraced hill farmland gives way to dense settlement — the two crops here cover slightly different extents, so they're shown side by side rather than overlaid.",
+      a:{ src:NNT_BASE+"2A.jpg" }, b:{ src:NNT_BASE+"2B.jpg" } },
+    { id:3, lat:27.7010, lng:85.3670, mode:"align", base:"b",
+      title:"Tribhuvan Airport, Kathmandu", caption:"The same runway, from farmland at the edge of the city to the middle of it.",
+      a:{ src:NNT_BASE+"3A.jpg", width:224.50, height:190.67, left:-63.18, top:-7.71 },
+      b:{ src:NNT_BASE+"3B.jpg" } },
+    { id:4, lat:28.2350, lng:83.9750, mode:"sidebyside",
+      title:"Pokhara Valley", caption:"One frame tight on the airport corridor, the other pulled back to the whole valley bowl — shown side by side rather than forcing a mismatched overlay.",
+      a:{ src:NNT_BASE+"4A.jpg" }, b:{ src:NNT_BASE+"4B.jpg" } },
+    { id:5, lat:27.7160, lng:85.3140, mode:"align", base:"b",
+      title:"Narayanhiti Palace, Kathmandu", caption:"The palace grounds and the river bend just south of them, still recognisable under six more decades of the city.",
+      a:{ src:NNT_BASE+"5A.jpg", width:150.75, height:151.23, left:-20.67, top:4.12 },
+      b:{ src:NNT_BASE+"5B.jpg" } }
+  ];
+  function openNowThenViewer(pair){
+    document.getElementById('nnt-title').textContent = pair.title;
+    document.getElementById('nnt-caption').textContent = pair.caption;
+    document.getElementById('nnt-source').innerHTML = 'Source: <a href="https://nepalitimes.com/kathmandu-from-space-60-years-apart" target="_blank" rel="noopener">nepalitimes.com — "Kathmandu from space, 60 years apart"</a>';
+    const stage = document.getElementById('nnt-stage');
+    stage.innerHTML = '';
+    if(pair.mode === 'align'){
+      stage.className = 'nnt-align-stage';
+      stage.style.aspectRatio = '';
+      const baseKey = pair.base || 'a';        // image rendered full-bleed, always visible underneath
+      const overlayKey = baseKey === 'a' ? 'b' : 'a'; // image rendered scaled/positioned, clipped by the slider
+      const baseData = pair[baseKey], overlayData = pair[overlayKey];
+      const baseImg = new Image(); baseImg.src = baseData.src; baseImg.className = 'nnt-img-a'; baseImg.alt = pair.title;
+      baseImg.onload = () => { stage.style.aspectRatio = baseImg.naturalWidth + '/' + baseImg.naturalHeight; };
+      const wrapOverlay = document.createElement('div'); wrapOverlay.className = 'nnt-img-b-wrap';
+      const overlayImg = new Image(); overlayImg.src = overlayData.src; overlayImg.className = 'nnt-img-b'; overlayImg.alt = pair.title;
+      overlayImg.style.width = (overlayData.width != null ? overlayData.width : 100) + '%';
+      overlayImg.style.height = (overlayData.height != null ? overlayData.height : 100) + '%';
+      overlayImg.style.left = (overlayData.left != null ? overlayData.left : 0) + '%';
+      overlayImg.style.top = (overlayData.top != null ? overlayData.top : 0) + '%';
+      wrapOverlay.appendChild(overlayImg);
+      const tagThen = document.createElement('span'); tagThen.className = 'nnt-tag then'; tagThen.textContent = 'Then';
+      const tagNow = document.createElement('span'); tagNow.className = 'nnt-tag now'; tagNow.textContent = 'Now';
+      const handle = document.createElement('div'); handle.className = 'nnt-slider-handle'; handle.style.left = '50%';
+      stage.append(baseImg, wrapOverlay, tagThen, tagNow, handle);
+      // Clip direction depends on which image is the overlay: when the
+      // overlay is "now" (b), reveal it right-of-slider (as before). When
+      // the overlay is "then" (a) -- pairs 3 & 5, where b is the smaller,
+      // sharper crop used as the full-bleed base -- reveal the overlay
+      // left-of-slider instead, so "then" still reads on the left.
+      function clipFor(pct){ return overlayKey === 'b' ? `inset(0 0 0 ${pct}%)` : `inset(0 ${100-pct}% 0 0)`; }
+      wrapOverlay.style.clipPath = clipFor(50);
+      let dragging = false;
+      function setSlider(clientX){
+        const rect = stage.getBoundingClientRect();
+        let pct = ((clientX - rect.left) / rect.width) * 100;
+        pct = Math.max(0, Math.min(100, pct));
+        wrapOverlay.style.clipPath = clipFor(pct);
+        handle.style.left = pct + '%';
+      }
+      handle.addEventListener('pointerdown', e => { dragging = true; e.preventDefault(); });
+      stage.addEventListener('pointerdown', e => { if(e.target === handle) return; dragging = true; setSlider(e.clientX); });
+      window.addEventListener('pointermove', e => { if(dragging) setSlider(e.clientX); });
+      window.addEventListener('pointerup', () => { dragging = false; });
+    } else {
+      stage.className = '';
+      stage.style.aspectRatio = '';
+      stage.innerHTML = `<div class="nnt-sidebyside">
+        <figure><img src="${pair.a.src}" alt="${pair.title} (then)"><figcaption>Then</figcaption></figure>
+        <figure><img src="${pair.b.src}" alt="${pair.title} (now)"><figcaption>Now</figcaption></figure>
+      </div>`;
+    }
+    document.getElementById('nnt-modal').classList.add('open');
+  }
+  document.getElementById('nnt-close').addEventListener('click', () => document.getElementById('nnt-modal').classList.remove('open'));
+  document.getElementById('nnt-modal').addEventListener('click', e => { if(e.target.id === 'nnt-modal') document.getElementById('nnt-modal').classList.remove('open'); });
+
   // Crossfade with the map's background music (22.09.): arriving at the
   // hero/landing section fades the hero video's own volume up and ducks
   // bgMusic (reusing the same duckMusic()/unduckMusic() choke point every
@@ -4082,12 +4233,14 @@
     const cycleS = cfg.visibleS + cfg.waitS;
     let t = Math.random() * cycleS; // stagger multiple instances so they don't all pulse in sync
     let visible = true;
-    let spot = cfg.spots[Math.floor(Math.random() * cfg.spots.length)];
+    let spotIdx = Math.floor(Math.random() * cfg.spots.length);
+    let spot = cfg.spots[spotIdx];
     const marker = L.marker([spot.lat, spot.lng], {
       icon: L.divIcon({ className: cfg.iconClass || 'rojan-photos-icon', html: cfg.iconHtml, iconSize:[26,26], iconAnchor:[13,13] })
     }).bindTooltip(cfg.tooltipText, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
     marker.on('click', function(){
       if(!visible) return;
+      if(cfg.onClick){ cfg.onClick(spotIdx); return; }
       const ll = this.getLatLng();
       openSiteModal(Object.assign({}, cfg.poi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
     });
@@ -4096,7 +4249,8 @@
         t += dtSec;
         if(t >= cycleS){
           t -= cycleS;
-          spot = cfg.spots[Math.floor(Math.random() * cfg.spots.length)];
+          spotIdx = Math.floor(Math.random() * cfg.spots.length);
+          spot = cfg.spots[spotIdx];
           marker.setLatLng([spot.lat, spot.lng]);
         }
         if(t < cfg.visibleS){
@@ -4160,6 +4314,17 @@
     iconHtml: emojiBadge('🥋'),
     tooltipText: "Karate",
     poi: { name: "Karate", blurb: "A moment of sports practice in the valley. Footage not yet matched here.", media:{ kind:"image", id:"karate-placeholder", verified:false } }
+  });
+
+  // "Nepal, Now and Then" -- satellite comparison pop-up (24.09.), cycles
+  // through the same 5 spots/pairs as NOW_THEN_PAIRS above, in the same
+  // order, so the spot shown always matches the pair the click opens.
+  createFadeCycleMarker({
+    spots: NOW_THEN_PAIRS.map(p => ({ lat: p.lat, lng: p.lng })),
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: emojiBadge('🛰️'),
+    tooltipText: "Nepal, Now and Then",
+    onClick: (idx) => openNowThenViewer(NOW_THEN_PAIRS[idx])
   });
 
   // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
