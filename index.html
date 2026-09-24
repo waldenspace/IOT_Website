@@ -4834,6 +4834,36 @@
     refreshMusic();
     updateWeatherWidget();
   });
+
+  // ============ Sectionnav (Start/Karte/About) while in 3D Relief ============
+  // The 3D relief view scroll-locks the page (body gets position:fixed with a
+  // negative top offset, see lockPageScroll()) so the terrain canvas keeps a
+  // stable viewport. A plain hash-link click still fires the browser's native
+  // anchor jump, but since the body is pinned in place that jump is invisible
+  // -- location.hash changes yet nothing on screen moves, so the nav links
+  // looked broken. Mirror what btnImage/btnStrasse already do when leaving
+  // relief mode (unlock the scroll, hide the 3D view, resume the hero video),
+  // then scroll to the requested section manually once unlocked.
+  document.querySelectorAll('#sectionnav a').forEach(function(navLink){
+    navLink.addEventListener('click', function(e){
+      if (currentMode !== 'relief') return;
+      e.preventDefault();
+      var targetSel = navLink.getAttribute('href');
+      var targetEl = document.querySelector(targetSel);
+      reliefWrap.style.display = 'none';
+      unlockPageScroll();
+      try { heroPlayer.play(); } catch(err) {}
+      elGeo.style.display = 'none';
+      elImage.style.display = 'none';
+      musicBtn.style.display = 'none';
+      [btnImage, btnStrasse, btnRelief].forEach(function(b){ b.classList.remove('active'); });
+      currentMode = 'image';
+      refreshMusic();
+      if (targetEl) {
+        requestAnimationFrame(function(){ targetEl.scrollIntoView({ block: 'start' }); });
+      }
+    });
+  });
 </script>
 
 <script>
