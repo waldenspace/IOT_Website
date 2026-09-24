@@ -332,7 +332,7 @@
   .cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12.5px;color:var(--parchment);border-radius:5px;overflow:hidden;}
   .cal-day.other-month{opacity:0.25;}
   .cal-day.today{border:1px solid var(--gold);}
-  .cal-day .cal-moon-tint{position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:0;}
+  .cal-tibetan{opacity:0.55;font-size:10px;}
   .cal-day .cal-daynum, .cal-day .cal-moon-icon{position:relative;z-index:1;}
   .cal-day .cal-moon-icon{font-size:9px;line-height:1;margin-top:1px;}
   .cal-day .cal-dots{display:flex;gap:2px;margin-top:2px;position:relative;z-index:1;}
@@ -769,12 +769,12 @@
         <div class="cal-filter-chip on" data-tradition="newar"><span class="cal-dot" style="background:#A13A3A"></span>🛕 Newar</div>
         <div class="cal-filter-chip on" data-tradition="hindu"><span class="cal-dot" style="background:#7CA8A0"></span>🕉 Hindu</div>
         <div class="cal-filter-chip on" data-tradition="tibetan"><span class="cal-dot" style="background:#9B7EC2"></span>📿 Tibetan</div>
+        <div class="cal-filter-chip on" data-tradition="lunar"><span class="cal-dot" style="background:#6E93BF"></span>🌙 Practice Days</div>
       </div>
       <div id="cal-grid"></div>
       <div id="cal-legend">
-        <span>🌑 New moon</span>
-        <span>🌕 Full moon</span>
-        <span style="opacity:0.8;">— background tint = moon's brightness that night</span>
+        <span>🌑→🌕→🌘 daily moon phase</span>
+        <span style="opacity:0.8;">— dots below each date mark festivals and lunar practice days</span>
       </div>
       <div id="cal-events-list"></div>
     </div>
@@ -1130,7 +1130,8 @@
       "The map-mode menu (Paubhā / Valley Today / 3D Relief) now lines up at the same height as the Start / Map / About menu.",
       "The bird circling overhead now has the same background badge as the other markers.",
       "Removed a leftover fixed marker for the Ring Road — the moving car already covers it.",
-      "Added a temporary pop-up for Yeshi Tsogyal Cave."
+      "Added a temporary pop-up for Yeshi Tsogyal Cave.",
+      "Calendar: each day now shows a small moon-phase icon instead of a background tint, and there's a new \"Practice Days\" layer marking the recurring Tibetan Buddhist lunar observance days (Medicine Buddha, Guru Rinpoche, Dakini and others), each with its Tibetan-language date name."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -1241,10 +1242,29 @@
     { date:"2026-12-30", name:"Tamu Lhosar", tradition:"tibetan",
       blurb:"New Year for Nepal's Gurung community, the first of the winter's three separate Himalayan new years — village gatherings, traditional Gurung songs and dance, and the start of the Gurung calendar's own year count." }
   ];
-  const CAL_COLORS = { buddhist:"#C9962A", newar:"#A13A3A", hindu:"#7CA8A0", tibetan:"#9B7EC2" };
-  const CAL_ICONS = { buddhist:"☸", newar:"🛕", hindu:"🕉", tibetan:"📿" };
+  const CAL_COLORS = { buddhist:"#C9962A", newar:"#A13A3A", hindu:"#7CA8A0", tibetan:"#9B7EC2", lunar:"#6E93BF" };
+  const CAL_ICONS = { buddhist:"☸", newar:"🛕", hindu:"🕉", tibetan:"📿", lunar:"🌙" };
   const calActiveTraditions = new Set(Object.keys(CAL_COLORS));
   let calViewYear = 2026, calViewMonth = 0; // 0-indexed, starts on January 2026
+
+  // ---- Recurring lunar-day practice days (24.09.), Rigpa-calendar-style but
+  // NOT copied from it -- cross-checked across several independent sources
+  // (himalayanart.org, samyemandala.org, buddhaweekly.com; all agree on
+  // these six). Deliberately just the well-established, widely-cited set,
+  // not the full astrological system (which would need real Tibetan-
+  // calendar/astrology data we don't have -- see handoff notes). Tibetan
+  // labels here are the generic calendar date-terms ("tshes brgyad" = "the
+  // 8th", etc.), not the deity names themselves -- safer to get right than
+  // guessing at unfamiliar proper-noun spellings.
+  const LUNAR_OBSERVANCES = {
+    8:  { name:"Medicine Buddha Day", tibetan:"ཚེས་བརྒྱད", icon:"💊", blurb:"The 8th day of the lunar month — widely observed as Medicine Buddha Day across the Tibetan Buddhist calendar." },
+    10: { name:"Guru Rinpoche Day", tibetan:"ཚེས་བཅུ", icon:"🔱", blurb:"The 10th day of the lunar month — dedicated to Guru Padmasambhava (Guru Rinpoche), who established Tantric Buddhism in Tibet." },
+    15: { name:"Buddha Day (Full Moon)", tibetan:"ཚེས་བཅོ་ལྔ", icon:"☀️", blurb:"The 15th day, full moon — dedicated to the peaceful deities and, in many traditions, to Amitabha Buddha." },
+    25: { name:"Dakini Day", tibetan:"ཚེས་ཉེར་ལྔ", icon:"🌸", blurb:"The 25th day of the lunar month — when the wisdom dakinis are said to gather at sacred sites; a day for feast (tsok) offerings." },
+    29: { name:"Dharma Protector Day", tibetan:"ཚེས་ཉེར་དགུ", icon:"🛡️", blurb:"The 29th day, the eve of the new moon — dedicated to the Dharma protectors (dharmapalas), who safeguard the teachings." },
+    30: { name:"Shakyamuni Buddha Day (New Moon)", tibetan:"ཚེས་སུམ་ཅུ", icon:"🌑", blurb:"The 30th day, new moon — dedicated to Shakyamuni Buddha, the historical Buddha." }
+  };
+  const MOON_PHASE_ICONS = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
 
   // ---- Moon phase (23.09.): real astronomy, not tied to any one culture's
   // calendar -- a known reference new moon (2000-01-06 18:14 UTC) plus the
@@ -1263,6 +1283,30 @@
     return f; // 0 = new moon, 0.5 = full moon
   }
   function moonIllumination(frac){ return (1 - Math.cos(2*Math.PI*frac)) / 2; } // 0..1, 0=new 1=full
+  // Lunar day 1-30 (tithi), derived from the same verified phase fraction --
+  // NOT a real Tibetan calendar date (no leap/skipped-day conventions), just
+  // "how far through this synodic month", which is what the recurring
+  // practice days above are actually keyed to. Rounds to nearest whole day;
+  // 0 wraps to 30 (new-moon day).
+  function lunarDayOfMonth(frac){ let t = Math.round(frac * 30); return t <= 0 ? 30 : t; }
+  function moonPhaseIcon(frac){ return MOON_PHASE_ICONS[Math.round(frac * 8) % 8]; }
+  // Synthesises this month's recurring practice-day events on the fly (not
+  // stored in CALENDAR_EVENTS since they repeat every month) so they flow
+  // through the exact same rendering/filtering path as the festival dates.
+  function getLunarEventsForMonth(year, month0){
+    const days = new Date(year, month0 + 1, 0).getDate();
+    const out = [];
+    for(let d = 1; d <= days; d++){
+      const noonMs = Date.UTC(year, month0, d, 12, 0, 0);
+      const obs = LUNAR_OBSERVANCES[lunarDayOfMonth(moonPhaseFrac(noonMs))];
+      if(obs){
+        const dateStr = year + '-' + String(month0+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+        out.push({ date:dateStr, name:obs.name, tradition:"lunar", icon:obs.icon, tibetan:obs.tibetan,
+          blurb: obs.tibetan + " — " + obs.blurb });
+      }
+    }
+    return out;
+  }
 
   function calRenderGrid(){
     const grid = document.getElementById('cal-grid');
@@ -1279,30 +1323,22 @@
     const today = new Date();
     const todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
     const eventsByDate = {};
-    CALENDAR_EVENTS.forEach(ev => { (eventsByDate[ev.date] = eventsByDate[ev.date] || []).push(ev); });
+    CALENDAR_EVENTS.concat(getLunarEventsForMonth(calViewYear, calViewMonth)).forEach(ev => { (eventsByDate[ev.date] = eventsByDate[ev.date] || []).push(ev); });
     for(let i = 0; i < startOffset; i++){ const el = document.createElement('div'); el.className = 'cal-day other-month'; grid.appendChild(el); }
     for(let d = 1; d <= daysInMonth; d++){
       const dateStr = calViewYear + '-' + String(calViewMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
       const el = document.createElement('div');
       el.className = 'cal-day' + (dateStr === todayStr ? ' today' : '');
       const noonMs = Date.UTC(calViewYear, calViewMonth, d, 12, 0, 0);
-      const illumToday = moonIllumination(moonPhaseFrac(noonMs));
-      const illumPrev = moonIllumination(moonPhaseFrac(noonMs - 86400000));
-      const illumNext = moonIllumination(moonPhaseFrac(noonMs + 86400000));
-      // Background tint: cream-white, opacity scaled so full moon reads as
-      // a soft glow rather than a solid block (0.04 new -> 0.4 full).
-      const tint = document.createElement('div'); tint.className = 'cal-moon-tint';
-      tint.style.background = `rgba(242,230,201,${(0.04 + illumToday*0.36).toFixed(3)})`;
-      el.appendChild(tint);
+      const frac = moonPhaseFrac(noonMs);
       const daynum = document.createElement('span'); daynum.className = 'cal-daynum'; daynum.textContent = d;
       el.appendChild(daynum);
-      if(illumToday < illumPrev && illumToday < illumNext){
-        const moonIcon = document.createElement('span'); moonIcon.className = 'cal-moon-icon'; moonIcon.title = 'New moon'; moonIcon.textContent = '🌑';
-        el.appendChild(moonIcon);
-      } else if(illumToday > illumPrev && illumToday > illumNext){
-        const moonIcon = document.createElement('span'); moonIcon.className = 'cal-moon-icon'; moonIcon.title = 'Full moon'; moonIcon.textContent = '🌕';
-        el.appendChild(moonIcon);
-      }
+      // Small phase icon every day (24.09.: replaces the old full-field
+      // tint + new/full-only icon -- a tiny icon per feedback reads better
+      // than colouring the whole cell, and now shows all 8 phases not just
+      // new/full).
+      const moonIcon = document.createElement('span'); moonIcon.className = 'cal-moon-icon'; moonIcon.title = 'Moon phase'; moonIcon.textContent = moonPhaseIcon(frac);
+      el.appendChild(moonIcon);
       const evs = (eventsByDate[dateStr] || []).filter(ev => calActiveTraditions.has(ev.tradition));
       if(evs.length){
         const dots = document.createElement('div'); dots.className = 'cal-dots';
@@ -1315,17 +1351,17 @@
   }
   function calRenderEventsList(){
     const body = document.getElementById('cal-events-list');
-    const monthEvents = CALENDAR_EVENTS.filter(ev => {
+    const monthEvents = CALENDAR_EVENTS.concat(getLunarEventsForMonth(calViewYear, calViewMonth)).filter(ev => {
       const [y,m] = ev.date.split('-').map(Number);
       return y === calViewYear && (m - 1) === calViewMonth && calActiveTraditions.has(ev.tradition);
-    });
+    }).sort((a,b) => a.date.localeCompare(b.date));
     if(monthEvents.length === 0){ body.innerHTML = '<div style="font-size:12px;color:var(--ochre);opacity:0.7;text-align:center;">No marked dates this month</div>'; return; }
     body.innerHTML = '';
     monthEvents.forEach(ev => {
       const day = parseInt(ev.date.split('-')[2], 10);
       const row = document.createElement('div');
       row.className = 'cal-event-row clickable';
-      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-icon">${CAL_ICONS[ev.tradition]}</span><span class="cal-event-name">${ev.name} →</span>`;
+      row.innerHTML = `<span class="cal-event-date" style="color:${CAL_COLORS[ev.tradition]}">${day}</span><span class="cal-event-icon">${ev.icon || CAL_ICONS[ev.tradition]}</span><span class="cal-event-name">${ev.name}${ev.tibetan ? ' <span class="cal-tibetan">'+ev.tibetan+'</span>' : ''} →</span>`;
       row.addEventListener('click', () => {
         document.getElementById('calendar-modal').classList.remove('open');
         if(ev.poi && allPoisByName[ev.poi]){
