@@ -930,8 +930,10 @@
           <div class="ap-title">Boat to the Waterfall Trail</div>
           <div class="ap-desc">A motorboat crossing over the Kulekhani reservoir, from Dalsingpakha to the trailhead below Mohini Waterfall.</div>
         </div>
-        <div class="ap-ticket" data-choice="pharping">
-          <span class="ap-icon">🛵</span>
+        <div class="ap-ticket" data-choice="moments">
+          <span class="ap-icon">🎐</span>
+          <div class="ap-title">Moments at Dalsingpakha Ghat</div>
+          <div class="ap-desc">Impressions of the village itself, on the shore of the Kulekhani reservoir.</div>
         </div>
       </div>
     </div>
@@ -2171,12 +2173,12 @@
     sitemodal.classList.add('open');
   }
   // "Ride back to Pharping" -- placeholder only, footage still to be edited.
-  function openRideToPharpingPlaceholder(){
+  function openDalsingpakhaMomentsPlaceholder(){
     openSiteModal({
-      name: "Ride to Pharping",
-      blurb: "The road back from Dalsingpakha to Pharping. Footage still to be edited.",
+      name: "Moments at Dalsingpakha Ghat",
+      blurb: "Impressions of the village itself, on the shore of the Kulekhani reservoir. Footage still to be edited.",
       lat: MARKHU_BOAT_START.lat, lng: MARKHU_BOAT_START.lng,
-      media: { kind:"image", id:"dalsingpakha-pharping-ride-placeholder", verified:false }
+      media: { kind:"image", id:"dalsingpakha-moments-placeholder", verified:false }
     });
   }
 
@@ -2398,7 +2400,7 @@
         boatTicketModal.classList.remove('open');
         const choice = t.dataset.choice;
         if(choice === 'crossing') startBoatCrossing(false);
-        else if(choice === 'pharping') openRideToPharpingPlaceholder();
+        else if(choice === 'moments') openDalsingpakhaMomentsPlaceholder();
       };
     });
   }
@@ -3364,7 +3366,12 @@
   let ringRoadProgress = 0;
   const ringRoadSourcePoi = productionPois.find(p => p.name.indexOf('Ring Road') === 0);
   const ringLoopMarker = L.marker([RING_ROAD_PATH[0][0], RING_ROAD_PATH[0][1]],
-      { icon: makeIcon('car', 'moving-poi', categoryMeta.sliceoflife.color) })
+      // Fixed (23.09., per feedback): was makeIcon('car',...), which wraps
+      // the already-self-contained iconSvg.car (its own 28px circle badge
+      // baked in) in an EXTRA colored ring, bumping it to 34px -- visibly
+      // bigger than the scooter/boat icons. Same plain L.divIcon pattern as
+      // scooter/boat now, so all moving car/scooter icons share one size.
+      { icon: L.divIcon({ className:'scooter-icon', html: iconSvg.car, iconSize:[26,26], iconAnchor:[13,13] }) })
     .bindTooltip(ringRoadSourcePoi.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
     .on('click', () => {
       const ll = ringLoopMarker.getLatLng();
@@ -4079,14 +4086,17 @@
   const PHARPING_DALSINGPAKHA_CUM = cumulativeDistances(PHARPING_DALSINGPAKHA_ROUTE);
   const PHARPING_DALSINGPAKHA_TOTAL_M = PHARPING_DALSINGPAKHA_CUM[PHARPING_DALSINGPAKHA_CUM.length - 1];
   let pharpingCarProgressM = 0, pharpingCarDir = 1;
-  const PHARPING_CAR_ONE_WAY_S = 90;
+  const PHARPING_CAR_ONE_WAY_S = 600; // 23.09. feedback: was way too fast at 90s for a 23.7km road, slowed to 15% speed (90/0.15=600)
   const pharpingCarPoi = {
     name: "Pharping ⇄ Dalsingpakha Ghat",
     blurb: "A ride on the real road between Pharping and the Dalsingpakha Ghat boat crossing. Footage not yet matched here.",
     media:{ kind:"image", id:"pharping-dalsingpakha-car-placeholder", verified:false }
   };
   const pharpingCarMarker = L.marker([PHARPING_DALSINGPAKHA_ROUTE[0][0], PHARPING_DALSINGPAKHA_ROUTE[0][1]],
-      { icon: makeIcon('car', 'moving-poi', categoryMeta.sliceoflife.color) })
+      // Same fix as the Ring Road car (23.09.): plain L.divIcon at 26px
+      // instead of makeIcon('car',...), which double-wraps the already-
+      // self-contained iconSvg.car in an extra ring and bumps it to 34px.
+      { icon: L.divIcon({ className:'scooter-icon', html: iconSvg.car, iconSize:[26,26], iconAnchor:[13,13] }) })
     .bindTooltip("Pharping ⇄ Dalsingpakha Ghat", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
     .addTo(movingPoiLayer);
   pharpingCarMarker.on('click', function(){
