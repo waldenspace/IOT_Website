@@ -3858,7 +3858,7 @@
   const birdPoi = {
     name: "Bird's View on Guru Rinpoche",
     blurb: "A bird's-eye view circling the 40-metre Guru Rinpoche statue at Dallu, overlooking Asura Cave -- drawn as a black kite (Milvus migrans), the forked-tailed raptor seen soaring over the valley's temples and rooftops year-round.",
-    media: { kind:"image", id:"guru-rinpoche-birdseye-placeholder", verified:false }
+    media: { kind:"vimeo", id:"1230038272", h:"c225eb70ca", verified:true }
   };
   const birdMarker = L.marker([GURU_STATUE_POS.lat, GURU_STATUE_POS.lng], {
     icon: L.divIcon({ className:'bird-icon', html: iconSvg.bird, iconSize:[24,24], iconAnchor:[12,12] })
@@ -4041,8 +4041,17 @@
     media: { kind:"vimeo", id:"1229593719", h:"aa609683f2", verified:true },
     videoStart: 184, videoStop: 273
   };
+  // ---- Shared emoji-icon badge (24.09. rule, per feedback: no marker icon
+  // without a background badge -- cave/university/social-media were plain
+  // emoji with nothing behind them, unreadable against dark map tiles).
+  // Same cream+gold badge convention as the SVG icons in iconSvg. Every
+  // one-off emoji marker (Rojan photos, and everything through
+  // createFadeCycleMarker below) goes through this now.
+  function emojiBadge(emoji){
+    return '<div style="width:26px;height:26px;border-radius:50%;background:#F2E6C9;border:1.5px solid #C9962A;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,0.45);">'+emoji+'</div>';
+  }
   const rojanPhotosMarker = L.marker([rojanPhotosSpot.lat, rojanPhotosSpot.lng], {
-    icon: L.divIcon({ className:'rojan-photos-icon', html:'<div style="font-size:20px;line-height:26px;text-align:center;">📷</div>', iconSize:[26,26], iconAnchor:[13,13] })
+    icon: L.divIcon({ className:'rojan-photos-icon', html: emojiBadge('📷'), iconSize:[26,26], iconAnchor:[13,13] })
   }).bindTooltip("Rojan: Patan & Bhaktapur, 1970s", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
   rojanPhotosMarker.on('click', function(){
     if(!rojanPhotosVisible) return;
@@ -4094,7 +4103,7 @@
   createFadeCycleMarker({
     spots: [{ lat: 27.682245, lng: 85.287337 }],
     visibleS: 45, fadeS: 1.5, waitS: 65,
-    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">📱</div>',
+    iconHtml: emojiBadge('📱'),
     tooltipText: "Social Media Moment",
     poi: { name: "Social Media Moment", blurb: "A passing social-media moment, caught on camera. Footage not yet matched here.", media:{ kind:"image", id:"social-media-moment-placeholder", verified:false } }
   });
@@ -4102,7 +4111,7 @@
   createFadeCycleMarker({
     spots: [{ lat: 27.682374, lng: 85.286533 }],
     visibleS: 45, fadeS: 1.5, waitS: 65,
-    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🎓</div>',
+    iconHtml: emojiBadge('🎓'),
     tooltipText: "University Campus",
     poi: { name: "University Campus", blurb: "A moment on a university campus in the valley. Footage not yet matched here.", media:{ kind:"image", id:"university-campus-placeholder", verified:false } }
   });
@@ -4118,7 +4127,7 @@
       { lat: 27.80183, lng: 85.39942 }
     ],
     visibleS: 45, fadeS: 1.5, waitS: 65,
-    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🏔️</div>',
+    iconHtml: emojiBadge('🏔️'),
     tooltipText: "KTM Viewpoints",
     poi: { name: "KTM Viewpoints", blurb: "A view over the Kathmandu Valley from one of its high points. Footage not yet matched here.", media:{ kind:"image", id:"ktm-viewpoints-placeholder", verified:false } }
   });
@@ -4127,7 +4136,7 @@
   createFadeCycleMarker({
     spots: [{ lat: 27.6314665, lng: 85.2631114 }],
     visibleS: 45, fadeS: 1.5, waitS: 65,
-    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🕳️</div>',
+    iconHtml: emojiBadge('🕳️'),
     tooltipText: "Yeshi Tsogyal Cave",
     poi: { name: "Yeshi Tsogyal Cave", blurb: "A short climb up to Yeshi Tsogyal Cave — closed on the day of filming, so this is as far as we got.", media:{ kind:"vimeo", id:"1229863656", h:"103968f912", verified:true } }
   });
