@@ -114,14 +114,14 @@
   .pitch-block details[open] summary{margin-bottom:12px;}
 
   /* ---- Basemap style row (street map only) ---- */
-  #basemap-row{position:absolute;top:66px;right:24px;z-index:600;display:none;gap:6px;pointer-events:auto;}
+  #basemap-row{position:absolute;top:122px;right:24px;z-index:600;display:none;gap:6px;pointer-events:auto;}
   #basemap-row.show{display:flex;}
   #basemap-row .pill{font-size:11px;padding:7px 13px;}
-  #poi-tool-btn{position:absolute;top:66px;left:24px;z-index:600;display:none;}
+  #poi-tool-btn{position:absolute;top:122px;left:24px;z-index:600;display:none;}
   #poi-tool-btn.show{display:block;}
   #poi-tool-btn.active{background:var(--vermillion);color:var(--parchment);border-color:var(--gold);}
   #poi-tool-panel{
-    position:absolute; top:112px; left:24px; z-index:601; width:250px;
+    position:absolute; top:168px; left:24px; z-index:601; width:250px;
     background:var(--panel-bg); border:1px solid var(--border-c); border-radius:8px;
     padding:14px; display:none; font-family:'Cormorant Garamond',serif; color:var(--parchment);
   }
@@ -138,7 +138,7 @@
   #poi-tool-panel .row button{flex:1;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.05em;padding:8px;border-radius:6px;cursor:pointer;border:1px solid var(--border-c);background:transparent;color:var(--ochre);}
   #poi-tool-panel .row button.primary{background:var(--vermillion);color:var(--parchment);border-color:var(--gold);}
   #poi-tool-panel .hint{font-size:11px;color:var(--ochre);opacity:0.8;margin-top:10px;line-height:1.4;}
-  #poi-tool-list{position:absolute;top:112px;left:286px;z-index:601;width:210px;max-height:320px;overflow-y:auto;
+  #poi-tool-list{position:absolute;top:168px;left:286px;z-index:601;width:210px;max-height:320px;overflow-y:auto;
     background:var(--panel-bg);border:1px solid var(--border-c);border-radius:8px;padding:10px;display:none;}
   #poi-tool-list.open{display:block;}
   #poi-tool-list h4{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;margin:0 0 8px;}
@@ -167,7 +167,7 @@
   #topbar h1{margin:0;color:var(--gold);font-family:'Cinzel',serif;font-weight:600;font-size:20px;letter-spacing:0.08em;text-transform:uppercase;}
   #topbar .sub{color:var(--ochre);font-size:14px;font-style:italic;margin-top:2px;}
 
-  #layertoggle{position:fixed;top:20px;right:24px;z-index:600;display:flex;gap:8px;pointer-events:auto;}
+  #layertoggle{position:fixed;top:76px;right:24px;z-index:600;display:flex;gap:8px;pointer-events:auto;}
   .pill{
     font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.06em;padding:9px 16px;border-radius:999px;cursor:pointer;
     border:1px solid var(--border-c);background:var(--panel-bg);color:var(--ochre);transition:all 0.2s ease;user-select:none;
@@ -1463,10 +1463,6 @@
       lat:27.6966, lng:85.3591, airport:true,
       blurb:"Every visit to the valley starts and ends here. A meditative approach flight into Kathmandu — high cruise altitude giving way to the final descent — plus the option to fly onward to Pokhara.",
       media:{ kind:"vimeo", id:"1228167576", h:"e0851013fb", verified:true } },
-    { name:"Ring Road — A Moment in Traffic", type:"landmark", category:"sliceoflife",
-      lat:27.693298, lng:85.281833,
-      blurb:"An unnarrated slice of life: driving a stretch of Kathmandu's Ring Road. Not part of any of the other microstories — just a moment of simply being there.",
-      media:{ kind:"vimeo", id:"1228180504", h:"5b75998f0c", verified:true } },
     { name:"Yampi Vihara (I-Bahi)", nameNp:"येम्पि महाविहार", type:"pagoda", category:"paubha",
       lat:27.6766211, lng:85.327996,
       blurb:"Our journey into the Kathmandu Valley begins with a canvas print of a sixteenth-century Buddhist painting from the Virginia Museum of Fine Arts. The sites depicted on this artwork remain central to local religious traditions. The painting commemorates the restoration of the Svayambhu Stupa. Together with museologist Swosti Rajbhandari Kayastha and painters Ujay Bajracharya and Sudarshan Suwal, this microstory explores the history and meaning within the canvas — filmed at Yampi Vihara (I-Bahi), the Patan monastery the original paubhā once belonged to.",
@@ -1742,7 +1738,11 @@
     car: `<svg viewBox="0 0 28 28" width="28" height="28"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#C9962A" stroke-width="1.5"/><path d="M6,17 L7,13 Q8,10.5 10.5,10.5 L17.5,10.5 Q20,10.5 21,13 L22,17 Z" fill="#5C0F08"/><rect x="4.5" y="16" width="19" height="3.2" rx="1.6" fill="#3A1206"/><circle cx="9.5" cy="20" r="2.1" fill="#3A1206" stroke="#F2E6C9" stroke-width="0.8"/><circle cx="18.5" cy="20" r="2.1" fill="#3A1206" stroke="#F2E6C9" stroke-width="0.8"/></svg>`,
     football: `<svg viewBox="0 0 28 28" width="28" height="28"><circle cx="14" cy="14" r="13" fill="#5FA8D3" stroke="#3A1206" stroke-width="1.2"/><circle cx="14" cy="14" r="7" fill="#F2E6C9" stroke="#3A1206" stroke-width="1"/><path d="M14,9 L17.5,11.5 L16.2,15.5 L11.8,15.5 L10.5,11.5 Z" fill="#3A1206"/></svg>`,
     hiker: `<svg viewBox="0 0 28 28" width="28" height="28"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#8FA05C" stroke-width="1.5"/><path d="M14,5 L20,20 L15,17 L14,20 L13,17 L8,20 Z" fill="#4C6B2E"/><rect x="12.7" y="19" width="2.6" height="3.5" fill="#5C4126"/></svg>`,
-    bird: `<svg viewBox="0 0 28 28" width="24" height="24"><path d="M14 13 C13.3 11.5 12 10.3 9.5 10.5 C6.5 10.7 3.5 12.5 1 16 C4 15 7 14.3 9.3 15.2 C11 15.9 12.3 16.8 13.2 18 L12 22.5 L13.2 22 L14 19.3 L14.8 22 L16 22.5 L14.8 18 C15.7 16.8 17 15.9 18.7 15.2 C21 14.3 24 15 27 16 C24.5 12.5 21.5 10.7 18.5 10.5 C16 10.3 14.7 11.5 14 13 Z" fill="#3A1206" opacity="0.85"/></svg>`,
+    // Background badge added (24.09., per feedback) -- was the only icon in
+    // this set rendered without the cream circle behind it, so it read as a
+    // "transparent" marker against busy map backgrounds (same cream+gold
+    // badge convention as stupa/car/hiker/etc.).
+    bird: `<svg viewBox="0 0 28 28" width="24" height="24"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#C9962A" stroke-width="1.5"/><path d="M14 13 C13.3 11.5 12 10.3 9.5 10.5 C6.5 10.7 3.5 12.5 1 16 C4 15 7 14.3 9.3 15.2 C11 15.9 12.3 16.8 13.2 18 L12 22.5 L13.2 22 L14 19.3 L14.8 22 L16 22.5 L14.8 18 C15.7 16.8 17 15.9 18.7 15.2 C21 14.3 24 15 27 16 C24.5 12.5 21.5 10.7 18.5 10.5 C16 10.3 14.7 11.5 14 13 Z" fill="#3A1206" opacity="0.85"/></svg>`,
     scooter: `<svg viewBox="0 0 28 28" width="26" height="26"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#E0C34A" stroke-width="1.5"/><path d="M7,20 Q6,15 9,13 Q10,9 14,9 Q17,9 18,12 L20,12 Q22,12 22,15 L22,18 Q22,20 20,20 Z" fill="#8B1A0E"/><path d="M18,12 Q20.5,8.5 21.5,11 L21.3,15 Q19.8,16 18,15 Z" fill="#5C0F08"/><circle cx="20.6" cy="11.3" r="1" fill="#E0C34A"/><rect x="9" y="11.3" width="6" height="1.8" rx="0.9" fill="#3A1206"/><circle cx="10" cy="20.5" r="2.3" fill="#3A1206" stroke="#F2E6C9" stroke-width="0.6"/><circle cx="20" cy="20.5" r="2.3" fill="#3A1206" stroke="#F2E6C9" stroke-width="0.6"/></svg>`,
     // Given the same 28x28 cream-badge treatment as scooter/bridge/waterfall
     // (was floating with no circle background, reading as "transparent" --
@@ -3364,7 +3364,15 @@
   }
   const RING_ROAD_BASE_SPEED = RING_ROAD_TOTAL / 480; // ~8min per lap at cruising speed, before junction slowdowns -- was far too fast at 130s
   let ringRoadProgress = 0;
-  const ringRoadSourcePoi = productionPois.find(p => p.name.indexOf('Ring Road') === 0);
+  // Self-contained data for the moving Ring Road car's click content -- same
+  // pattern as Scooter to Taragaon etc. (24.09.: used to be a real
+  // productionPois entry, which meant a duplicate FIXED marker also sat at
+  // that spot on the map alongside the moving car; now the fixed marker is
+  // gone and this is the only place this data lives, for both 2D and 3D).
+  const RING_ROAD_POI_DATA = { name:"Ring Road — A Moment in Traffic", type:"landmark", category:"sliceoflife",
+    blurb:"An unnarrated slice of life: driving a stretch of Kathmandu's Ring Road. Not part of any of the other microstories — just a moment of simply being there.",
+    media:{ kind:"vimeo", id:"1228180504", h:"5b75998f0c", verified:true } };
+  const ringRoadSourcePoi = RING_ROAD_POI_DATA;
   const ringLoopMarker = L.marker([RING_ROAD_PATH[0][0], RING_ROAD_PATH[0][1]],
       // Fixed (23.09., per feedback): was makeIcon('car',...), which wraps
       // the already-self-contained iconSvg.car (its own 28px circle badge
@@ -4493,7 +4501,7 @@
 
   const SPAWN_THEMES = [
     { icon:'🐄', label:'Animals', blurb:'A passing glimpse of animals around the valley — footage for this theme is still being edited into short vignettes.' },
-    { icon:'🏔', label:'Clouds & Mountains', blurb:'Clouds drifting over the valley\'s peaks — footage for this theme is still being edited into short vignettes.' },
+    { icon:'🏔', label:'Mountain View', blurb:'Clouds drifting over the valley\'s peaks — footage for this theme is still being edited into short vignettes.' },
     { icon:'🏗', label:'Construction', blurb:'A moment of the valley rebuilding itself — footage for this theme is still being edited into short vignettes.' },
     { icon:'🚪', label:'Doors & Entrances', blurb:'A doorway glimpsed in passing — footage for this theme is still being edited into short vignettes.' },
     { icon:'🚗', label:'Driving', blurb:'A stretch of road, seen from the car — footage for this theme is still being edited into short vignettes.' },
@@ -5829,7 +5837,7 @@ const ICON_SVG = {
   var RING_ROAD_CUM_3D = cumulativeDist3D(RING_ROAD_PATH_3D);
   var RING_ROAD_SPEED_3D = RING_ROAD_CUM_3D[RING_ROAD_CUM_3D.length - 1] / 480; // same ~8min/lap pace as the 2D map
   var ringCarProgress3D = 0;
-  var ringRoadSourcePoi3D = productionPois.find(function(p){ return p.name.indexOf('Ring Road') === 0; });
+  var ringRoadSourcePoi3D = RING_ROAD_POI_DATA;
 
   // ============================================================
   // Decorative road comets (22.09., redone as trail-comets after
