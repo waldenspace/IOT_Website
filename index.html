@@ -1133,7 +1133,8 @@
       "Added a temporary pop-up for Yeshi Tsogyal Cave.",
       "Calendar: each day now shows a small moon-phase icon instead of a background tint, and there's a new \"Practice Days\" layer marking the recurring Tibetan Buddhist lunar observance days (Medicine Buddha, Guru Rinpoche, Dakini and others), each with its Tibetan-language date name.",
       "Fixed a few markers (Yeshi Tsogyal Cave, University Campus, Social Media Moment) that had no background badge and were hard to see — every marker icon now has one.",
-      "Added the video to the bird circling the Guru Rinpoche statue."
+      "Added the video to the bird circling the Guru Rinpoche statue.",
+      "Added three new spots: Tal Barahi Mandir (the lake temple on Phewa Lake), Shanti Ban Batika, and a temporary Karate/sports pop-up."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -1636,6 +1637,15 @@
       lat:28.2437, lng:83.9519,
       blurb:"A ridge above Pokhara, 1600m up, famous as the valley's best sunrise vantage point over the Annapurna range and Phewa Lake below — also a popular paragliding launch site. Footage not yet matched here.",
       media:{ kind:"image", id:"sarangkot-placeholder", verified:false } },
+    { name:"Tal Barahi Mandir", type:"shrine", category:"sacred_places", related: ["Sarangkot"],
+      lat:28.207418, lng:83.9534251,
+      blurb:"Pokhara's most important religious site — a two-storied pagoda temple dedicated to the goddess Barahi (an avatar of Durga), standing on its own small island in the middle of Phewa Lake, reachable only by boat. Devotees, especially on Saturdays, come to make offerings and seek blessings. Footage coming soon.",
+      sources: [{label:"Wikipedia", url:"https://en.wikipedia.org/wiki/Tal_Barahi_Temple"}],
+      media:{ kind:"image", id:"tal-barahi-mandir-placeholder", verified:false } },
+    { name:"Shanti Ban Batika", type:"landmark-minor", category:"sliceoflife",
+      lat:28.2112749, lng:83.9926125,
+      blurb:"A small garden in Pokhara's Lakeside area. Footage coming soon.",
+      media:{ kind:"image", id:"shanti-ban-batika-placeholder", verified:false } },
     { name:"Gupteshwor Mahadev Cave", type:"shrine", category:"rituals", related: ["Sarangkot", "Guru Rinpoche Cave & Statue, Pharping"],
       lat:28.189552, lng:83.957847,
       blurb:"A sacred limestone cave in Pokhara, directly across from Devi's Falls — whose water actually runs straight through it. A naturally-formed Shiva liṅga at its heart has been worshipped here since it was rediscovered in the 16th century.",
@@ -4141,6 +4151,15 @@
     iconHtml: emojiBadge('🕳️'),
     tooltipText: "Yeshi Tsogyal Cave",
     poi: { name: "Yeshi Tsogyal Cave", blurb: "A short climb up to Yeshi Tsogyal Cave — closed on the day of filming, so this is as far as we got.", media:{ kind:"vimeo", id:"1229863656", h:"103968f912", verified:true } }
+  });
+
+  // "Karate" -- fixed spot, no video yet.
+  createFadeCycleMarker({
+    spots: [{ lat: 27.685504, lng: 85.315704 }],
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: emojiBadge('🥋'),
+    tooltipText: "Karate",
+    poi: { name: "Karate", blurb: "A moment of sports practice in the valley. Footage not yet matched here.", media:{ kind:"image", id:"karate-placeholder", verified:false } }
   });
 
   // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
