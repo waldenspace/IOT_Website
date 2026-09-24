@@ -1129,7 +1129,8 @@
       "Renamed the \"Clouds & Mountains\" theme to \"Mountain View\".",
       "The map-mode menu (Paubhā / Valley Today / 3D Relief) now lines up at the same height as the Start / Map / About menu.",
       "The bird circling overhead now has the same background badge as the other markers.",
-      "Removed a leftover fixed marker for the Ring Road — the moving car already covers it."
+      "Removed a leftover fixed marker for the Ring Road — the moving car already covers it.",
+      "Added a temporary pop-up for Yeshi Tsogyal Cave."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -4084,6 +4085,15 @@
     iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🏔️</div>',
     tooltipText: "KTM Viewpoints",
     poi: { name: "KTM Viewpoints", blurb: "A view over the Kathmandu Valley from one of its high points. Footage not yet matched here.", media:{ kind:"image", id:"ktm-viewpoints-placeholder", verified:false } }
+  });
+
+  // "Yeshi Tsogyal Cave" -- short climb up to the cave, real footage (24.09.).
+  createFadeCycleMarker({
+    spots: [{ lat: 27.6314665, lng: 85.2631114 }],
+    visibleS: 45, fadeS: 1.5, waitS: 65,
+    iconHtml: '<div style="font-size:19px;line-height:26px;text-align:center;">🕳️</div>',
+    tooltipText: "Yeshi Tsogyal Cave",
+    poi: { name: "Yeshi Tsogyal Cave", blurb: "A short climb up to Yeshi Tsogyal Cave — closed on the day of filming, so this is as far as we got.", media:{ kind:"vimeo", id:"1229863656", h:"103968f912", verified:true } }
   });
 
   // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
