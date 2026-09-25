@@ -452,6 +452,27 @@
   #boat-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
   #boat-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
 
+  /* ---- Pokhara Airport "ticket counter" -- same chrome as the boat one,
+     just one destination for now (per user, 24.09.) */
+  #pokhara-ticket-modal{
+    position:fixed;inset:0;z-index:1000;background:rgba(10,4,2,0.85);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity 0.35s ease,visibility 0s linear 0.35s;
+  }
+  #pokhara-ticket-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 0.35s ease,visibility 0s linear 0s;}
+  #pokhara-ticket-card{
+    position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;
+    max-width:520px;width:100%;padding:36px 32px;text-align:center;
+    transform:scale(0.9);opacity:0;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;
+  }
+  #pokhara-ticket-modal.open #pokhara-ticket-card{transform:scale(1);opacity:1;}
+  #pokhara-ticket-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #pokhara-ticket-close:hover{color:var(--gold);}
+  #pokhara-ticket-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-size:19px;margin:0 0 6px;}
+  #pokhara-ticket-card .ap-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ochre);margin-bottom:30px;font-size:15px;}
+  #pokhara-tickets{display:flex;justify-content:center;}
+  #pokhara-tickets .ap-ticket{max-width:280px;}
+
   /* ---- Taragaon Museum "ticket counter" -- same chrome again, two films
      to choose from instead of one straight-in video. ---- */
   #taragaon-ticket-modal{
@@ -971,6 +992,21 @@
     </div>
   </div>
 
+  <div id="pokhara-ticket-modal">
+    <div id="pokhara-ticket-card">
+      <button id="pokhara-ticket-close">✕</button>
+      <h2>Pokhara Airport — Departures</h2>
+      <div class="ap-sub">Choose your journey</div>
+      <div id="pokhara-tickets">
+        <div class="ap-ticket" data-choice="kathmandu">
+          <span class="ap-icon">✈</span>
+          <div class="ap-title">Kathmandu</div>
+          <div class="ap-desc">Heading back east: cruising in, descending past Dakshinkali, then landing at Tribhuvan Int'l.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="boat-ticket-modal">
     <div id="boat-ticket-card">
       <button id="boat-ticket-close">✕</button>
@@ -1190,7 +1226,8 @@
       "New \"Nepal, Now and Then\" pop-up: satellite views of five spots across the valley, decades apart, with a drag-to-reveal comparison slider (or a side-by-side view where the two source images don't line up closely enough for a slider).",
       "Temporary pop-ups (University Campus, Social Media Moment, Karate, Yeshi Tsogyal Cave, Nepal Now and Then) now stay visible longer and reappear sooner. Note: these only run while you're on the \"Kathmandu Valley Today\" map, not the Paubhā view or 3D Relief.",
       "Enlarged the Nepal, Now and Then comparison window.",
-      "Added a second bird circling overhead, this time around Rigon Tashi Choeling Monastery."
+      "Added a second bird circling overhead, this time around Rigon Tashi Choeling Monastery.",
+      "Pokhara Airport now has a proper ticket counter, matching Kathmandu's -- one destination for now."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -1657,7 +1694,7 @@
       blurb:"A white stupa on a ridge above Phewa Lake, reached by boat and a forest climb — one of the valley's quiet vantage points over the whole of Pokhara.",
       media:{ kind:"image", id:"world-peace-pagoda-placeholder", verified:false } },
     { name:"Pokhara Airport", type:"landmark", category:"sliceoflife",
-      lat:28.1996, lng:83.9820, pokharaReturn:true,
+      lat:28.1996, lng:83.9820, pokharaTicketCounter:true,
       blurb:"The gateway back to Kathmandu.",
       media:{ kind:"image", id:"Still_2026-05-19_212940_2.28.1", verified:false } },
     { name:"Tribhuvan Int'l Airport (KTM)", type:"airport", category:"interdependence",
@@ -2594,6 +2631,23 @@
   document.getElementById('airport-close').addEventListener('click', () => airportModal.classList.remove('open'));
   airportModal.addEventListener('click', e => { if(e.target === airportModal) airportModal.classList.remove('open'); });
 
+  // ---- Pokhara Airport "ticket counter" (24.09.): same chrome again, just
+  // one destination for now. Used to be a direct flyBackToKathmandu()
+  // trigger with no counter UI at all -- now matches the KTM/boat pattern.
+  const pokharaTicketModal = document.getElementById('pokhara-ticket-modal');
+  function openPokharaTicketCounter(poi){
+    flyMapToward(poi, 1.2, 3.0);
+    pokharaTicketModal.classList.add('open');
+    document.querySelectorAll('#pokhara-tickets .ap-ticket').forEach(t => {
+      t.onclick = () => {
+        pokharaTicketModal.classList.remove('open');
+        if(t.dataset.choice === 'kathmandu') flyBackToKathmandu();
+      };
+    });
+  }
+  document.getElementById('pokhara-ticket-close').addEventListener('click', () => pokharaTicketModal.classList.remove('open'));
+  pokharaTicketModal.addEventListener('click', e => { if(e.target === pokharaTicketModal) pokharaTicketModal.classList.remove('open'); });
+
   // ---- Boat "ticket counter" (Dalsingpakha): same "choose your journey"
   // pattern and chrome as the airport counter above, just its own DOM
   // overlay/ids so the two can't stomp on each other. Two choices: the real
@@ -3036,7 +3090,7 @@
   pois.concat(productionPois).forEach(p => {
     const marker = L.marker([p.lat, p.lng], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color, p.featured) })
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
-      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.chilanchoTicketCounter ? openChilanchoTicketCounter(p) : p.pokharaReturn ? flyBackToKathmandu() : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
+      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.chilanchoTicketCounter ? openChilanchoTicketCounter(p) : p.pokharaTicketCounter ? openPokharaTicketCounter(p) : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
     if(categoryLayers[p.category]) marker.addTo(categoryLayers[p.category]);
   });
   Object.values(categoryLayers).forEach(l => l.addTo(mapGeo));
