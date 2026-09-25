@@ -1228,7 +1228,8 @@
       "Enlarged the Nepal, Now and Then comparison window.",
       "Added a second bird circling overhead, this time around Rigon Tashi Choeling Monastery.",
       "Pokhara Airport now has a proper ticket counter, matching Kathmandu's -- one destination for now.",
-      "Added the real video to the Cloudwatching spawn theme -- a cloud timelapse over the valley's hillsides."
+      "Added the real video to the Cloudwatching spawn theme -- a cloud timelapse over the valley's hillsides.",
+      "The Tihar Festival Parade pop-up now has its real video, plus a short and an expandable longer text on Tihar and Kirtipur's own Newar Swanti traditions."
     ]},
     { date: "23 September 2026", items: [
       "The site now updates itself automatically — no more manual re-downloads for the team to see the latest version.",
@@ -4519,8 +4520,9 @@
   const TIHAR_ANGULAR_SPEED = (2 * Math.PI) / 150; // one full circuit every 2.5 minutes
   const tiharPoi = {
     name: "Tihar Festival Parade, Kirtipur",
-    blurb: "The Tihar festival procession circling Chilancho Stupa in Kirtipur.",
-    media: { kind:"image", id:"kirtipur-tihar-parade-placeholder", verified:false }
+    blurb: "Swanti, as Kirtipur's Newar community calls Tihar — five days of lights, animal worship, and the Newar new year, Nepal Sambat.",
+    readMore: "Tihar honours a different figure each day: crows as Yama's messengers, dogs for their loyalty, cows for prosperity, and finally Bhai Tika, when sisters mark their brothers' foreheads with a seven-coloured tika for long life. Doorways fill with oil lamps (diyo) and rangoli to guide the goddess Lakshmi in on the third night.\n\nFor Kirtipur's Newar community the festival runs alongside Swanti, its own name for the same five days, built around Mha Puja — the ritual worship of one's own body and spirit — and the start of the Nepal Sambat calendar. Chilancho Stupa becomes one of the town's gathering points: oil lamps are lit across Kirtipur's heritage sites, and Mha Puja itself is held in the stupa's courtyard, families sitting in rows to bless one another for the year ahead. Deusi and bhailo groups move between houses through the same lanes, singing for blessings in exchange for sel roti and small gifts.",
+    media: { kind:"vimeo", id:"1230371903", h:"89dc668f83", verified:true }
   };
   const tiharMarker = L.marker([TIHAR_START.lat, TIHAR_START.lng], {
     icon: L.divIcon({ className:'diya-icon', html: iconSvg.diya, iconSize:[26,26], iconAnchor:[13,13] })
