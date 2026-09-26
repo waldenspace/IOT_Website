@@ -1212,6 +1212,10 @@
   // entry first) whenever a round of changes goes live -- keep entries
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
+    { date: "26 September 2026", items: [
+      "\"Nepal, Now and Then\" is now 5 separate pop-ups instead of one that cycled between 5 spots — so more than one can turn up at a time, and finding any given one doesn't depend on a shared slot landing on it.",
+      "All 5 \"Nepal, Now and Then\" image pairs now line up properly — they're hand-matched to the same size now, so the comparison slider works correctly for every one of them."
+    ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
       "Renamed the \"Clouds & Mountains\" theme to \"Mountain View\".",
@@ -1223,7 +1227,7 @@
       "Fixed a few markers (Yeshi Tsogyal Cave, University Campus, Social Media Moment) that had no background badge and were hard to see — every marker icon now has one.",
       "Added the video to the bird circling the Guru Rinpoche statue.",
       "Added three new spots: Tal Barahi Mandir (the lake temple on Phewa Lake), Shanti Ban Batika, and a temporary Karate/sports pop-up.",
-      "New \"Nepal, Now and Then\" pop-up: satellite views of five spots across the valley, decades apart, with a drag-to-reveal comparison slider (or a side-by-side view where the two source images don't line up closely enough for a slider).",
+      "New \"Nepal, Now and Then\" pop-up: satellite views of five spots across the valley, decades apart, with a drag-to-reveal comparison slider.",
       "Temporary pop-ups (University Campus, Social Media Moment, Karate, Yeshi Tsogyal Cave, Nepal Now and Then) now stay visible longer and reappear sooner. Note: these only run while you're on the \"Kathmandu Valley Today\" map, not the Paubhā view or 3D Relief.",
       "Enlarged the Nepal, Now and Then comparison window.",
       "Added a second bird circling overhead, this time around Rigon Tashi Choeling Monastery.",
@@ -1491,45 +1495,34 @@
   document.getElementById('calendar-close').addEventListener('click', () => document.getElementById('calendar-modal').classList.remove('open'));
   document.getElementById('calendar-modal').addEventListener('click', e => { if(e.target.id === 'calendar-modal') document.getElementById('calendar-modal').classList.remove('open'); });
 
-  // ---- Nepal, Now and Then (24.09.) ----
-  // Source: 5 image pairs on the iqldiwsm Cloudinary account (public ids
-  // "1A".."5B", A=archival/~1960s-70s, B=recent satellite), following the
-  // nepalitimes.com "Kathmandu from space, 60 years apart" piece. These are
-  // NOT geo-registered files -- no coordinates, no shared projection -- so
-  // the alignment below is a manual, eyeballed fit (grid-overlay + 2 shared
-  // landmarks per pair, plain similarity transform: uniform scale + offset,
-  // no rotation correction), not a surveyed one. For 3 of the 5 pairs the
-  // source crops already covered close to the same real-world extent, so
-  // this fit is solid enough for a real drag-to-reveal slider:
-  //   - Pair 1: a lakeside town (Pokhara/Phewa Lake), landmarks = the small
-  //     forest patch + the river/road crossing near it
-  //   - Pair 3: Kathmandu's Tribhuvan Airport, landmarks = the two runway
-  //     thresholds (about as reliable an anchor as this site has)
-  //   - Pair 5: the Narayanhiti Palace grounds in Kathmandu, landmarks =
-  //     the palace building + the river bend/bridge south of it
-  // Pairs 2 and 4 cover visibly different extents in A vs B (a tight crop
-  // vs a wide one) -- forcing a slider on those would misrepresent them, so
-  // they use the honest side-by-side fallback instead, exactly as planned.
+  // ---- Nepal, Now and Then (24.09., simplified 25.09.) ----
+  // Source: 5 image pairs on the iqldiwsm Cloudinary account, following
+  // the nepalitimes.com "Kathmandu from space, 60 years apart" piece.
+  // 24.09.-25.09.: tried to eyeball-align the original mismatched-size
+  // source files ourselves (grid overlays, hand-picked landmarks, a
+  // similarity-transform CSS overlay) -- workable for some pairs, shaky
+  // for others, and slow going. The person then hand-matched all 5 pairs
+  // to identical size/format themselves (Cloudinary folder "Now and then
+  // Matched", filenames like "3A_neo.001.jpeg.001") -- so none of that
+  // alignment math is needed anymore: every pair is just two same-size
+  // images, straight 100%/100% overlay, slider on top.
   const NNT_BASE = "https://res.cloudinary.com/iqldiwsm/image/upload/";
   const NOW_THEN_PAIRS = [
-    { id:1, lat:28.2131, lng:83.9589, mode:"align", base:"a",
+    { id:1, lat:28.2131, lng:83.9589,
       title:"Lakeside, Pokhara", caption:"Phewa Lake's shoreline, decades apart — the small forested patch above the town is one of the few things that hasn't moved.",
-      a:{ src:NNT_BASE+"1A.jpg" },
-      b:{ src:NNT_BASE+"1B.jpg", width:100.29, height:93.48, left:-5.81, top:-8.25 } },
-    { id:2, lat:27.6550, lng:85.3400, mode:"sidebyside",
-      title:"Valley hillside", caption:"Terraced hill farmland gives way to dense settlement — the two crops here cover slightly different extents, so they're shown side by side rather than overlaid.",
-      a:{ src:NNT_BASE+"2A.jpg" }, b:{ src:NNT_BASE+"2B.jpg" } },
-    { id:3, lat:27.7010, lng:85.3670, mode:"align", base:"b",
-      title:"Tribhuvan Airport, Kathmandu", caption:"The same runway, from farmland at the edge of the city to the middle of it.",
-      a:{ src:NNT_BASE+"3A.jpg", width:224.50, height:190.67, left:-63.18, top:-7.71 },
-      b:{ src:NNT_BASE+"3B.jpg" } },
-    { id:4, lat:28.2350, lng:83.9750, mode:"sidebyside",
-      title:"Pokhara Valley", caption:"One frame tight on the airport corridor, the other pulled back to the whole valley bowl — shown side by side rather than forcing a mismatched overlay.",
-      a:{ src:NNT_BASE+"4A.jpg" }, b:{ src:NNT_BASE+"4B.jpg" } },
-    { id:5, lat:27.7160, lng:85.3140, mode:"align", base:"b",
-      title:"Narayanhiti Palace, Kathmandu", caption:"The palace grounds and the river bend just south of them, still recognisable under six more decades of the city.",
-      a:{ src:NNT_BASE+"5A.jpg", width:150.75, height:151.23, left:-20.67, top:4.12 },
-      b:{ src:NNT_BASE+"5B.jpg" } }
+      a:{ src:NNT_BASE+"1A_neo.001.jpg" }, b:{ src:NNT_BASE+"1B_Neo.001.jpg" } },
+    { id:2, lat:27.6550, lng:85.3400,
+      title:"Valley hillside", caption:"Terraced hill farmland gives way to dense settlement.",
+      a:{ src:NNT_BASE+"2A_neo.002.jpg" }, b:{ src:NNT_BASE+"2B_neo.002.jpg" } },
+    { id:3, lat:27.7010, lng:85.3670,
+      title:"Tribhuvan Airport, Kathmandu", caption:"From farmland at the edge of the city to the middle of it.",
+      a:{ src:NNT_BASE+"3A_neo.001.jpeg.001.jpg" }, b:{ src:NNT_BASE+"3B_neo.001.jpeg.001.jpg" } },
+    { id:4, lat:28.2350, lng:83.9750,
+      title:"Pokhara Valley", caption:"The valley around Pokhara's airport, decades apart.",
+      a:{ src:NNT_BASE+"4A_neo.001.jpg" }, b:{ src:NNT_BASE+"4B_neo.001.jpg" } },
+    { id:5, lat:27.7160, lng:85.3140,
+      title:"Narayanhiti Palace, Kathmandu", caption:"The palace grounds, still recognisable under six more decades of the city.",
+      a:{ src:NNT_BASE+"5A_neo.001.jpeg.001.jpg" }, b:{ src:NNT_BASE+"5B_neo.001.jpeg.001.jpg" } }
   ];
   function openNowThenViewer(pair){
     document.getElementById('nnt-title').textContent = pair.title;
@@ -1537,52 +1530,31 @@
     document.getElementById('nnt-source').innerHTML = 'Source: <a href="https://nepalitimes.com/kathmandu-from-space-60-years-apart" target="_blank" rel="noopener">nepalitimes.com — "Kathmandu from space, 60 years apart"</a>';
     const stage = document.getElementById('nnt-stage');
     stage.innerHTML = '';
-    if(pair.mode === 'align'){
-      stage.className = 'nnt-align-stage';
-      stage.style.aspectRatio = '';
-      const baseKey = pair.base || 'a';        // image rendered full-bleed, always visible underneath
-      const overlayKey = baseKey === 'a' ? 'b' : 'a'; // image rendered scaled/positioned, clipped by the slider
-      const baseData = pair[baseKey], overlayData = pair[overlayKey];
-      const baseImg = new Image(); baseImg.src = baseData.src; baseImg.className = 'nnt-img-a'; baseImg.alt = pair.title;
-      baseImg.onload = () => { stage.style.aspectRatio = baseImg.naturalWidth + '/' + baseImg.naturalHeight; };
-      const wrapOverlay = document.createElement('div'); wrapOverlay.className = 'nnt-img-b-wrap';
-      const overlayImg = new Image(); overlayImg.src = overlayData.src; overlayImg.className = 'nnt-img-b'; overlayImg.alt = pair.title;
-      overlayImg.style.width = (overlayData.width != null ? overlayData.width : 100) + '%';
-      overlayImg.style.height = (overlayData.height != null ? overlayData.height : 100) + '%';
-      overlayImg.style.left = (overlayData.left != null ? overlayData.left : 0) + '%';
-      overlayImg.style.top = (overlayData.top != null ? overlayData.top : 0) + '%';
-      wrapOverlay.appendChild(overlayImg);
-      const tagThen = document.createElement('span'); tagThen.className = 'nnt-tag then'; tagThen.textContent = 'Then';
-      const tagNow = document.createElement('span'); tagNow.className = 'nnt-tag now'; tagNow.textContent = 'Now';
-      const handle = document.createElement('div'); handle.className = 'nnt-slider-handle'; handle.style.left = '50%';
-      stage.append(baseImg, wrapOverlay, tagThen, tagNow, handle);
-      // Clip direction depends on which image is the overlay: when the
-      // overlay is "now" (b), reveal it right-of-slider (as before). When
-      // the overlay is "then" (a) -- pairs 3 & 5, where b is the smaller,
-      // sharper crop used as the full-bleed base -- reveal the overlay
-      // left-of-slider instead, so "then" still reads on the left.
-      function clipFor(pct){ return overlayKey === 'b' ? `inset(0 0 0 ${pct}%)` : `inset(0 ${100-pct}% 0 0)`; }
-      wrapOverlay.style.clipPath = clipFor(50);
-      let dragging = false;
-      function setSlider(clientX){
-        const rect = stage.getBoundingClientRect();
-        let pct = ((clientX - rect.left) / rect.width) * 100;
-        pct = Math.max(0, Math.min(100, pct));
-        wrapOverlay.style.clipPath = clipFor(pct);
-        handle.style.left = pct + '%';
-      }
-      handle.addEventListener('pointerdown', e => { dragging = true; e.preventDefault(); });
-      stage.addEventListener('pointerdown', e => { if(e.target === handle) return; dragging = true; setSlider(e.clientX); });
-      window.addEventListener('pointermove', e => { if(dragging) setSlider(e.clientX); });
-      window.addEventListener('pointerup', () => { dragging = false; });
-    } else {
-      stage.className = '';
-      stage.style.aspectRatio = '';
-      stage.innerHTML = `<div class="nnt-sidebyside">
-        <figure><img src="${pair.a.src}" alt="${pair.title} (then)"><figcaption>Then</figcaption></figure>
-        <figure><img src="${pair.b.src}" alt="${pair.title} (now)"><figcaption>Now</figcaption></figure>
-      </div>`;
+    stage.className = 'nnt-align-stage';
+    stage.style.aspectRatio = '';
+    const baseImg = new Image(); baseImg.src = pair.a.src; baseImg.className = 'nnt-img-a'; baseImg.alt = pair.title;
+    baseImg.onload = () => { stage.style.aspectRatio = baseImg.naturalWidth + '/' + baseImg.naturalHeight; };
+    const wrapOverlay = document.createElement('div'); wrapOverlay.className = 'nnt-img-b-wrap';
+    const overlayImg = new Image(); overlayImg.src = pair.b.src; overlayImg.className = 'nnt-img-b'; overlayImg.alt = pair.title;
+    overlayImg.style.width = '100%'; overlayImg.style.height = '100%'; overlayImg.style.left = '0'; overlayImg.style.top = '0';
+    wrapOverlay.appendChild(overlayImg);
+    const tagThen = document.createElement('span'); tagThen.className = 'nnt-tag then'; tagThen.textContent = 'Then';
+    const tagNow = document.createElement('span'); tagNow.className = 'nnt-tag now'; tagNow.textContent = 'Now';
+    const handle = document.createElement('div'); handle.className = 'nnt-slider-handle'; handle.style.left = '50%';
+    stage.append(baseImg, wrapOverlay, tagThen, tagNow, handle);
+    wrapOverlay.style.clipPath = 'inset(0 0 0 50%)';
+    let dragging = false;
+    function setSlider(clientX){
+      const rect = stage.getBoundingClientRect();
+      let pct = ((clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      wrapOverlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      handle.style.left = pct + '%';
     }
+    handle.addEventListener('pointerdown', e => { dragging = true; e.preventDefault(); });
+    stage.addEventListener('pointerdown', e => { if(e.target === handle) return; dragging = true; setSlider(e.clientX); });
+    window.addEventListener('pointermove', e => { if(dragging) setSlider(e.clientX); });
+    window.addEventListener('pointerup', () => { dragging = false; });
     document.getElementById('nnt-modal').classList.add('open');
   }
   document.getElementById('nnt-close').addEventListener('click', () => document.getElementById('nnt-modal').classList.remove('open'));
@@ -4396,15 +4368,22 @@
     poi: { name: "Karate", blurb: "A moment of sports practice in the valley. Footage not yet matched here.", media:{ kind:"image", id:"karate-placeholder", verified:false } }
   });
 
-  // "Nepal, Now and Then" -- satellite comparison pop-up (24.09.), cycles
-  // through the same 5 spots/pairs as NOW_THEN_PAIRS above, in the same
-  // order, so the spot shown always matches the pair the click opens.
-  createFadeCycleMarker({
-    spots: NOW_THEN_PAIRS.map(p => ({ lat: p.lat, lng: p.lng })),
-    visibleS: 60, fadeS: 1.5, waitS: 35,
-    iconHtml: emojiBadge('🛰️'),
-    tooltipText: "Nepal, Now and Then",
-    onClick: (idx) => openNowThenViewer(NOW_THEN_PAIRS[idx])
+  // "Nepal, Now and Then" (25.09.): was ONE marker cycling through 5
+  // spots, meaning only one of the 5 pairs was ever even potentially
+  // visible at a time -- which is very likely why the person kept running
+  // into the same couple of pairs and rarely the others. Split into 5
+  // independent pop-ups instead (same pattern as Karate/Cave/etc. above),
+  // each with its own spot and its own cycle, so multiple can be visible
+  // at once and finding any given one no longer depends on a single
+  // shared slot landing on it.
+  NOW_THEN_PAIRS.forEach(pair => {
+    createFadeCycleMarker({
+      spots: [{ lat: pair.lat, lng: pair.lng }],
+      visibleS: 60, fadeS: 1.5, waitS: 35,
+      iconHtml: emojiBadge('🛰️'),
+      tooltipText: "Nepal, Now and Then: " + pair.title,
+      onClick: () => openNowThenViewer(pair)
+    });
   });
 
   // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
