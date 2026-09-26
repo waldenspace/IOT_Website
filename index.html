@@ -1218,7 +1218,9 @@
       "The \"Then\" satellite images are now dated (1967, declassified US spy-satellite photographs) right on the pop-up.",
       "Moved two of the \"Nepal, Now and Then\" spots (Lakeside Pokhara and Pokhara Valley) into the Kathmandu Valley map area, where they'll actually turn up -- they were placed in Pokhara before, far outside where most people look.",
       "Corrected all 5 \"Nepal, Now and Then\" locations and titles -- every pair is actually a Kathmandu Valley view, not Pokhara, and one wasn't Narayanhiti Palace as first labelled.",
-      "Added real captions to all 5 \"Nepal, Now and Then\" pairs, with what's actually changed in each -- Balaju's industrial area, Budhanilkantha's paddy fields, Kathmandu airport's then-new runway, the valley's urbanisation, and Baneshwor before Nepal's parliament complex was built there."
+      "Added real captions to all 5 \"Nepal, Now and Then\" pairs, with what's actually changed in each -- Balaju's industrial area, Budhanilkantha's paddy fields, Kathmandu airport's then-new runway, the valley's urbanisation, and Baneshwor before Nepal's parliament complex was built there.",
+      "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Rojan films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
+      "Added a temporary pop-up for chanting at a wayside pati."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -4363,6 +4365,17 @@
     poi: { name: "Yeshi Tsogyal Cave", blurb: "A short climb up to Yeshi Tsogyal Cave — closed on the day of filming, so this is as far as we got.", media:{ kind:"vimeo", id:"1229863656", h:"103968f912", verified:true } }
   });
 
+  // "Pati Chanting" -- fixed spot, real video (25.09.). NOT the same as
+  // the "Pati" field-recording bucket or the "Pati" ambient spawn theme
+  // (both unrelated, pre-existing) -- this is its own temp POI.
+  createFadeCycleMarker({
+    spots: [{ lat: 27.677685, lng: 85.278443 }],
+    visibleS: 60, fadeS: 1.5, waitS: 35,
+    iconHtml: emojiBadge('🙏'),
+    tooltipText: "Pati Chanting",
+    poi: { name: "Pati Chanting", blurb: "Chanting at a wayside pati, one of the valley's open-sided public rest platforms.", media:{ kind:"vimeo", id:"1230515468", h:"dad95f8ce2", verified:true } }
+  });
+
   // "Karate" -- fixed spot, no video yet.
   createFadeCycleMarker({
     spots: [{ lat: 27.685504, lng: 85.315704 }],
@@ -4672,9 +4685,25 @@
     "Kutumba Rehearsal — Sarangi with Kilian Nepali",
     "Honey & Sweetie",
     "Cremation Blessings",
-    "Chilancho Ritual"
+    "Chilancho Ritual",
+    "Weltmuseum Wien",
+    "Tibet House US",
+    "Swostie Interview",
+    "Yampi Vihara (I-Bahi)",
+    "Bird's View on Guru Rinpoche",
+    "Tihar Festival Parade, Kirtipur",
+    "Taragaon Museum"
   ];
-  const featuredPois = FEATURED_STORY_NAMES.map(n => productionPois.find(p => p.name === n)).filter(Boolean);
+  // A couple of these live outside productionPois entirely (birdPoi/tiharPoi
+  // are standalone objects for the dynamic pop-up markers, defined further
+  // down the script but already in scope here) -- checked first, before
+  // falling back to the normal productionPois name lookup. Taragaon Museum
+  // is a ticket-counter POI (two real Rojan films behind it, no single
+  // video of its own) so it needs its own thumbnail and its own click
+  // routing below, same as clicking it anywhere else on the map does.
+  const FEATURED_EXTRA_LOOKUP = { "Bird's View on Guru Rinpoche": birdPoi, "Tihar Festival Parade, Kirtipur": tiharPoi };
+  const FEATURED_THUMB_OVERRIDE = { "Taragaon Museum": "1229593719" };
+  const featuredPois = FEATURED_STORY_NAMES.map(n => FEATURED_EXTRA_LOOKUP[n] || productionPois.find(p => p.name === n)).filter(Boolean);
   const fwThumb = document.getElementById('fw-thumb');
   const fwTitle = document.getElementById('fw-title');
   const fwBlurb = document.getElementById('fw-blurb');
@@ -4688,7 +4717,7 @@
     const fwSlide = document.getElementById('fw-slide');
     fwSlide.style.opacity = '0';
     setTimeout(() => {
-      fwThumb.src = poi.media.kind === 'vimeo' ? `https://vumbnail.com/${poi.media.id}.jpg` : '';
+      fwThumb.src = poi.media.kind === 'vimeo' ? `https://vumbnail.com/${poi.media.id}.jpg` : (FEATURED_THUMB_OVERRIDE[poi.name] ? `https://vumbnail.com/${FEATURED_THUMB_OVERRIDE[poi.name]}.jpg` : '');
       fwThumb.alt = poi.name;
       fwTitle.textContent = poi.name;
       fwBlurb.textContent = poi.blurb;
@@ -4704,7 +4733,9 @@
   }, 16000); // 2-3x longer per story than before (was 5500ms)
   featuredWidget.addEventListener('click', () => {
     const poi = featuredPois[featuredIndex];
-    if(poi) openSiteModal(poi);
+    if(!poi) return;
+    if(poi.taragaonTicketCounter) openTaragaonTicketCounter(poi);
+    else openSiteModal(poi);
   });
 
   // ============ Temporary "spawn" POIs (themed ambient pop-ups) ============
