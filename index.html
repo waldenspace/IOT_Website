@@ -1214,7 +1214,9 @@
   const CHANGELOG = [
     { date: "26 September 2026", items: [
       "\"Nepal, Now and Then\" is now 5 separate pop-ups instead of one that cycled between 5 spots — so more than one can turn up at a time, and finding any given one doesn't depend on a shared slot landing on it.",
-      "All 5 \"Nepal, Now and Then\" image pairs now line up properly — they're hand-matched to the same size now, so the comparison slider works correctly for every one of them."
+      "All 5 \"Nepal, Now and Then\" image pairs now line up properly — they're hand-matched to the same size now, so the comparison slider works correctly for every one of them.",
+      "The \"Then\" satellite images are now dated (1967, declassified US spy-satellite photographs) right on the pop-up.",
+      "Moved two of the \"Nepal, Now and Then\" spots (Lakeside Pokhara and Pokhara Valley) into the Kathmandu Valley map area, where they'll actually turn up -- they were placed in Pokhara before, far outside where most people look."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -1508,7 +1510,7 @@
   // images, straight 100%/100% overlay, slider on top.
   const NNT_BASE = "https://res.cloudinary.com/iqldiwsm/image/upload/";
   const NOW_THEN_PAIRS = [
-    { id:1, lat:28.2131, lng:83.9589,
+    { id:1, lat:27.6850, lng:85.4100,
       title:"Lakeside, Pokhara", caption:"Phewa Lake's shoreline, decades apart — the small forested patch above the town is one of the few things that hasn't moved.",
       a:{ src:NNT_BASE+"1A_neo.001.jpg" }, b:{ src:NNT_BASE+"1B_Neo.001.jpg" } },
     { id:2, lat:27.6550, lng:85.3400,
@@ -1517,7 +1519,7 @@
     { id:3, lat:27.7010, lng:85.3670,
       title:"Tribhuvan Airport, Kathmandu", caption:"From farmland at the edge of the city to the middle of it.",
       a:{ src:NNT_BASE+"3A_neo.001.jpeg.001.jpg" }, b:{ src:NNT_BASE+"3B_neo.001.jpeg.001.jpg" } },
-    { id:4, lat:28.2350, lng:83.9750,
+    { id:4, lat:27.6650, lng:85.2600,
       title:"Pokhara Valley", caption:"The valley around Pokhara's airport, decades apart.",
       a:{ src:NNT_BASE+"4A_neo.001.jpg" }, b:{ src:NNT_BASE+"4B_neo.001.jpg" } },
     { id:5, lat:27.7160, lng:85.3140,
@@ -1527,7 +1529,7 @@
   function openNowThenViewer(pair){
     document.getElementById('nnt-title').textContent = pair.title;
     document.getElementById('nnt-caption').textContent = pair.caption;
-    document.getElementById('nnt-source').innerHTML = 'Source: <a href="https://nepalitimes.com/kathmandu-from-space-60-years-apart" target="_blank" rel="noopener">nepalitimes.com — "Kathmandu from space, 60 years apart"</a>';
+    document.getElementById('nnt-source').innerHTML = '"Then" is a declassified US Corona spy-satellite photograph from 5 February 1967; "Now" is recent satellite imagery.<br>Source: <a href="https://nepalitimes.com/kathmandu-from-space-60-years-apart" target="_blank" rel="noopener">nepalitimes.com — "Kathmandu from space, 60 years apart"</a>';
     const stage = document.getElementById('nnt-stage');
     stage.innerHTML = '';
     stage.className = 'nnt-align-stage';
@@ -1538,7 +1540,7 @@
     const overlayImg = new Image(); overlayImg.src = pair.b.src; overlayImg.className = 'nnt-img-b'; overlayImg.alt = pair.title;
     overlayImg.style.width = '100%'; overlayImg.style.height = '100%'; overlayImg.style.left = '0'; overlayImg.style.top = '0';
     wrapOverlay.appendChild(overlayImg);
-    const tagThen = document.createElement('span'); tagThen.className = 'nnt-tag then'; tagThen.textContent = 'Then';
+    const tagThen = document.createElement('span'); tagThen.className = 'nnt-tag then'; tagThen.textContent = 'Then (1967)';
     const tagNow = document.createElement('span'); tagNow.className = 'nnt-tag now'; tagNow.textContent = 'Now';
     const handle = document.createElement('div'); handle.className = 'nnt-slider-handle'; handle.style.left = '50%';
     stage.append(baseImg, wrapOverlay, tagThen, tagNow, handle);
