@@ -1220,7 +1220,8 @@
       "Corrected all 5 \"Nepal, Now and Then\" locations and titles -- every pair is actually a Kathmandu Valley view, not Pokhara, and one wasn't Narayanhiti Palace as first labelled.",
       "Added real captions to all 5 \"Nepal, Now and Then\" pairs, with what's actually changed in each -- Balaju's industrial area, Budhanilkantha's paddy fields, Kathmandu airport's then-new runway, the valley's urbanisation, and Baneshwor before Nepal's parliament complex was built there.",
       "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Rojan films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
-      "Added a temporary pop-up for chanting at a wayside pati."
+      "Added a temporary pop-up for chanting at a wayside pati.",
+      "KTM Viewpoints now has its first real video; more are on the way, one at a time."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -4339,21 +4340,38 @@
     tooltipText: "University Campus",
     poi: { name: "University Campus", blurb: "A moment on a university campus in the valley. Footage not yet matched here.", media:{ kind:"image", id:"university-campus-placeholder", verified:false } }
   });
-  // "KTM Viewpoints" -- cycles between three real elevated viewpoints
-  // already used elsewhere on the site (Champadevi ridge, the hillside
-  // above the Mingyur Rinpoche interview, Shivapuri) -- same DEM-verified
-  // coordinates as the Timelapse Clouds hotspots, reused here rather than
-  // guessing new ones. No video yet.
-  createFadeCycleMarker({
-    spots: [
-      { lat: 27.64346, lng: 85.25124 },
-      { lat: 27.72913, lng: 85.26444 },
-      { lat: 27.80183, lng: 85.39942 }
-    ],
-    visibleS: 60, fadeS: 1.5, waitS: 35,
-    iconHtml: emojiBadge('🏔️'),
-    tooltipText: "KTM Viewpoints",
-    poi: { name: "KTM Viewpoints", blurb: "A view over the Kathmandu Valley from one of its high points. Footage not yet matched here.", media:{ kind:"image", id:"ktm-viewpoints-placeholder", verified:false } }
+  // "KTM Viewpoints" -- real elevated viewpoints over the valley. Used to
+  // be one marker cycling between 3 placeholder spots sharing one generic
+  // blurb; per the person (25.09.), individual real videos are starting
+  // to come in one at a time ("there will be more to come"), so this is
+  // now a small array (same pattern as NOW_THEN_PAIRS) -- one independent
+  // pop-up per viewpoint, each with its own name/blurb/media, so a future
+  // video just means filling in one entry rather than restructuring
+  // anything. First 3 spots are the original DEM-verified coordinates
+  // (Champadevi ridge, the hillside above the Mingyur Rinpoche interview,
+  // Shivapuri), still placeholder; the 4th is the first real one.
+  const KTM_VIEWPOINTS = [
+    { lat: 27.64346, lng: 85.25124, name: "Champadevi Ridge Viewpoint",
+      blurb: "A view over the Kathmandu Valley from the Champadevi ridge. Footage not yet matched here.",
+      media:{ kind:"image", id:"ktm-viewpoint-champadevi-placeholder", verified:false } },
+    { lat: 27.72913, lng: 85.26444, name: "Hillside Viewpoint, Rigon Tashi Choeling",
+      blurb: "A view over the Kathmandu Valley from the hillside above Rigon Tashi Choeling. Footage not yet matched here.",
+      media:{ kind:"image", id:"ktm-viewpoint-hillside-placeholder", verified:false } },
+    { lat: 27.80183, lng: 85.39942, name: "Shivapuri Viewpoint",
+      blurb: "A view over the Kathmandu Valley from Shivapuri. Footage not yet matched here.",
+      media:{ kind:"image", id:"ktm-viewpoint-shivapuri-placeholder", verified:false } },
+    { lat: 27.677158, lng: 85.279746, name: "Kathmandu Valley Viewpoint",
+      blurb: "A view over the Kathmandu Valley from one of its high points.",
+      media:{ kind:"vimeo", id:"1230534332", h:"fd06084147", verified:true } }
+  ];
+  KTM_VIEWPOINTS.forEach(vp => {
+    createFadeCycleMarker({
+      spots: [{ lat: vp.lat, lng: vp.lng }],
+      visibleS: 60, fadeS: 1.5, waitS: 35,
+      iconHtml: emojiBadge('🏔️'),
+      tooltipText: vp.name,
+      poi: { name: vp.name, blurb: vp.blurb, media: vp.media }
+    });
   });
 
   // "Yeshi Tsogyal Cave" -- short climb up to the cave, real footage (24.09.).
