@@ -1216,7 +1216,8 @@
       "\"Nepal, Now and Then\" is now 5 separate pop-ups instead of one that cycled between 5 spots — so more than one can turn up at a time, and finding any given one doesn't depend on a shared slot landing on it.",
       "All 5 \"Nepal, Now and Then\" image pairs now line up properly — they're hand-matched to the same size now, so the comparison slider works correctly for every one of them.",
       "The \"Then\" satellite images are now dated (1967, declassified US spy-satellite photographs) right on the pop-up.",
-      "Moved two of the \"Nepal, Now and Then\" spots (Lakeside Pokhara and Pokhara Valley) into the Kathmandu Valley map area, where they'll actually turn up -- they were placed in Pokhara before, far outside where most people look."
+      "Moved two of the \"Nepal, Now and Then\" spots (Lakeside Pokhara and Pokhara Valley) into the Kathmandu Valley map area, where they'll actually turn up -- they were placed in Pokhara before, far outside where most people look.",
+      "Corrected all 5 \"Nepal, Now and Then\" locations and titles -- every pair is actually a Kathmandu Valley view, not Pokhara, and one wasn't Narayanhiti Palace as first labelled."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -1510,20 +1511,20 @@
   // images, straight 100%/100% overlay, slider on top.
   const NNT_BASE = "https://res.cloudinary.com/iqldiwsm/image/upload/";
   const NOW_THEN_PAIRS = [
-    { id:1, lat:27.6850, lng:85.4100,
-      title:"Lakeside, Pokhara", caption:"Phewa Lake's shoreline, decades apart — the small forested patch above the town is one of the few things that hasn't moved.",
+    { id:1, lat:27.735257, lng:85.305861,
+      title:"Northern Kathmandu", caption:"Farmland at the northern edge of the city, decades apart.",
       a:{ src:NNT_BASE+"1A_neo.001.jpg" }, b:{ src:NNT_BASE+"1B_Neo.001.jpg" } },
-    { id:2, lat:27.6550, lng:85.3400,
+    { id:2, lat:27.776406, lng:85.362049,
       title:"Valley hillside", caption:"Terraced hill farmland gives way to dense settlement.",
       a:{ src:NNT_BASE+"2A_neo.002.jpg" }, b:{ src:NNT_BASE+"2B_neo.002.jpg" } },
     { id:3, lat:27.7010, lng:85.3670,
       title:"Tribhuvan Airport, Kathmandu", caption:"From farmland at the edge of the city to the middle of it.",
       a:{ src:NNT_BASE+"3A_neo.001.jpeg.001.jpg" }, b:{ src:NNT_BASE+"3B_neo.001.jpeg.001.jpg" } },
-    { id:4, lat:27.6650, lng:85.2600,
-      title:"Pokhara Valley", caption:"The valley around Pokhara's airport, decades apart.",
+    { id:4, lat:27.714679, lng:85.326554,
+      title:"Kathmandu Valley", caption:"A wide view across the whole Kathmandu Valley, decades apart.",
       a:{ src:NNT_BASE+"4A_neo.001.jpg" }, b:{ src:NNT_BASE+"4B_neo.001.jpg" } },
-    { id:5, lat:27.7160, lng:85.3140,
-      title:"Narayanhiti Palace, Kathmandu", caption:"The palace grounds, still recognisable under six more decades of the city.",
+    { id:5, lat:27.678910, lng:85.332464,
+      title:"Lalitpur, Kathmandu Valley", caption:"The Lalitpur side of the valley, decades apart.",
       a:{ src:NNT_BASE+"5A_neo.001.jpeg.001.jpg" }, b:{ src:NNT_BASE+"5B_neo.001.jpeg.001.jpg" } }
   ];
   function openNowThenViewer(pair){
