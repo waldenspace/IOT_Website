@@ -1222,7 +1222,8 @@
       "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Rojan films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
       "Added a temporary pop-up for chanting at a wayside pati.",
       "KTM Viewpoints now has its first real video; more are on the way, one at a time.",
-      "Added a slow rowboat crossing Phewa Lake, between the dock and Tal Barahi Mandir."
+      "Added a slow rowboat crossing Phewa Lake, between the dock and Tal Barahi Mandir.",
+      "New rare pop-up: \"Blessing Treasure Hunt (Andrea)\", 7 spots across the Kathmandu Valley and Pokhara, each with a short traditional blessing."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -4382,6 +4383,58 @@
     iconHtml: emojiBadge('🕳️'),
     tooltipText: "Yeshi Tsogyal Cave",
     poi: { name: "Yeshi Tsogyal Cave", blurb: "A short climb up to Yeshi Tsogyal Cave — closed on the day of filming, so this is as far as we got.", media:{ kind:"vimeo", id:"1229863656", h:"103968f912", verified:true } }
+  });
+
+  // ---- "Blessing Treasure Hunt (Andrea)" -- 7 small temporary pop-ups
+  // (26.09.), working title as given. 5 in the Kathmandu Valley, 2 in
+  // Pokhara, spread out rather than clustered with existing POI. Each
+  // carries its own short traditional-style blessing (paraphrased in my
+  // own words, not a verbatim quote from any single copyrighted
+  // translation -- these draw on well-known, centuries-old Buddhist
+  // blessing forms: loving-kindness/metta, the Four Immeasurables, a
+  // long-life aspiration, Chenrezig's mantra, a traveller's blessing, and
+  // Tashi Delek) plus a short "why this blessing" line. Deliberately
+  // rarer than the other pop-ups (visibleS/waitS below give a much lower
+  // duty cycle) so finding one feels like the "treasure hunt" of the
+  // name. Couldn't resolve the requested placeholder screenshot
+  // ("Stills_24_Impermanence_Interdependence_Emptiness_explained_
+  // 01_20_27_01") to a real Cloudinary URL by guessing the public_id --
+  // same issue as the "Now and then Matched" folder before, where the
+  // exact filename had to come from a screenshot of the Media Library
+  // rather than being guessable. Using the same plain placeholder-image
+  // pattern the rest of the site already uses meanwhile.
+  const BLESSING_TREASURE_HUNT = [
+    { lat: 27.7050, lng: 85.3050,
+      blessing: "May you be happy. May you be safe. May you be free from suffering.",
+      note: "A loving-kindness (metta) blessing, offered outward to whoever finds it." },
+    { lat: 27.6720, lng: 85.4280,
+      blessing: "May all beings have happiness and its causes. May all be free from suffering and its causes.",
+      note: "The opening lines of the Four Immeasurables, chanted before many Buddhist practices in the valley." },
+    { lat: 27.6480, lng: 85.2850,
+      blessing: "May you live long, free of illness, meeting good fortune at every turn.",
+      note: "A long-life blessing, the kind offered to elders and travellers alike." },
+    { lat: 27.7550, lng: 85.3450,
+      blessing: "Om Mani Padme Hum -- the jewel in the lotus, turning the heart toward compassion.",
+      note: "Chenrezig's mantra, carved into mani stones and spun in prayer wheels across the valley." },
+    { lat: 27.7020, lng: 85.3600,
+      blessing: "May your path be safe, your load be light, and your journey bring you home.",
+      note: "A traveller's blessing, for anyone setting out on a road." },
+    { lat: 28.2100, lng: 83.9700,
+      blessing: "Tashi Delek -- may auspiciousness and good fortune arise.",
+      note: "The everyday Tibetan greeting, itself a small blessing." },
+    { lat: 28.2350, lng: 83.9600,
+      blessing: "May all never be separated from the happiness that is free of suffering.",
+      note: "The third of the Four Immeasurables -- a wish for lasting, not fleeting, joy." }
+  ];
+  BLESSING_TREASURE_HUNT.forEach((b, i) => {
+    createFadeCycleMarker({
+      spots: [{ lat: b.lat, lng: b.lng }],
+      visibleS: 40, fadeS: 1.5, waitS: 160, // much rarer than the other pop-ups (95s/63% duty) -- ~20% duty, fits the "treasure hunt" of it
+      iconHtml: emojiBadge('🪷'),
+      tooltipText: "Blessing Treasure Hunt (Andrea)",
+      poi: { name: "Blessing Treasure Hunt (Andrea)", blurb: b.blessing + " — " + b.note,
+        media:{ kind:"image", id:"blessing-treasure-hunt-placeholder-" + (i+1), verified:false } }
+    });
   });
 
   // "Pati Chanting" -- fixed spot, real video (25.09.). NOT the same as
