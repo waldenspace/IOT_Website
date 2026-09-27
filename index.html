@@ -1221,7 +1221,8 @@
       "Added real captions to all 5 \"Nepal, Now and Then\" pairs, with what's actually changed in each -- Balaju's industrial area, Budhanilkantha's paddy fields, Kathmandu airport's then-new runway, the valley's urbanisation, and Baneshwor before Nepal's parliament complex was built there.",
       "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Rojan films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
       "Added a temporary pop-up for chanting at a wayside pati.",
-      "KTM Viewpoints now has its first real video; more are on the way, one at a time."
+      "KTM Viewpoints now has its first real video; more are on the way, one at a time.",
+      "Added a slow rowboat crossing Phewa Lake, between the dock and Tal Barahi Mandir."
     ]},
     { date: "24 September 2026", items: [
       "The Start / Map / About menu now actually works while you're in the 3D Relief view — it used to look unresponsive because the page's scroll was locked for the 3D view.",
@@ -4454,6 +4455,32 @@
     openSiteModal(Object.assign({}, pharpingCarPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
   });
 
+  // ---- Dynamic: rowboat shuttling across Phewa Lake, Pokhara (26.09.) --
+  // straight open-water crossing (no road graph -- there's no road on a
+  // lake), same cumulativeDistances()/pointAtDistance() + ping-pong
+  // direction technique as the Pharping<->Dalsingpakha car, just with a
+  // plain 2-point path instead of a real road. Deliberately very slow
+  // (a rowboat, not a motorboat) and the same small 26px boat icon/badge
+  // as the existing Markhu boat marker, per the instruction that these
+  // moving icons should read as one visual family. Video not filmed yet.
+  const ROWBOAT_PATH = [[28.2080577,83.955363],[28.20767133611051,83.95357130328463]]; // Phewa Taal Boating dock -> Tal Barahi Mandir landing
+  const ROWBOAT_CUM = cumulativeDistances(ROWBOAT_PATH);
+  const ROWBOAT_TOTAL_M = ROWBOAT_CUM[ROWBOAT_CUM.length - 1];
+  let rowboatProgressM = 0, rowboatDir = 1;
+  const ROWBOAT_ONE_WAY_S = 240; // ~180m crossing in 4 minutes -- a slow row, not a motorboat
+  const rowboatPoi = {
+    name: "Rowboat, Phewa Lake",
+    blurb: "A slow rowboat crossing between the lakeside dock and Tal Barahi Mandir, on its island in the middle of Phewa Lake. Footage not yet filmed.",
+    media:{ kind:"image", id:"phewa-rowboat-placeholder", verified:false }
+  };
+  const rowboatMarker = L.marker([ROWBOAT_PATH[0][0], ROWBOAT_PATH[0][1]], {
+    icon: L.divIcon({ className:'boat-icon', html: '<div style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));"><svg viewBox="0 0 28 28" width="26" height="26"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#5FA8D3" stroke-width="1.5"/><path d="M6,17 L22,17 L20,21 L8,21 Z" fill="#3A1206"/><rect x="12.3" y="9" width="1.4" height="8" fill="#3A1206"/><path d="M13.7,9 L19,13 L13.7,14.5 Z" fill="#5FA8D3"/></svg></div>', iconSize:[26,26], iconAnchor:[13,13] })
+  }).bindTooltip("Rowboat, Phewa Lake", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
+  rowboatMarker.on('click', function(){
+    const ll = this.getLatLng();
+    openSiteModal(Object.assign({}, rowboatPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
+  });
+
   // ---- Temporary: scooter driving from the crossing west of Taragaon
   // Museum to the museum itself (22.09., second rebuild after feedback):
   // leg 1 (crossing -> turn-in) now follows the actual main road instead
@@ -4611,6 +4638,11 @@
     if(pharpingCarProgressM >= PHARPING_DALSINGPAKHA_TOTAL_M){ pharpingCarProgressM = PHARPING_DALSINGPAKHA_TOTAL_M; pharpingCarDir = -1; }
     else if(pharpingCarProgressM <= 0){ pharpingCarProgressM = 0; pharpingCarDir = 1; }
     const pharpingCarPos = pointAtDistance(PHARPING_DALSINGPAKHA_ROUTE, PHARPING_DALSINGPAKHA_CUM, pharpingCarProgressM);
+    rowboatProgressM += (ROWBOAT_TOTAL_M / ROWBOAT_ONE_WAY_S) * rowboatDir * dtSec;
+    if(rowboatProgressM >= ROWBOAT_TOTAL_M){ rowboatProgressM = ROWBOAT_TOTAL_M; rowboatDir = -1; }
+    else if(rowboatProgressM <= 0){ rowboatProgressM = 0; rowboatDir = 1; }
+    const rowboatPos = pointAtDistance(ROWBOAT_PATH, ROWBOAT_CUM, rowboatProgressM);
+    rowboatMarker.setLatLng([rowboatPos.lat, rowboatPos.lng]);
     pharpingCarMarker.setLatLng([pharpingCarPos.lat, pharpingCarPos.lng]);
     fadeCycleMarkers.forEach(m => m.tick(dtSec));
     rojanPhotosT += dtSec;
