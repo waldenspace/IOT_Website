@@ -588,6 +588,31 @@
   #sm-readmore-inner p:last-child{margin-bottom:0;}
   #sm-readmore-inner a{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold);}
   #sm-readmore-inner a:hover{color:var(--parchment);}
+  /* call-to-action button under the blurb (28.09.), e.g. the flood POI's donate button */
+  #sm-cta{margin:2px 0 14px;display:flex;gap:10px;flex-wrap:wrap;}
+  #sm-cta:empty{display:none;}
+  .sm-cta-btn{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#2a1810;background:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:9px 18px;cursor:pointer;transition:background .2s ease,color .2s ease;}
+  .sm-cta-btn:hover{background:transparent;color:var(--gold);}
+  /* "how to help" overview (28.09.) */
+  #help-modal{position:fixed;inset:0;z-index:1100;background:rgba(10,4,2,0.88);display:flex;align-items:center;justify-content:center;padding:4vh 4vw;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease,visibility 0s linear .35s;}
+  #help-modal.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .35s ease,visibility 0s linear 0s;}
+  #help-card{position:relative;background:var(--panel-bg);border:1px solid var(--border-c);border-radius:10px;max-width:860px;width:100%;max-height:92vh;overflow-y:auto;padding:30px 30px 26px;color:var(--parchment);font-family:'Cormorant Garamond',serif;transform:scale(.94);opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .35s ease;}
+  #help-modal.open #help-card{transform:scale(1);opacity:1;}
+  #help-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--ochre);font-size:20px;cursor:pointer;line-height:1;}
+  #help-close:hover{color:var(--gold);}
+  #help-card h2{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-size:17px;margin:0 0 4px;}
+  #help-card .help-sub{color:var(--ochre);font-style:italic;font-size:14px;margin-bottom:6px;}
+  #help-card h3{font-family:'Cinzel',serif;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre);margin:22px 0 8px;border-bottom:1px solid rgba(201,150,42,.3);padding-bottom:5px;}
+  #help-card .help-why{margin:0;display:grid;grid-template-columns:auto 1fr;column-gap:18px;row-gap:9px;font-size:15.5px;line-height:1.42;}
+  #help-card .help-why dt{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);padding-top:3px;}
+  #help-card .help-why dd{margin:0;}
+  #help-card .help-org{padding:7px 0;border-bottom:1px dotted rgba(201,150,42,.18);font-size:15px;line-height:1.4;}
+  #help-card .help-org a{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold);}
+  #help-card .help-org a:hover{color:var(--parchment);}
+  #help-card .help-tag{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ochre);border:1px solid rgba(201,150,42,.4);border-radius:3px;padding:1px 5px;margin-left:8px;white-space:nowrap;}
+  #help-card .help-note{font-size:13px;opacity:.78;font-style:italic;margin-top:12px;line-height:1.45;}
+  #help-card .help-more{font-size:14px;line-height:1.7;}
+  #help-card .help-more a{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold);margin-right:4px;}
   #sm-sources{margin-top:12px;font-size:13px;color:var(--ochre);}
   #sm-sources a{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold);}
   #sm-sources a:hover{color:var(--parchment);}
@@ -945,6 +970,14 @@
     <div class="lg-row" data-layer="archive"><span class="lg-dot archive"></span>Repatriated / Missing Artworks</div>
     <div class="lg-row" data-layer="scholarly"><span class="lg-dot" style="background:none;border:1px dashed var(--gold);"></span>Scholarly Field Key (Fig. 2)</div>
     <div class="lg-row" data-layer="fieldrec" title="Temporary pop-up markers around the valley, incl. Tascam field recordings (117 real recordings, 7 locations)"><span class="lg-dot" style="background:#3A1206;display:inline-flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="9" height="9" style="display:block;"><path d="M12 3a7 7 0 0 0-7 7v5.5a2 2 0 0 0 2 2h1a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H6.2A5.8 5.8 0 0 1 17.8 10.5H16a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1a2 2 0 0 0 2-2V10a7 7 0 0 0-7-7z" fill="#F2E6C9"/></svg></span>Field Recordings (temporary pop-ups)</div>
+    <div class="lg-row off" data-layer="nowthen" title="Show every Now and Then spot permanently: the five 1967-vs-today comparisons and Roshan Mishra's 1970s photographs. Off = one at a time, rotating."><span class="lg-dot" style="background:#F2E6C9;border:1px solid var(--gold);"></span>Nepal, Now and Then</div>
+  </div>
+
+  <div id="help-modal">
+    <div id="help-card">
+      <button id="help-close">✕</button>
+      <div id="help-content"></div>
+    </div>
   </div>
 
   <div id="featured-widget">
@@ -1050,13 +1083,13 @@
       <div id="taragaon-tickets">
         <div class="ap-ticket" data-choice="portrait">
           <img class="ap-thumb" src="https://i.vimeocdn.com/video/2204290597-79192981712355c80977aca0354e6500c342d6ebf0226dab4d274696f8691e77-d_295x166?region=us" alt="">
-          <div class="ap-title">A Day with Rojan</div>
-          <div class="ap-desc">A portrait: a day alongside Roshan "Rojan" Mishra, director of the Taragaon Museum.</div>
+          <div class="ap-title">A Day with Roshan Mishra</div>
+          <div class="ap-desc">A portrait: a day alongside Roshan Mishra, director of the Taragaon Museum.</div>
         </div>
         <div class="ap-ticket" data-choice="restitution">
           <img class="ap-thumb" src="https://i.vimeocdn.com/video/2204293320-0aad4ed1b19a1c76878d61a151b12afccda6d45db858094f01df6718e5cb682d-d_295x166?region=us" alt="">
-          <div class="ap-title">Museums, Art Theft &amp; Restitution</div>
-          <div class="ap-desc">Rojan on museums, art theft, and restitution — the questions this atlas keeps returning to.</div>
+          <div class="ap-title">Roshan Mishra on Museums, Art Theft &amp; Restitution</div>
+          <div class="ap-desc">Roshan Mishra on museums, art theft, and restitution — the questions this atlas keeps returning to.</div>
         </div>
       </div>
     </div>
@@ -1096,6 +1129,7 @@
         <h2 id="sm-title"></h2>
         <div id="sm-title-np"></div>
         <p id="sm-body"></p>
+        <div id="sm-cta"></div>
         <div id="sm-readmore-wrap"></div>
         <div id="sm-related"></div>
         <div id="sm-actions"></div>
@@ -1227,6 +1261,13 @@
   // entry first) whenever a round of changes goes live -- keep entries
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
+    { date: "28 September 2026", items: [
+      "The Rasuwa flood marker now has a \"Donate & how to help\" button right in the first pop-up, opening an overview of why help is still needed and which organisations to give to, including Nepali ones (preliminary list, not vetted).",
+      "New marker for the glacier collapse that set off the flood.",
+      "Layers: new \"Nepal, Now and Then\" row. Off, exactly one Now and Then spot is always on the map, rotating; on, all of them stay visible until you switch it off. Roshan Mishra's 1970s-photographs video is part of the group now.",
+      "Animals, Fire, Shops and the other ambient moments now appear at the same relaxed rhythm as the other pop-ups; Earthquake moments can also turn up in Bhaktapur; Street Faces are paused.",
+      "The Taragaon films now carry Roshan Mishra's full name.",
+    ]},
     { date: "27 September 2026", items: [
       "Don't Miss now shows the stories in random order, with back and forward buttons to browse them; the thumbnails that were missing (Kutumba, Chilancho, Weltmuseum, Tibet House, Swostie, Yampi Vihara, the bird, Tihar, Taragaon) are fixed.",
       "The Layers panel and Don't Miss moved down so they no longer sit on top of the map-mode buttons; Don't Miss follows the Layers panel automatically.",
@@ -1243,7 +1284,7 @@
       "Moved two of the \"Nepal, Now and Then\" spots (Lakeside Pokhara and Pokhara Valley) into the Kathmandu Valley map area, where they'll actually turn up -- they were placed in Pokhara before, far outside where most people look.",
       "Corrected all 5 \"Nepal, Now and Then\" locations and titles -- every pair is actually a Kathmandu Valley view, not Pokhara, and one wasn't Narayanhiti Palace as first labelled.",
       "Added real captions to all 5 \"Nepal, Now and Then\" pairs, with what's actually changed in each -- Balaju's industrial area, Budhanilkantha's paddy fields, Kathmandu airport's then-new runway, the valley's urbanisation, and Baneshwor before Nepal's parliament complex was built there.",
-      "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Rojan films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
+      "The \"Don't Miss\" widget now cycles through 13 stories instead of 6 -- added the Taragaon/Roshan Mishra films, the Tihar Festival Parade, the Weltmuseum and Tibet House interviews, Swostie's interview, Yampi Vihara, and the bird circling the Guru Rinpoche statue.",
       "Added a temporary pop-up for chanting at a wayside pati.",
       "KTM Viewpoints now has its first real video; more are on the way, one at a time.",
       "Added a slow rowboat crossing Phewa Lake, between the dock and Tal Barahi Mandir.",
@@ -1277,8 +1318,8 @@
       "The map-mode menu (Paubhā / Valley Today / 3D Relief) is now visible on the landing page too.",
       "Added this changelog, and a tool on the map for sketching your own points of interest.",
       "Boudhanath now has its real film instead of a placeholder.",
-      "Taragaon Museum now offers a choice of two films: a portrait of Rojan, and Rojan on museums, art theft and restitution.",
-      "Added a temporary spot in Patan and Bhaktapur where Rojan shows 1970s photographs of both cities.",
+      "Taragaon Museum now offers a choice of two films: a portrait of Roshan Mishra, and Roshan Mishra on museums, art theft and restitution.",
+      "Added a temporary spot in Patan and Bhaktapur where Roshan Mishra shows 1970s photographs of both cities.",
       "Added a festival calendar (bottom left, next to the weather) marking Buddhist, Newar, Hindu and Tibetan dates for 2026."
     ]},
     { date: "23 September 2026 (later)", items: [
@@ -2693,15 +2734,15 @@
         const choice = t.dataset.choice;
         if(choice === 'portrait'){
           openSiteModal(Object.assign({}, poi, {
-            name: "A Day with Rojan at Taragaon",
-            blurb: "A portrait: a day alongside Roshan \"Rojan\" Mishra, director of the Taragaon Museum.",
+            name: "A Day with Roshan Mishra at Taragaon",
+            blurb: "A portrait: a day alongside Roshan Mishra, director of the Taragaon Museum.",
             media: { kind:"vimeo", id:"1229593719", h:"aa609683f2", verified:true },
             skipFlyToward:true
           }));
         } else if(choice === 'restitution'){
           openSiteModal(Object.assign({}, poi, {
-            name: "Rojan on Museums, Art Theft & Restitution",
-            blurb: "Rojan on museums, art theft, and restitution — the questions this atlas keeps returning to.",
+            name: "Roshan Mishra on Museums, Art Theft & Restitution",
+            blurb: "Roshan Mishra on museums, art theft, and restitution — the questions this atlas keeps returning to.",
             media: { kind:"vimeo", id:"1229595778", h:"7af8abd26d", verified:true },
             skipFlyToward:true
           }));
@@ -2785,6 +2826,8 @@
     smTitle.textContent = poi.name;
     document.getElementById('sm-title-np').textContent = poi.nameNp || '';
     smBody.textContent = poi.blurb;
+    const smCta = document.getElementById('sm-cta'); smCta.innerHTML = '';
+    (poi.actions || []).forEach(a => { const b = document.createElement('button'); b.className = 'sm-cta-btn'; b.textContent = a.label; b.addEventListener('click', a.onClick); smCta.appendChild(b); });
     smEyebrow.textContent = poi.media.kind === 'info' ? 'Location · documentation' : (poi.media.verified ? 'Location · film footage' : 'Location · placeholder image');
 
     // ---- Phase 4: enriched "read more" panel, sources, related POIs ----
@@ -2890,7 +2933,7 @@
     }
     sitemodal.classList.add('open');
   }
-  function closeSiteModal(){
+  function closeSiteModal(){ var _c = document.getElementById('sm-cta'); if(_c) _c.innerHTML = '';
     flightBindGen++; // stop following any in-progress video-bound flight
     sitemodal.classList.remove('open');
     if(smPlayer) fadeVimeoVolume(smPlayer, 1, 0, 350);
@@ -3306,6 +3349,7 @@
         }
         return;
       }
+      if(key === 'nowthen'){ setNowThenPermanent(!nowThenPermanent); row.classList.toggle('off', !nowThenPermanent); return; }
       const layer = layerMap[key];
       if(mapGeo.hasLayer(layer)){ mapGeo.removeLayer(layer); row.classList.add('off'); }
       else { layer.addTo(mapGeo); row.classList.remove('off'); }
@@ -4300,8 +4344,8 @@
   let rojanPhotosVisible = true;
   let rojanPhotosSpot = ROJAN_PHOTOS_SPOTS[Math.random() < 0.5 ? 0 : 1];
   const rojanPhotosPoi = {
-    name: "Rojan: Patan & Bhaktapur in the 1970s",
-    blurb: "Rojan leafs through photographs of Patan and Bhaktapur from the 1970s.",
+    name: "Roshan Mishra: Patan & Bhaktapur in the 1970s",
+    blurb: "Roshan Mishra leafs through photographs of Patan and Bhaktapur from the 1970s.",
     media: { kind:"vimeo", id:"1229593719", h:"aa609683f2", verified:true },
     videoStart: 184, videoStop: 273
   };
@@ -4314,14 +4358,8 @@
   function emojiBadge(emoji){
     return '<div style="width:26px;height:26px;border-radius:50%;background:#F2E6C9;border:1.5px solid #C9962A;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,0.45);">'+emoji+'</div>';
   }
-  const rojanPhotosMarker = L.marker([rojanPhotosSpot.lat, rojanPhotosSpot.lng], {
-    icon: L.divIcon({ className:'rojan-photos-icon', html: emojiBadge('📷'), iconSize:[26,26], iconAnchor:[13,13] })
-  }).bindTooltip("Rojan: Patan & Bhaktapur, 1970s", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
-  rojanPhotosMarker.on('click', function(){
-    if(!rojanPhotosVisible) return;
-    const ll = this.getLatLng();
-    openSiteModal(Object.assign({}, rojanPhotosPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
-  });
+  // (28.09.) The Roshan Mishra 1970s-photos marker used to live here as its own
+  // cycle; it is now one of the six items of the Nepal, Now and Then group below.
 
   // ---- Reusable fade-cycle marker factory (23.09.): generalises the
   // Rojan-photos pattern above (appear at one of N spots, stay visible,
@@ -4339,32 +4377,40 @@
   function createFadeCycleMarker(cfg){
     const cycleS = cfg.visibleS + cfg.waitS;
     let t = Math.random() * cycleS; // stagger multiple instances so they don't all pulse in sync
-    let visible = true;
+    let visible = true, enabled = true;
     const pickSpotIdx = () => cfg.pickSpot ? cfg.pickSpot() : Math.floor(Math.random() * cfg.spots.length);
     let spotIdx = pickSpotIdx();
     let spot = cfg.spots[spotIdx];
-    const marker = L.marker([spot.lat, spot.lng], {
-      icon: L.divIcon({ className: cfg.iconClass || 'rojan-photos-icon', html: cfg.iconHtml, iconSize:[26,26], iconAnchor:[13,13] })
-    }).bindTooltip(cfg.tooltipText, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
+    const iconFor = i => L.divIcon({ className: cfg.iconClass || 'rojan-photos-icon', html: cfg.iconHtmlFor ? cfg.iconHtmlFor(i) : cfg.iconHtml, iconSize:[26,26], iconAnchor:[13,13] });
+    const tipFor = i => cfg.tooltipFor ? cfg.tooltipFor(i) : cfg.tooltipText;
+    const marker = L.marker([spot.lat, spot.lng], { icon: iconFor(spotIdx) })
+      .bindTooltip(tipFor(spotIdx), { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(movingPoiLayer);
     marker.on('click', function(){
-      if(!visible) return;
+      if(!visible || !enabled) return;
       if(cfg.onClick){ cfg.onClick(spotIdx); return; }
       const ll = this.getLatLng();
       openSiteModal(Object.assign({}, cfg.poi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
     });
+    function applySpot(){
+      spot = cfg.spots[spotIdx];
+      marker.setLatLng([spot.lat, spot.lng]);
+      if(cfg.iconHtmlFor) marker.setIcon(iconFor(spotIdx));
+      if(cfg.tooltipFor) marker.setTooltipContent(tipFor(spotIdx));
+    }
+    const fadeIn = cfg.fadeInS != null ? cfg.fadeInS : cfg.fadeS; // 28.09.: pop-ups now fade IN as well as out
     const entry = {
+      marker,
+      setEnabled(v){ enabled = !!v; if(!enabled){ visible = false; marker.setOpacity(0); } },
       tick(dtSec){
         t += dtSec;
-        if(t >= cycleS){
-          t -= cycleS;
-          spotIdx = pickSpotIdx();
-          spot = cfg.spots[spotIdx];
-          marker.setLatLng([spot.lat, spot.lng]);
-        }
+        if(t >= cycleS){ t -= cycleS; spotIdx = pickSpotIdx(); applySpot(); }
+        if(!enabled){ visible = false; marker.setOpacity(0); return; }
         if(t < cfg.visibleS){
           const fadeStartT = cfg.visibleS - cfg.fadeS;
-          if(t >= fadeStartT){ visible = false; marker.setOpacity(Math.max(0, 1 - (t - fadeStartT) / cfg.fadeS)); }
-          else { visible = true; marker.setOpacity(1); }
+          let op = t < fadeIn ? Math.max(0, t / fadeIn) : 1;
+          if(t >= fadeStartT){ visible = false; op = Math.min(op, Math.max(0, 1 - (t - fadeStartT) / cfg.fadeS)); }
+          else visible = true;
+          marker.setOpacity(op);
         } else {
           visible = false; marker.setOpacity(0);
         }
@@ -4504,14 +4550,22 @@
     poi: { name: "Karate", blurb: "A moment of sports practice in the valley. Footage not yet matched here.", media:{ kind:"image", id:"karate-placeholder", verified:false } }
   });
 
-  // Nepal, Now and Then (27.09.): back to ONE marker cycling through the 5
-  // spots -- five independent ones sometimes put three on the map at once,
-  // which was too much. What made the earlier single-marker version feel
-  // like "only 3 of 5 ever show up" was pure chance (spot picked at random
-  // every cycle); a shuffled bag fixes that: each of the five turns up
-  // once before any repeats, never the same twice in a row, one at a time.
-  // Deliberately on for longer than the other pop-ups (visible ~70s of
-  // every ~110s) since it's the one with real content to look at.
+  // ---- Nepal, Now and Then: one group of six, two modes (28.09.) --------
+  // The group = the five 1967-vs-today comparisons + Roshan Mishra's video
+  // excerpt with the 1970s photographs of Patan/Bhaktapur.
+  //  * Default: ONE marker rotates through the six (shuffled bag -- every one
+  //    once before any repeats, never the same twice in a row) and there is
+  //    always exactly one on the map: 70 s on, no pause, 0.8 s crossfade dip.
+  //  * Legend row "Nepal, Now and Then": switches the rotation off and shows
+  //    all of them permanently (Roshan's video at both cities), until the row
+  //    is switched off again.
+  const NNT_ITEMS = NOW_THEN_PAIRS.map(p => ({ kind:'pair', pair:p, lat:p.lat, lng:p.lng, icon:'🛰️', tip:'Nepal, Now and Then: ' + p.title }))
+    .concat([{ kind:'photos', lat:ROJAN_PHOTOS_SPOTS[0].lat, lng:ROJAN_PHOTOS_SPOTS[0].lng, icon:'📷', tip:'Nepal, Now and Then: Roshan Mishra, Patan & Bhaktapur, 1970s' }]);
+  const NNT_PHOTOS_IDX = NNT_ITEMS.length - 1;
+  function openNntItem(item, ll){
+    if(item.kind === 'pair') openNowThenViewer(item.pair);
+    else openSiteModal(Object.assign({}, rojanPhotosPoi, { lat: ll.lat, lng: ll.lng, skipFlyToward:true }));
+  }
   const nntBag = (function(n){
     let bag = [], last = -1;
     return function(){
@@ -4522,15 +4576,33 @@
       }
       last = bag.pop(); return last;
     };
-  })(NOW_THEN_PAIRS.length);
-  createFadeCycleMarker({
-    spots: NOW_THEN_PAIRS.map(p => ({ lat: p.lat, lng: p.lng })),
-    pickSpot: nntBag,
-    visibleS: 70, fadeS: 1.5, waitS: 40,
-    iconHtml: emojiBadge('🛰️'),
-    tooltipText: "Nepal, Now and Then",
-    onClick: (idx) => openNowThenViewer(NOW_THEN_PAIRS[idx])
+  })(NNT_ITEMS.length);
+  function nntPick(){
+    const i = nntBag();
+    if(i === NNT_PHOTOS_IDX){ const c = ROJAN_PHOTOS_SPOTS[Math.random() < 0.5 ? 0 : 1]; NNT_ITEMS[i].lat = c.lat; NNT_ITEMS[i].lng = c.lng; }
+    return i;
+  }
+  const nntCycle = createFadeCycleMarker({
+    spots: NNT_ITEMS, pickSpot: nntPick,
+    visibleS: 70, fadeS: 0.8, waitS: 0,
+    iconHtmlFor: i => emojiBadge(NNT_ITEMS[i].icon), tooltipFor: i => NNT_ITEMS[i].tip,
+    onClick: idx => openNntItem(NNT_ITEMS[idx], NNT_ITEMS[idx])
   });
+  const nowThenLayer = L.layerGroup();
+  function addNntPermanent(item, lat, lng){
+    const mk = L.marker([lat, lng], { icon: L.divIcon({ className:'rojan-photos-icon', html: emojiBadge(item.icon), iconSize:[26,26], iconAnchor:[13,13] }) })
+      .bindTooltip(item.tip, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 });
+    mk.on('click', () => openNntItem(item, { lat, lng }));
+    nowThenLayer.addLayer(mk);
+  }
+  NNT_ITEMS.forEach((it, i) => { if(i !== NNT_PHOTOS_IDX) addNntPermanent(it, it.lat, it.lng); });
+  ROJAN_PHOTOS_SPOTS.forEach(c => addNntPermanent(NNT_ITEMS[NNT_PHOTOS_IDX], c.lat, c.lng));
+  let nowThenPermanent = false;
+  function setNowThenPermanent(on){
+    nowThenPermanent = !!on;
+    if(nowThenPermanent) nowThenLayer.addTo(mapGeo); else mapGeo.removeLayer(nowThenLayer);
+    nntCycle.setEnabled(!nowThenPermanent);
+  }
 
   // ---- Dynamic: small car shuttling between Pharping and Dalsingpakha
   // Ghat on the real road (23.09.) -- same road-routing technique as the
@@ -4648,16 +4720,15 @@ const FLOOD_LABEL_AT = [28.1111,85.2788];
   const rasuwaFloodPoi = {
     name: "Rasuwa Flood, 26 August 2026",
     type: "landmark-minor", lat: 28.25943244938471, lng: 85.3672908075767,
-    blurb: `On the morning of 26 August 2026 a glacier collapse near Langtang Lirung sent a debris flood into the Gyirong border crossing within minutes and on down the Bhote Koshi and Trishuli, some 100 km through Rasuwa, Nuwakot and Dhading. More than 1,300 people are confirmed dead in Nepal and thousands are still missing (figures as of mid-September 2026).`,
+    blurb: `On the morning of 26 August 2026 a glacier collapse near Langtang Lirung sent a debris flood down the Bhote Koshi and Trishuli, about 100 km through Rasuwa, Nuwakot and Dhading. More than 1,300 people are confirmed dead in Nepal and thousands are still missing (mid-September figures). Survivors still need shelter before winter, clean water, medical and psychological care, and help rebuilding; aid groups ask for cash donations to established organisations.`,
     readMore: `At about 08:37 local time a mass of ice and rock broke away from the glacier just north of Langtang Lirung and fell roughly 1.2 km. Seismometers worldwide registered a magnitude-5.2 signal; USGS analysis showed that signal was the collapse itself, not a tectonic earthquake. Debris and meltwater became a fast debris flood that destroyed the Gyirong / Rasuwagadhi border crossing about seven minutes later, then followed the Lhende Khola, Bhote Koshi and Trishuli rivers. At Galchhi, some 88 km downstream, the Trishuli reportedly rose about nine metres in half an hour.
 
 By 12 September Nepali authorities counted at least 1,386 dead and 5,130 missing; Chinese authorities reported 43 dead and 519 missing in Tibet (6 September). Around 1.6 million people were affected, thousands of homes, dozens of bridges and more than a dozen hydropower projects were destroyed or damaged, and several hundred hydropower workers were reported missing. These figures are still changing.
 
 The area was a blind spot for hazard monitoring: warning systems built for monsoon floods and glacial-lake outbursts did not pick up a glacier collapse in time, and upstream stations were swept away before alerts could go out. Researchers say a warming climate probably made such collapses more likely, though some stop short of attributing this single event to it; the exact cause is still being studied.
 
-The shaded corridor on the map is a schematic band (a few hundred metres either side) around the OpenStreetMap river line, from just above the Gyirong / Rasuwagadhi border crossing down the Lhende Khola, Bhote Koshi and Trishuli for about 100 km, the runout USGS gives. Its five shades run from the heaviest-hit upper valley (border crossing to Syaphrubesi) down through Dhunche, Betrawati and Trishuli Bazar to the lightly touched end — a qualitative reading of reported damage, not a measurement. It is not a surveyed flood extent: the real reach varied a great deal with the terrain, and effects continued further downstream. For mapped hazard zones see the USGS response page and the Stimson Center analysis below.
-
-<strong>How to help.</strong> A first, preliminary list of international organisations reported to be working on the flood response. It has not been vetted yet — please check each organisation's own Nepal flood appeal before donating, and consider that Nepali organisations also need support.<br>• <a href="https://www.ifrc.org" target="_blank" rel="noopener">International Federation of Red Cross and Red Crescent Societies (IFRC)</a> — emergency relief, supporting the Nepal Red Cross<br>• <a href="https://nrcs.org" target="_blank" rel="noopener">Nepal Red Cross Society</a> — shelter items, first aid, charging stations<br>• <a href="https://www.savethechildren.net" target="_blank" rel="noopener">Save the Children</a> — household relief items, warnings about contaminated water<br>• <a href="https://plan-international.org" target="_blank" rel="noopener">Plan International</a> — shelter, hygiene and menstrual-health kits<br>• <a href="https://www.wvi.org" target="_blank" rel="noopener">World Vision International</a> — emergency programme: shelter, food, clean water<br>• <a href="https://www.care.org/news-and-stories/nepal-flash-floods-2026-care-emergency-response/" target="_blank" rel="noopener">CARE</a> — emergency relief, hygiene and dignity kits<br>• <a href="https://www.crs.org" target="_blank" rel="noopener">Catholic Relief Services</a> — working with Caritas Nepal<br>• <a href="https://www.prosperglobal.org" target="_blank" rel="noopener">Prosper Global (formerly Mercy Corps)</a> — needs assessment, coordination with local authorities<br>• <a href="https://www.allhandsandhearts.org" target="_blank" rel="noopener">All Hands and Hearts</a> — relief and school rebuilding in Nuwakot<br>• <a href="https://www.projecthope.org" target="_blank" rel="noopener">Project HOPE</a> — mobile medical care in hard-to-reach areas<br>• <a href="https://www.directrelief.org" target="_blank" rel="noopener">Direct Relief</a> — medical supplies<br>• <a href="https://www.hi.org" target="_blank" rel="noopener">Humanity &amp; Inclusion</a> — emergency care and rehabilitation in hospitals<br>• <a href="https://www.globalgiving.org" target="_blank" rel="noopener">GlobalGiving</a> — Nepal Flood Relief Fund for local organisations<br>• <a href="https://wck.org" target="_blank" rel="noopener">World Central Kitchen</a> — meals`,
+The shaded corridor on the map is a schematic band (a few hundred metres either side) around the OpenStreetMap river line, from just above the Gyirong / Rasuwagadhi border crossing down the Lhende Khola, Bhote Koshi and Trishuli for about 100 km, the runout USGS gives. Its five shades run from the heaviest-hit upper valley (border crossing to Syaphrubesi) down through Dhunche, Betrawati and Trishuli Bazar to the lightly touched end — a qualitative reading of reported damage, not a measurement. It is not a surveyed flood extent: the real reach varied a great deal with the terrain, and effects continued further downstream. For mapped hazard zones see the USGS response page and the Stimson Center analysis below.`,
+    actions: [{ label:'Donate & how to help', onClick: () => openFloodHelp() }],
     sources: [
       { label:"USGS", url:"https://www.usgs.gov/programs/landslide-hazards/science/2026-nepal-debris-avalanche-and-flash-flood" },
       { label:"Stimson Center", url:"https://www.stimson.org/2026/a-cascading-disaster-on-the-china-nepal-border-what-to-know-about-the-august-2026-rasuwa-flood/" },
@@ -4683,6 +4754,84 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     icon: L.divIcon({ className:'flood-icon', html: floodIconHtml, iconSize:[26,26], iconAnchor:[13,13] })
   }).bindTooltip("Rasuwa Flood, 26 August 2026", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 }).addTo(floodLayer);
   floodMarker.on('click', () => openSiteModal(rasuwaFloodPoi));
+
+  // Source of the flood (28.09.): the glacier collapse itself, at the coordinates given by the project.
+  const glacierPoi = {
+    name: "Glacier collapse, 26 August 2026", type: "landmark-minor", lat: 28.2765, lng: 85.5194,
+    blurb: "Where the ice and rock broke away, north of Langtang Lirung, setting off the Rasuwa flood. The full account is under the Rasuwa Flood marker.",
+    sources: [ { label:"USGS", url:"https://www.usgs.gov/programs/landslide-hazards/science/2026-nepal-debris-avalanche-and-flash-flood" }, { label:"Al Jazeera", url:"https://www.aljazeera.com/news/2026/8/27/nepal-tibet-floods-what-happened-what-caused-them-and-who-is-missing" } ],
+    media: { kind:"info", verified:true, title:"Source of the flood",
+      facts: [
+        ["Location", "28.2765° N, 85.5194° E (project coordinates)"],
+        ["Event", "Ice–rock collapse from the glacier north of Langtang Lirung"],
+        ["Time", "26 Aug 2026, about 08:37 NPT"],
+        ["Fall", "Roughly 1.2 km"],
+        ["Signal", "Magnitude-5.2 seismic signal; USGS: the collapse itself, not a tectonic earthquake"],
+        ["Then", "Debris flood hit the Gyirong / Rasuwagadhi crossing about seven minutes later"]
+      ] }
+  };
+  const glacierIconHtml = '<div style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));"><svg viewBox="0 0 28 28" width="26" height="26"><circle cx="14" cy="14" r="13" fill="#F2E6C9" stroke="#9C4A3A" stroke-width="1.5"/><path d="M6 19.5 L11.5 9 L14.5 14 L17 11 L22 19.5 Z" fill="#3A1206"/></svg></div>';
+  L.marker([glacierPoi.lat, glacierPoi.lng], { icon: L.divIcon({ className:'flood-icon', html: glacierIconHtml, iconSize:[26,26], iconAnchor:[13,13] }) })
+    .bindTooltip("Glacier collapse (source), 26 Aug 2026", { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
+    .on('click', () => openSiteModal(glacierPoi)).addTo(floodLayer);
+
+  // "Donate & how to help" overview (28.09.). Content = what the Kathmandu
+  // Post, Direct Relief and the Barre Center's organisation list reported;
+  // every link was fetched and answered (a few big NGOs block automated
+  // checks -- marked homepage-only). NOT vetted or endorsed: says so on screen.
+  const FLOOD_HELP_WHY = [
+    ["Shelter before winter", "Thousands of displaced families are living under tarpaulins in holding centres in Rasuwa and Nuwakot. When rain returned in late September, tents leaked and bedding stayed wet. Survivors are asking for safe shelter, food, tarpaulins, mattresses and medical care; permanent resettlement is still waiting for approval (Kathmandu Post, 26 Sep)."],
+    ["Clean water and health", "Health workers were still recording waterborne-disease cases in late September; UNICEF counts some 17,000 children who need psychosocial support. Health posts were destroyed, and Rasuwa's only public hospital has 17 beds (Direct Relief, Sept)."],
+    ["Rebuilding a livelihood", "Homes, markets, bridges and hydropower plants were swept away; the government's first estimate puts reconstruction at up to US$5 billion, and aid officials expect months to years of rebuilding and mental-health care (Kathmandu Post, 27 and 30 Aug)."],
+    ["Cash rather than goods", "Aid groups ask for cash donations, so local organisations can buy and move what is needed as needs change (Kathmandu Post, 27 Aug)."]
+  ];
+  const FLOOD_HELP_ORGS = [
+    { group:"Official channel and Nepali organisations", items:[
+      { tag:"Government", name:"Prime Minister's Disaster Relief Fund", url:"https://opmcm.gov.np/content/586/heartfelt-appeal/", note:"Nepal's official relief fund, by law only for rescue, treatment, relief, rehabilitation and infrastructure; accounts are audited yearly. Bank accounts and QR codes on the Prime Minister's Office page; card portal:", url2:"https://pmdrf.nchl.com.np/", label2:"pmdrf.nchl.com.np" },
+      { tag:"Nepali", name:"Nepal Red Cross Society", url:"https://donation.nrcs.org/", note:"Among the most active responders: search and rescue, tarpaulins, blankets, first aid, drinking water, transitional shelter for the most vulnerable." },
+      { tag:"Nepali", name:"Shenpen Nepal", url:"https://shenpennepal.org/donate/", note:"Nepal-based organisation (healthcare, education, disaster relief) raising funds for its flood response; general donation page." },
+      { tag:"Nepali", name:"ADWAN (Association for Dalit Women's Advancement of Nepal)", url:"https://www.friendsofadwan.org/support-us", note:"Women's groups network that has given relief in earlier disasters; no flood-specific page, the link supports its wider work." },
+      { tag:"Nepali", name:"Caritas Nepal", url:"https://www.caritasnepal.org/", note:"Church-founded disaster-relief organisation (founded 1990 after floods); homepage only, partner of Catholic Relief Services." },
+      { tag:"Himalayan", name:"Live to Love", url:"https://www.livetolove.org/supportnepal", note:"Himalayan humanitarian organisation delivering relief to cut-off villages in Rasuwa with local partners." },
+      { tag:"Himalayan", name:"Karuna-Shechen", url:"https://donation.karuna-shechen.org/urgence/~my-donation", note:"Long-running programmes in Nepal and the Himalaya; committed emergency funds and works in Dhading." }
+    ] },
+    { group:"International organisations with a Nepal flood page", items:[
+      { tag:"International", name:"IFRC emergency appeal", url:"https://donate.redcrossredcrescent.org/ifrc/nepal-flash-floods/", note:"Funds go to the Nepal Red Cross response." },
+      { tag:"International", name:"Oxfam", url:"https://www.oxfam.org.uk/oxfam-in-action/current-emergencies/nepal-floods/", note:"Food, hygiene kits and shelter in Dhading, Rasuwa and Nuwakot with Nepali partners such as CSRC and Focus Nepal." },
+      { tag:"International", name:"CARE", url:"https://www.care.org/news-and-stories/nepal-flash-floods-2026-care-emergency-response/", note:"Relief and hygiene kits through local partners." },
+      { tag:"International", name:"Direct Relief", url:"https://www.directrelief.org/emergency/nepal-floods-2026/", note:"Medicines and medical teams, incl. Nepali partners Mountain Heart Nepal and Dhulikhel Hospital." },
+      { tag:"International", name:"MSF (Doctors Without Borders)", url:"https://msf.org.uk/article/nepal-tibet-floods-what-msf-doing-and-how-can-i-help", note:"What MSF is doing and how to help." },
+      { tag:"International", name:"GlobalGiving Nepal Flood Relief Fund", url:"https://www.globalgiving.org/projects/nepal-flood-relief-fund/", note:"Funds local organisations for rescue, medical care, shelter, food and water." }
+    ] }
+  ];
+  const FLOOD_HELP_MORE = [
+    ["Save the Children", "https://www.savethechildren.net"], ["Plan International", "https://plan-international.org"], ["World Vision", "https://www.wvi.org"],
+    ["Catholic Relief Services", "https://www.crs.org"], ["Prosper Global (formerly Mercy Corps)", "https://www.prosperglobal.org"], ["All Hands and Hearts", "https://www.allhandsandhearts.org"],
+    ["Project HOPE", "https://www.projecthope.org"], ["Humanity & Inclusion", "https://www.hi.org"], ["World Central Kitchen", "https://wck.org"]
+  ];
+  function openFloodHelp(){
+    const box = document.getElementById('help-content');
+    box.innerHTML = '';
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; };
+    const link = (url, text) => { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; return a; };
+    box.append(el('h2', null, 'Help after the Rasuwa flood'), el('div', 'help-sub', 'Why help is still needed, and where to give'));
+    box.appendChild(el('h3', null, 'Why and what for'));
+    const dl = el('dl', 'help-why'); FLOOD_HELP_WHY.forEach(([k, v]) => { dl.append(el('dt', null, k), el('dd', null, v)); }); box.appendChild(dl);
+    box.appendChild(el('div', 'help-note', 'Give safely: check account details on the organisation\'s own official site or through Nepal\'s embassy or consulate before you transfer money. Disaster appeals attract scams, especially in the first weeks. This list is preliminary; the organisations are not vetted or endorsed by this project.'));
+    FLOOD_HELP_ORGS.forEach(g => {
+      box.appendChild(el('h3', null, g.group));
+      g.items.forEach(o => {
+        const row = el('div', 'help-org'); row.appendChild(link(o.url, o.name)); row.appendChild(el('span', 'help-tag', o.tag));
+        row.appendChild(el('div', null, o.note + (o.url2 ? ' ' : ''))); if(o.url2) row.lastChild.appendChild(link(o.url2, o.label2));
+        box.appendChild(row);
+      });
+    });
+    box.appendChild(el('h3', null, 'More international organisations (homepages only)'));
+    const more = el('div', 'help-more'); FLOOD_HELP_MORE.forEach(([n, u], i) => { more.appendChild(link(u, n)); if(i < FLOOD_HELP_MORE.length - 1) more.appendChild(document.createTextNode(' · ')); }); box.appendChild(more);
+    document.getElementById('help-modal').classList.add('open');
+  }
+  document.getElementById('help-close').addEventListener('click', () => document.getElementById('help-modal').classList.remove('open'));
+  document.getElementById('help-modal').addEventListener('click', e => { if(e.target.id === 'help-modal') document.getElementById('help-modal').classList.remove('open'); });
 
   // ---- Temporary: scooter driving from the crossing west of Taragaon
   // Museum to the museum itself (22.09., second rebuild after feedback):
@@ -4848,25 +4997,6 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     rowboatMarker.setLatLng([rowboatPos.lat, rowboatPos.lng]);
     pharpingCarMarker.setLatLng([pharpingCarPos.lat, pharpingCarPos.lng]);
     fadeCycleMarkers.forEach(m => m.tick(dtSec));
-    rojanPhotosT += dtSec;
-    if(rojanPhotosT >= ROJAN_PHOTOS_CYCLE_S){
-      rojanPhotosT -= ROJAN_PHOTOS_CYCLE_S;
-      rojanPhotosSpot = ROJAN_PHOTOS_SPOTS[Math.random() < 0.5 ? 0 : 1];
-      rojanPhotosMarker.setLatLng([rojanPhotosSpot.lat, rojanPhotosSpot.lng]);
-    }
-    if(rojanPhotosT < ROJAN_PHOTOS_VISIBLE_S){
-      const fadeStartT = ROJAN_PHOTOS_VISIBLE_S - ROJAN_PHOTOS_FADE_S;
-      if(rojanPhotosT >= fadeStartT){
-        rojanPhotosVisible = false;
-        rojanPhotosMarker.setOpacity(Math.max(0, 1 - (rojanPhotosT - fadeStartT) / ROJAN_PHOTOS_FADE_S));
-      } else {
-        rojanPhotosVisible = true;
-        rojanPhotosMarker.setOpacity(1);
-      }
-    } else {
-      rojanPhotosVisible = false;
-      rojanPhotosMarker.setOpacity(0);
-    }
     taragaonRollerT += dtSec;
     if(taragaonRollerT >= TARAGAON_ROLLER_CYCLE_S) taragaonRollerT -= TARAGAON_ROLLER_CYCLE_S;
     if(taragaonRollerT < TARAGAON_LEG1_S){
@@ -5192,7 +5322,6 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     { icon:'🛍', label:'Shops', blurb:'A shopfront glimpsed in passing — footage for this theme is still being edited into short vignettes.' },
     { icon:'🙏', label:'Shrines & Buddhas', blurb:'A wayside shrine or Buddha image — footage for this theme is still being edited into short vignettes.' },
     { icon:'🎨', label:'Street Art', blurb:'Street art found around the valley — footage for this theme is still being edited into short vignettes.' },
-    { icon:'🙂', label:'Street Faces', blurb:'A face glimpsed on the street — footage for this theme is still being edited into short vignettes.' },
     { icon:'🚦', label:'Traffic', blurb:'A moment of the valley\'s traffic — footage for this theme is still being edited into short vignettes.' },
     { icon:'☁️', label:'Cloudwatching', badgeColor:'#7CA8A0', blurb:'A slow timelapse of clouds over one of the valley\'s hillsides — no narrative, just cloudwatching, for meditation.', media:{ kind:"vimeo", id:"1230280760", h:"da0518f074", verified:true } },
     { icon:'🌙', label:'Moon Fever', blurb:'A restless night under the full moon.', media:{ kind:"vimeo", id:"1229665735", h:"773483704a", verified:true } },
@@ -5230,7 +5359,7 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
   }
   const spawnLayer = L.layerGroup().addTo(mapGeo);
   let activeSpawns = [];
-  const MAX_CONCURRENT_SPAWNS = 5;
+  const MAX_CONCURRENT_SPAWNS = 14;
   let fieldRecordingsEnabled = true; // toggled from the "Field Recordings" legend row
   // Themes that only make sense in the dense old city (27.09., per
   // feedback): they spawn strictly inside the Ring Road, and a bit less
@@ -5278,6 +5407,11 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     }
     return { lat: 27.7048, lng: 85.3070 }; // Kathmandu Durbar Square, as a safe fallback
   }
+  const BHAKTAPUR_CENTER = { lat: 27.6716, lng: 85.4282 }, BHAKTAPUR_R_M = 950; // old town, ~1 km radius
+  function randomPointInBhaktapur(){
+    const r = BHAKTAPUR_R_M * Math.sqrt(Math.random()), a = Math.random() * 2 * Math.PI;
+    return { lat: BHAKTAPUR_CENTER.lat + r * Math.cos(a) / 111320, lng: BHAKTAPUR_CENTER.lng + r * Math.sin(a) / (111320 * Math.cos(BHAKTAPUR_CENTER.lat * Math.PI / 180)) };
+  }
   function pickFieldRecordingBucket(){
     const names = Object.keys(FIELD_RECORDING_BUCKETS);
     return names[Math.floor(Math.random() * names.length)];
@@ -5311,10 +5445,10 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     { lat: 27.72913, lng: 85.26444 },  // hillside just N/NE of the Mingyur Rinpoche interview site (27.7249549, 85.2621323, near Druk Amitabha Monastery) -- modest local high point (2094m), no separate name found
     { lat: 27.80183, lng: 85.39942 }   // Shivapuri foothills -- this is the single highest point in the whole DEM (2568m), right where you'd expect the Shivapuri massif's own flank to be
   ];
-  function spawnTempPoi(forceFieldRecording){
-    if(currentMode !== 'strasse' || activeSpawns.length >= MAX_CONCURRENT_SPAWNS) return;
+  function spawnTempPoi(forceFieldRecording, opts){
+    if(currentMode !== 'strasse' || activeSpawns.length >= MAX_CONCURRENT_SPAWNS) return false;
     const theme = forceFieldRecording ? SPAWN_THEMES.find(t => t.label === 'Field Recordings') : pickWeightedSpawnTheme();
-    if(!theme) return;
+    if(!theme) return false;
     let lat, lng, forcedBucket = null;
     if(theme.label === 'Field Recordings'){
       forcedBucket = pickFieldRecordingBucket();
@@ -5338,7 +5472,8 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
       lat = hs.lat + (Math.random() - 0.5) * jitter;
       lng = hs.lng + (Math.random() - 0.5) * jitter;
     } else if(INNER_CITY_THEMES.indexOf(theme.label) >= 0){
-      const pt = randomPointInsideRing(); lat = pt.lat; lng = pt.lng;
+      // Earthquake may also turn up in Bhaktapur (28.09.); Traffic and Street Art stay inside the Ring Road
+      const pt = (theme.label === 'Earthquake' && Math.random() < 0.45) ? randomPointInBhaktapur() : randomPointInsideRing(); lat = pt.lat; lng = pt.lng;
     } else {
       const region = pickSpawnRegion();
       lat = region.latMin + Math.random() * (region.latMax - region.latMin);
@@ -5364,22 +5499,38 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     activeSpawns.push(marker);
     const presenceEl = () => marker.getElement() && marker.getElement().querySelector('.spawn-presence');
     requestAnimationFrame(() => { const el = presenceEl(); if(el) el.classList.add('spawn-visible'); }); // scale up
-    const lifespanMs = 12000 + Math.random() * 10000; // 12-22s visible (was 8-15s, still felt too brief per feedback)
+    const lifespanMs = (opts && opts.lifespanMs) || (12000 + Math.random() * 10000); // default 12-22s; the ambient slots below pass 45s
     setTimeout(() => {
       const el = presenceEl();
       if(el){ el.classList.remove('spawn-visible'); el.classList.add('spawn-leaving'); } // scale back down
       setTimeout(() => {
         spawnLayer.removeLayer(marker);
         activeSpawns = activeSpawns.filter(m => m !== marker);
+        if(opts && opts.onGone) opts.onGone();
       }, 650);
     }, lifespanMs);
+    return true;
   }
-  // Irregular spawn rhythm (2-5.5s between attempts) combined with the 5-10s
-  // lifespan above settles into "usually 2-3 visible, sometimes 1, sometimes
-  // up to 5" without ever spawning two at exactly the same moment.
-  (function scheduleNextSpawn(){
-    setTimeout(() => { spawnTempPoi(); scheduleNextSpawn(); }, 2000 + Math.random() * 3500);
-  })();
+  // Ambient themes (Animals, Fire, Shops, ...) now follow the SAME rhythm as
+  // the other temporary pop-ups (28.09.): each spawn stays ~45 s, then that
+  // "slot" rests ~110 s (+-20 %) before showing a new random theme somewhere
+  // new. Ten independent slots, started in a random phase so the map fills
+  // like steady state right away -> about 3 visible at any time (was ~4 in
+  // constant 12-22 s flickers). Change AMBIENT_SLOTS for more or fewer.
+  const AMBIENT_SLOTS = 10;
+  function runAmbientSlot(firstDelayMs, lifespanMs){
+    const go = () => {
+      if(currentMode !== 'strasse'){ setTimeout(go, 2000); return; }
+      const ok = spawnTempPoi(false, { lifespanMs: lifespanMs, onGone: () => runAmbientSlot(TEMP_STD.waitS * 1000 * (0.8 + Math.random() * 0.4), TEMP_STD.visibleS * 1000) });
+      if(!ok) setTimeout(go, 3000);
+    };
+    setTimeout(go, firstDelayMs);
+  }
+  for(let i = 0; i < AMBIENT_SLOTS; i++){
+    const phase = Math.random() * (TEMP_STD.visibleS + TEMP_STD.waitS);
+    if(phase < TEMP_STD.visibleS) runAmbientSlot(1500 + Math.random() * 3000, (TEMP_STD.visibleS - phase) * 1000 + 3000);
+    else runAmbientSlot((phase - TEMP_STD.visibleS) * 1000 + 1500, TEMP_STD.visibleS * 1000);
+  }
 
   // ============ Ambient background music (Kathmandu Valley Today + 3D Relief only) ============
 
