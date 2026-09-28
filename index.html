@@ -1267,6 +1267,7 @@
       "Layers: new \"Nepal, Now and Then\" row. Off, exactly one Now and Then spot is always on the map, rotating; on, all of them stay visible until you switch it off. Roshan Mishra's 1970s-photographs video is part of the group now.",
       "Animals, Fire, Shops and the other ambient moments now appear at the same relaxed rhythm as the other pop-ups; Earthquake moments can also turn up in Bhaktapur; Street Faces are paused.",
       "The Taragaon films now carry Roshan Mishra's full name.",
+      "Bhaktapur: the markers that used to sit exactly on top of the Durbar Square icon (Bisket Jatra, Roshan Mishra's 1970s photographs, a Blessing spot) now form a small ring around it, and the random pop-ups keep a little distance from the centre.",
     ]},
     { date: "27 September 2026", items: [
       "Don't Miss now shows the stories in random order, with back and forward buttons to browse them; the thumbnails that were missing (Kutumba, Chilancho, Weltmuseum, Tibet House, Swostie, Yampi Vihara, the bird, Tihar, Taragaon) are fixed.",
@@ -1918,7 +1919,7 @@
     { name:"Rato Machhindranath Jatra (Patan)", lat:27.6782363, lng:85.3168528,
       blurb:"The oldest and longest chariot festival in the Kathmandu Valley, traditionally beginning at Pulchok, Lalitpur, with the building of an 18-metre chariot. In 2026 the festival ran from April through the Bhoto Jatra ceremony on 16 July; the next date, set by the Nepal Sambat lunar calendar, falls around April 2027.",
       link:"https://diplomatnepal.com/art-culture/bhoto-jatra-ancient-vest-ceremony-concludes-rato-machhindranath-jatra/" },
-    { name:"Bisket Jatra (Bhaktapur)", lat:27.6718200, lng:85.4286500,
+    { name:"Bisket Jatra (Bhaktapur)", lat:27.6720700, lng:85.4295129,
       blurb:"Newar New Year festival with a chariot procession of Bhairabnath around Bhaktapur Durbar Square; in 2026 it began on 15 April. Next date around mid-April 2027.",
       link:"https://diplomatnepal.com/category/photo-feature/" },
   ];
@@ -4334,7 +4335,7 @@
   // idea as the Taragaon roller, just without a drive in between.
   const ROJAN_PHOTOS_SPOTS = [
     { lat: 27.6726981, lng: 85.3253211, label: "Patan" },
-    { lat: 27.6720700, lng: 85.4282951, label: "Bhaktapur" }
+    { lat: 27.6731483, lng: 85.4282951, label: "Bhaktapur" } // moved 120 m north of the Durbar Square icon (28.09.)
   ];
   const ROJAN_PHOTOS_VISIBLE_S = 50;
   const ROJAN_PHOTOS_FADE_S = 1.5;
@@ -4500,7 +4501,7 @@
     { lat: 27.7050, lng: 85.3050,
       blessing: "May you be happy. May you be safe. May you be free from suffering.",
       note: "A loving-kindness (metta) blessing, offered outward to whoever finds it." },
-    { lat: 27.6720, lng: 85.4280,
+    { lat: 27.6713085, lng: 85.4274341, // 120 m south-west of the Durbar Square icon
       blessing: "May all beings have happiness and its causes. May all be free from suffering and its causes.",
       note: "The opening lines of the Four Immeasurables, chanted before many Buddhist practices in the valley." },
     { lat: 27.6480, lng: 85.2850,
@@ -5409,7 +5410,8 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
   }
   const BHAKTAPUR_CENTER = { lat: 27.6716, lng: 85.4282 }, BHAKTAPUR_R_M = 950; // old town, ~1 km radius
   function randomPointInBhaktapur(){
-    const r = BHAKTAPUR_R_M * Math.sqrt(Math.random()), a = Math.random() * 2 * Math.PI;
+    const R_MIN = 170; // keep clear of the Durbar Square icon and its ring of fixed markers (28.09.)
+    const r = Math.sqrt(R_MIN*R_MIN + Math.random() * (BHAKTAPUR_R_M*BHAKTAPUR_R_M - R_MIN*R_MIN)), a = Math.random() * 2 * Math.PI;
     return { lat: BHAKTAPUR_CENTER.lat + r * Math.cos(a) / 111320, lng: BHAKTAPUR_CENTER.lng + r * Math.sin(a) / (111320 * Math.cos(BHAKTAPUR_CENTER.lat * Math.PI / 180)) };
   }
   function pickFieldRecordingBucket(){
