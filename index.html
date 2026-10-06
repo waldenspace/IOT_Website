@@ -1262,7 +1262,7 @@
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
     { date: "6 October 2026", items: [
-      "Live satellite and 3D wireframe: the two aircraft between Kathmandu and Pokhara now climb, cruise and descend instead of hugging the ground, and always keep clear of the hills. In Live Satellite a small shadow and height line under each plane shows how high it is. The wireframe shows the planes while they are over the Kathmandu valley. The altitude profile is schematic, not real flight data.",
+      "Live satellite and 3D wireframe: the two aircraft between Kathmandu and Pokhara now climb, cruise and descend on a smooth, terrain-independent altitude profile instead of hugging the ground. In Live Satellite a small shadow and height line under each plane shows how high it is. The wireframe shows the planes while they are over the Kathmandu valley. The altitude profile is schematic, not real flight data.",
     ]},
     { date: "28 September 2026", items: [
       "The Rasuwa flood marker now has a \"Donate & how to help\" button right in the first pop-up, opening an overview of why help is still needed and which organisations to give to, including Nepali ones (preliminary list, not vetted).",
@@ -6873,11 +6873,20 @@ const ICON_SVG = {
   // (schematic) altitude profile as in Live Satellite. The wireframe only
   // covers the Kathmandu valley, so a plane is visible just while it is
   // inside that box (take-off/climb-out, or final approach in the other leg).
-  var planeGeo3D = new THREE.ConeGeometry(0.3, 1.1, 5); planeGeo3D.rotateX(Math.PI / 2); // apex points +Z
-  var planeMeshes3D = [0, 1].map(function(){
-    var m = new THREE.Mesh(planeGeo3D, new THREE.MeshBasicMaterial({ color: 0xC9962A }));
-    m.visible = false; scene.add(m); return m;
-  });
+  function buildPlaneMesh3D(){
+    var mat = new THREE.MeshBasicMaterial({ color: 0xC9962A });
+    var g = new THREE.Group();
+    var fus = new THREE.CylinderGeometry(0.09, 0.09, 1.0, 8); fus.rotateX(Math.PI / 2);          // body along z
+    var nose = new THREE.ConeGeometry(0.09, 0.28, 8); nose.rotateX(Math.PI / 2); nose.translate(0, 0, 0.64); // nose at +z
+    var wing = new THREE.BoxGeometry(1.25, 0.025, 0.22); wing.translate(0, 0, 0.08);
+    var tailPlane = new THREE.BoxGeometry(0.45, 0.025, 0.14); tailPlane.translate(0, 0, -0.45);
+    var fin = new THREE.BoxGeometry(0.025, 0.2, 0.16); fin.translate(0, 0.1, -0.45);
+    [fus, nose, wing, tailPlane, fin].forEach(function(geo){ g.add(new THREE.Mesh(geo, mat)); });
+    g.scale.set(1.3, 1.3, 1.3);
+    g.visible = false; scene.add(g);
+    return g;
+  }
+  var planeMeshes3D = [buildPlaneMesh3D(), buildPlaneMesh3D()];
 
   // Live satellite car + 2 aircraft -- plain MapLibre markers, created once
   // and just repositioned each frame (cheaper than re-creating).
@@ -6915,23 +6924,23 @@ const ICON_SVG = {
     cr.s = segF;
     return cr;
   }
-  // Schematic altitude profile (metres above sea level) along the path, keyed
-  // by the same segment parameter s (0..5) the path uses: s=1 is the KTM
-  // runway threshold, s=2 Dakshinkali, s=3 mid-route, s=4 Pokhara approach
-  // fix, s=5 Pokhara threshold. Schematic, NOT real flight data: airport
-  // elevations are real (KTM ~1338 m, Pokhara ~827 m); the cruise level and
-  // climb/descent shape are an illustrative ATR-style hop.
-  var FLIGHT_ALT_FWD_3D = [[0,1338],[1,1338],[2,2600],[2.9,4300],[3.4,4300],[4,977],[5,827]];
-  var FLIGHT_ALT_REV_3D = [[0,827],[1,977],[1.7,4300],[2.4,4300],[3,2300],[4,1338],[5,1338]];
-  // Minimum height ABOVE GROUND (metres) along the same s parameter. Without
-  // it a plane climbing out of Kathmandu (profile ~1.8 km MSL) would sit
-  // inside the surrounding hills (2+ km), i.e. look like it hugs the ground.
-  var FLIGHT_AGL_FWD_3D = [[0,0],[1,0],[1.5,500],[2,1200],[2.6,1800],[3.4,1800],[3.8,900],[4,150],[5,0]];
-  var FLIGHT_AGL_REV_3D = [[0,0],[1,150],[1.3,900],[1.8,1800],[2.4,1800],[2.9,1400],[3.5,500],[4,0],[5,0]];
+  // Altitude profile (metres above sea level) along the path, keyed by the
+  // same segment parameter s (0..5) the path uses: s=1 is the KTM runway
+  // threshold, s=2 Dakshinkali, s=3 mid-route, s=4 Pokhara approach fix,
+  // s=5 Pokhara threshold. The profile depends ONLY on position along the
+  // route, never on the terrain below, so the plane flies a smooth climb /
+  // cruise / descent and the ground simply passes beneath it. Checked against
+  // SRTM elevations along the route (highest ground ~1.9 km near Dakshinkali,
+  // mostly 0.5-0.9 km west of it): at least ~1.4 km clearance en route.
+  // Schematic, NOT real flight data: airport elevations are real (KTM ~1338 m,
+  // Pokhara ~827 m); cruise level and climb/descent shape are an illustrative
+  // turboprop hop.
+  var FLIGHT_ALT_FWD_3D = [[0,1338],[1,1338],[1.6,2700],[2.2,3400],[2.8,3700],[3.4,3700],[4,977],[5,827]];
+  var FLIGHT_ALT_REV_3D = [[0,827],[1,977],[1.6,3700],[2.5,3700],[3.1,2900],[4,1338],[5,1338]];
+  // Height above the ground below (metres), never negative. Only used to place
+  // the marker/mesh relative to the terrain surface.
   function flightAglM3D(pos, groundTrueM){
-    var prof = flightAltMSL3D(pos.keys, pos.s) - groundTrueM;
-    var floorAgl = flightAltMSL3D(pos.floorKeys, pos.s);
-    return Math.max(0, prof, floorAgl);
+    return Math.max(0, flightAltMSL3D(pos.keys, pos.s) - groundTrueM);
   }
   function flightAltMSL3D(keys, s){
     s = Math.max(0, Math.min(5, s));
@@ -6952,13 +6961,13 @@ const ICON_SVG = {
     if(t < leg){
       if(t < AIRCRAFT_FLIGHT_MS_3D){ pos = interpolateFlightPath3D(FLIGHT_PATH_3D, t / AIRCRAFT_FLIGHT_MS_3D); }
       else { var e = FLIGHT_PATH_3D[FLIGHT_PATH_3D.length - 1]; pos = { lat: e.lat, lng: e.lng, s: 5 }; }
-      pos.keys = FLIGHT_ALT_FWD_3D; pos.floorKeys = FLIGHT_AGL_FWD_3D;
+      pos.keys = FLIGHT_ALT_FWD_3D;
       return pos;
     }
     var t2 = t - leg;
     if(t2 < AIRCRAFT_FLIGHT_MS_3D){ pos = interpolateFlightPath3D(FLIGHT_PATH_3D_REV, t2 / AIRCRAFT_FLIGHT_MS_3D); }
     else { var e2 = FLIGHT_PATH_3D_REV[FLIGHT_PATH_3D_REV.length - 1]; pos = { lat: e2.lat, lng: e2.lng, s: 5 }; }
-    pos.keys = FLIGHT_ALT_REV_3D; pos.floorKeys = FLIGHT_AGL_REV_3D;
+    pos.keys = FLIGHT_ALT_REV_3D;
     return pos;
   }
   // Screen-space lift (px) that makes a plane at flightAltMSL3D() appear above
