@@ -1262,7 +1262,7 @@
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
     { date: "6 October 2026", items: [
-      "Live satellite view: the two aircraft between Kathmandu and Pokhara now climb, cruise and descend instead of hugging the ground. A small shadow and height line under each plane shows how high it is. The altitude profile is schematic, not real flight data.",
+      "Live satellite and 3D wireframe: the two aircraft between Kathmandu and Pokhara now climb, cruise and descend instead of hugging the ground, and always keep clear of the hills. In Live Satellite a small shadow and height line under each plane shows how high it is. The wireframe shows the planes while they are over the Kathmandu valley. The altitude profile is schematic, not real flight data.",
     ]},
     { date: "28 September 2026", items: [
       "The Rasuwa flood marker now has a \"Donate & how to help\" button right in the first pop-up, opening an overview of why help is still needed and which organisations to give to, including Nepali ones (preliminary list, not vetted).",
@@ -6869,6 +6869,16 @@ const ICON_SVG = {
   }
   carMesh3D.userData.isRingCar = true;
 
+  // Wireframe aircraft: the two KTM<->Pokhara planes, with the same
+  // (schematic) altitude profile as in Live Satellite. The wireframe only
+  // covers the Kathmandu valley, so a plane is visible just while it is
+  // inside that box (take-off/climb-out, or final approach in the other leg).
+  var planeGeo3D = new THREE.ConeGeometry(0.3, 1.1, 5); planeGeo3D.rotateX(Math.PI / 2); // apex points +Z
+  var planeMeshes3D = [0, 1].map(function(){
+    var m = new THREE.Mesh(planeGeo3D, new THREE.MeshBasicMaterial({ color: 0xC9962A }));
+    m.visible = false; scene.add(m); return m;
+  });
+
   // Live satellite car + 2 aircraft -- plain MapLibre markers, created once
   // and just repositioned each frame (cheaper than re-creating).
   var FLIGHT_PATH_3D = [
@@ -6913,6 +6923,16 @@ const ICON_SVG = {
   // climb/descent shape are an illustrative ATR-style hop.
   var FLIGHT_ALT_FWD_3D = [[0,1338],[1,1338],[2,2600],[2.9,4300],[3.4,4300],[4,977],[5,827]];
   var FLIGHT_ALT_REV_3D = [[0,827],[1,977],[1.7,4300],[2.4,4300],[3,2300],[4,1338],[5,1338]];
+  // Minimum height ABOVE GROUND (metres) along the same s parameter. Without
+  // it a plane climbing out of Kathmandu (profile ~1.8 km MSL) would sit
+  // inside the surrounding hills (2+ km), i.e. look like it hugs the ground.
+  var FLIGHT_AGL_FWD_3D = [[0,0],[1,0],[1.5,500],[2,1200],[2.6,1800],[3.4,1800],[3.8,900],[4,150],[5,0]];
+  var FLIGHT_AGL_REV_3D = [[0,0],[1,150],[1.3,900],[1.8,1800],[2.4,1800],[2.9,1400],[3.5,500],[4,0],[5,0]];
+  function flightAglM3D(pos, groundTrueM){
+    var prof = flightAltMSL3D(pos.keys, pos.s) - groundTrueM;
+    var floorAgl = flightAltMSL3D(pos.floorKeys, pos.s);
+    return Math.max(0, prof, floorAgl);
+  }
   function flightAltMSL3D(keys, s){
     s = Math.max(0, Math.min(5, s));
     var n = keys.length, d = [], m = [], i;
@@ -6932,13 +6952,13 @@ const ICON_SVG = {
     if(t < leg){
       if(t < AIRCRAFT_FLIGHT_MS_3D){ pos = interpolateFlightPath3D(FLIGHT_PATH_3D, t / AIRCRAFT_FLIGHT_MS_3D); }
       else { var e = FLIGHT_PATH_3D[FLIGHT_PATH_3D.length - 1]; pos = { lat: e.lat, lng: e.lng, s: 5 }; }
-      pos.keys = FLIGHT_ALT_FWD_3D;
+      pos.keys = FLIGHT_ALT_FWD_3D; pos.floorKeys = FLIGHT_AGL_FWD_3D;
       return pos;
     }
     var t2 = t - leg;
     if(t2 < AIRCRAFT_FLIGHT_MS_3D){ pos = interpolateFlightPath3D(FLIGHT_PATH_3D_REV, t2 / AIRCRAFT_FLIGHT_MS_3D); }
     else { var e2 = FLIGHT_PATH_3D_REV[FLIGHT_PATH_3D_REV.length - 1]; pos = { lat: e2.lat, lng: e2.lng, s: 5 }; }
-    pos.keys = FLIGHT_ALT_REV_3D;
+    pos.keys = FLIGHT_ALT_REV_3D; pos.floorKeys = FLIGHT_AGL_REV_3D;
     return pos;
   }
   // Screen-space lift (px) that makes a plane at flightAltMSL3D() appear above
@@ -6946,13 +6966,12 @@ const ICON_SVG = {
   // we raise them by (planeAlt - groundElev) * exaggeration, converted to pixels.
   function planeLiftPx3D(pos){
     var exag = (typeof exagByMode !== 'undefined' && exagByMode.live) ? exagByMode.live : 1;
-    var alt = flightAltMSL3D(pos.keys, pos.s) * exag;
-    var ground = map.queryTerrainElevation([pos.lng, pos.lat]);
-    if(ground === null || ground === undefined){ ground = 0; }
-    var aglM = Math.max(0, alt - ground);
+    var ground = map.queryTerrainElevation([pos.lng, pos.lat]); // already multiplied by exaggeration
+    var groundTrue = (ground === null || ground === undefined) ? 1300 : ground / exag;
+    var aglM = flightAglM3D(pos, groundTrue) * exag;
     var ppm = 512 * Math.pow(2, map.getZoom()) / (40075016.686 * Math.cos(pos.lat * Math.PI / 180));
     var lift = aglM * ppm * Math.sin(map.getPitch() * Math.PI / 180);
-    return Math.min(lift, 600);
+    return Math.min(lift, 700);
   }
   var aircraftPoi3D = {
     name: "Flight in Progress — KTM ⇄ Pokhara",
@@ -7010,6 +7029,23 @@ const ICON_SVG = {
       carMesh3D.visible = true;
     } else {
       carMesh3D.visible = false;
+    }
+
+    if(currentMode === 'wire'){
+      var offs = [0, AIRCRAFT_CYCLE_MS_3D / 2];
+      for(var wi = 0; wi < 2; wi++){
+        var wm = planeMeshes3D[wi], pa = (wi === 0) ? p1 : p2, pb = aircraftPos3D(offs[wi], now + 1500);
+        var ua = (pa.lng - LON_MIN) / (LON_MAX - LON_MIN), va = (LAT_MAX - pa.lat) / (LAT_MAX - LAT_MIN);
+        if(ua < -0.05 || ua > 1.05 || va < -0.05 || va > 1.05){ wm.visible = false; continue; }
+        var sa = latLngToScene(pa.lat, pa.lng), sb = latLngToScene(pb.lat, pb.lng);
+        var ya = (sa.elev + flightAglM3D(pa, sa.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
+        var yb = (sb.elev + flightAglM3D(pb, sb.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
+        wm.position.set(sa.x, ya, sa.z);
+        if(Math.abs(sb.x - sa.x) + Math.abs(sb.z - sa.z) + Math.abs(yb - ya) > 1e-6){ wm.lookAt(sb.x, yb, sb.z); }
+        wm.visible = true;
+      }
+    } else {
+      planeMeshes3D[0].visible = false; planeMeshes3D[1].visible = false;
     }
 
     if(currentMode === 'live' && mapLoaded){
