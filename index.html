@@ -1262,6 +1262,7 @@
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
     { date: "7 October 2026", items: [
+      "Live Satellite: aircraft are now drawn at their true height above sea level, so they no longer follow the terrain over hills and valleys. The ground shadow and height line only show during take-off and landing, not in cruise.",
       "3D views: the international flights (Kathmandu ⇄ Berlin, Vienna, New York) now appear in Live Satellite and the 3D wireframe too, each in its route colour and with a route tag. They take off, climb to cruise height and descend like the Pokhara flights; click one to open its film. The altitude profile is schematic, not real flight data. The wireframe aeroplane is also half the size now.",
     ]},
     { date: "6 October 2026", items: [
@@ -6979,17 +6980,32 @@ const ICON_SVG = {
     pos.keys = FLIGHT_ALT_REV_3D;
     return pos;
   }
-  // Screen-space lift (px) that makes a plane at flightAltMSL3D() appear above
-  // the (exaggerated) terrain under it. Markers sit on the terrain surface, so
-  // we raise them by (planeAlt - groundElev) * exaggeration, converted to pixels.
-  function planeLiftPx3D(pos){
+  // Screen offset (px) that puts a plane marker at its TRUE altitude above sea
+  // level. A MapLibre marker is drawn at the terrain surface under it, so we
+  // project the same lng/lat at the plane's altitude (x terrain exaggeration)
+  // through the map's own 3D matrix and offset the marker by the difference.
+  // That makes the plane's on-screen position depend only on its altitude
+  // above sea level, never on the ground below (no terrain-following).
+  function planeOffset3D(pos){
     var exag = (typeof exagByMode !== 'undefined' && exagByMode.live) ? exagByMode.live : 1;
-    var ground = map.queryTerrainElevation([pos.lng, pos.lat]); // already multiplied by exaggeration
-    var groundTrue = (ground === null || ground === undefined) ? 1300 : ground / exag;
-    var aglM = flightAglM3D(pos, groundTrue) * exag;
-    var ppm = 512 * Math.pow(2, map.getZoom()) / (40075016.686 * Math.cos(pos.lat * Math.PI / 180));
-    var lift = aglM * ppm * Math.sin(map.getPitch() * Math.PI / 180);
-    return Math.min(lift, 700);
+    var alt = (pos.altM !== undefined) ? pos.altM : flightAltMSL3D(pos.keys, pos.s);
+    var tr = map.transform;
+    if(tr && typeof tr.coordinatePoint === 'function' && tr._pixelMatrix3D){
+      var mc = maplibregl.MercatorCoordinate.fromLngLat([pos.lng, pos.lat]);
+      var pPlane = tr.coordinatePoint(mc, alt * exag, tr._pixelMatrix3D);
+      var pGround = map.project([pos.lng, pos.lat]);
+      var dx = pPlane.x - pGround.x, dy = pPlane.y - pGround.y;
+      if(isFinite(dx) && isFinite(dy)){
+        return { x: Math.max(-4000, Math.min(4000, dx)), y: Math.max(-4000, Math.min(4000, dy)), alt: alt };
+      }
+    }
+    return { x: 0, y: 0, alt: alt };
+  }
+  // The ground shadow + height line only show for take-off/climb-out and
+  // approach/descent, fading out towards cruise altitude.
+  function applyPlaneShadow3D(shadowEl, o, hideAboveM, fadeM){
+    shadowEl.style.opacity = String(smooth3D((hideAboveM - o.alt) / fadeM));
+    shadowEl.firstChild.nextSibling.style.height = Math.max(0, -o.y - 8) + 'px';
   }
   var aircraftPoi3D = {
     name: "Flight in Progress — KTM ⇄ Pokhara",
@@ -7135,18 +7151,18 @@ const ICON_SVG = {
     if(currentMode === 'live' && mapLoaded){
       if(!liveMovingAdded){ carMarker3D.addTo(map); shadow1Marker3D.addTo(map); shadow2Marker3D.addTo(map); plane1Marker3D.addTo(map); plane2Marker3D.addTo(map); INTL_FLEET_3D.forEach(function(f){ f.shadow.addTo(map); f.marker.addTo(map); }); liveMovingAdded = true; }
       carMarker3D.setLngLat([carLL.lng, carLL.lat]);
-      var lift1 = planeLiftPx3D(p1), lift2 = planeLiftPx3D(p2);
-      plane1Marker3D.setLngLat([p1.lng, p1.lat]).setOffset([0, -lift1]);
-      plane2Marker3D.setLngLat([p2.lng, p2.lat]).setOffset([0, -lift2]);
+      var o1 = planeOffset3D(p1), o2 = planeOffset3D(p2);
+      plane1Marker3D.setLngLat([p1.lng, p1.lat]).setOffset([o1.x, o1.y]);
+      plane2Marker3D.setLngLat([p2.lng, p2.lat]).setOffset([o2.x, o2.y]);
       shadow1Marker3D.setLngLat([p1.lng, p1.lat]);
       shadow2Marker3D.setLngLat([p2.lng, p2.lat]);
-      shadow1El3D.firstChild.nextSibling.style.height = Math.max(0, lift1 - 8) + 'px';
-      shadow2El3D.firstChild.nextSibling.style.height = Math.max(0, lift2 - 8) + 'px';
+      applyPlaneShadow3D(shadow1El3D, o1, 2600, 600);
+      applyPlaneShadow3D(shadow2El3D, o2, 2600, 600);
       INTL_FLEET_3D.forEach(function(f){
-        var sm = intlSample3D(f, now), lift = planeLiftPx3D(sm);
-        f.marker.setLngLat([sm.lng, sm.lat]).setOffset([0, -lift]);
+        var sm = intlSample3D(f, now), o = planeOffset3D(sm);
+        f.marker.setLngLat([sm.lng, sm.lat]).setOffset([o.x, o.y]);
         f.shadow.setLngLat([sm.lng, sm.lat]);
-        f.shadowEl.firstChild.nextSibling.style.height = Math.max(0, lift - 8) + 'px';
+        applyPlaneShadow3D(f.shadowEl, o, 5000, 1000);
         if(sm.dir !== f.lastDir){ f.lastDir = sm.dir; f.label.textContent = sm.dir > 0 ? 'KTM\u2013' + f.tk.route.code : f.tk.route.code + '\u2013KTM'; }
       });
     }
