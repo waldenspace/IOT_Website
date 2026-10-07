@@ -1261,6 +1261,9 @@
   // entry first) whenever a round of changes goes live -- keep entries
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
+    { date: "7 October 2026", items: [
+      "3D views: the international flights (Kathmandu ⇄ Berlin, Vienna, New York) now appear in Live Satellite and the 3D wireframe too, each in its route colour and with a route tag. They take off, climb to cruise height and descend like the Pokhara flights; click one to open its film. The altitude profile is schematic, not real flight data. The wireframe aeroplane is also half the size now.",
+    ]},
     { date: "6 October 2026", items: [
       "Live satellite and 3D wireframe: the two aircraft between Kathmandu and Pokhara now climb, cruise and descend on a smooth, terrain-independent altitude profile instead of hugging the ground. In Live Satellite a small shadow and height line under each plane shows how high it is. The wireframe shows the planes while they are over the Kathmandu valley. The altitude profile is schematic, not real flight data.",
     ]},
@@ -4055,26 +4058,28 @@
     // dir: +1 outbound (KTM -> destination), -1 inbound (destination -> KTM)
     function legPos(easedFrac, outbound){
       if(outbound){
-        if(easedFrac < corridorFrac) return { pos: interpolatePolylineSegLinear(INTL_CORRIDOR, easedFrac / corridorFrac), dir: 1 };
+        // zone/c/t = extra phase info for the 3D views' altitude profile (2D ignores it):
+        // c = progress through the 3 corridor segments (0..3), t = progress along the long leg (0..1), both in travel direction.
+        if(easedFrac < corridorFrac) return { pos: interpolatePolylineSegLinear(INTL_CORRIDOR, easedFrac / corridorFrac), dir: 1, zone: 'corr', c: easedFrac / corridorFrac * (INTL_CORRIDOR.length - 1) };
         const localT = flightProgress((easedFrac - corridorFrac) / cruiseFrac, seamRampFrac);
-        return { pos: lerpLatLng(DAKSHINKALI_PT, route, localT), dir: 1 };
+        return { pos: lerpLatLng(DAKSHINKALI_PT, route, localT), dir: 1, zone: 'cruise', t: localT };
       }
       if(easedFrac < cruiseFrac){
         const localT = flightProgress(easedFrac / cruiseFrac, seamRampFrac);
-        return { pos: lerpLatLng(route, DAKSHINKALI_PT, localT), dir: -1 };
+        return { pos: lerpLatLng(route, DAKSHINKALI_PT, localT), dir: -1, zone: 'cruise', t: localT };
       }
-      return { pos: interpolatePolylineSegLinear(INTL_CORRIDOR.slice().reverse(), (easedFrac - cruiseFrac) / corridorFrac), dir: -1 };
+      return { pos: interpolatePolylineSegLinear(INTL_CORRIDOR.slice().reverse(), (easedFrac - cruiseFrac) / corridorFrac), dir: -1, zone: 'corr', c: (easedFrac - cruiseFrac) / corridorFrac * (INTL_CORRIDOR.length - 1) };
     }
     function posAt(offsetMs, tMs){
       const t = ((tMs + offsetMs) % cycleMs + cycleMs) % cycleMs;
       const leg = route.flightMs + route.gateMs;
       if(t < leg){
         if(t < route.flightMs) return legPos(flightProgress(t / route.flightMs, rampFrac), true);
-        return { pos: route, dir: 1 };
+        return { pos: route, dir: 1, zone: 'cruise', t: 1 };
       }
       const t2 = t - leg;
       if(t2 < route.flightMs) return legPos(flightProgress(t2 / route.flightMs, rampFrac), false);
-      return { pos: INTL_CORRIDOR[0], dir: -1 };
+      return { pos: INTL_CORRIDOR[0], dir: -1, zone: 'corr', c: INTL_CORRIDOR.length - 1 };
     }
     const poi = {
       name: `Flight in Progress — KTM ⇄ ${route.name}`,
@@ -4136,6 +4141,9 @@
       return updatePlaneMarker(marker, prev, sample.pos);
     }
     return {
+      route, poi,
+      fleetOffsets: fleet.map(f => f.offsetMs),
+      sampleAt: posAt, // used by the 3D views (same positions/timing as 2D)
       tick(wallClock){
         fleet.forEach(f => { f.prev = updateWithDir(f.marker, f.prev, posAt(f.offsetMs, wallClock)); });
       }
@@ -6873,8 +6881,8 @@ const ICON_SVG = {
   // (schematic) altitude profile as in Live Satellite. The wireframe only
   // covers the Kathmandu valley, so a plane is visible just while it is
   // inside that box (take-off/climb-out, or final approach in the other leg).
-  function buildPlaneMesh3D(){
-    var mat = new THREE.MeshBasicMaterial({ color: 0xC9962A });
+  function buildPlaneMesh3D(color){
+    var mat = new THREE.MeshBasicMaterial({ color: color || 0xC9962A });
     var g = new THREE.Group();
     var fus = new THREE.CylinderGeometry(0.09, 0.09, 1.0, 8); fus.rotateX(Math.PI / 2);          // body along z
     var nose = new THREE.ConeGeometry(0.09, 0.28, 8); nose.rotateX(Math.PI / 2); nose.translate(0, 0, 0.64); // nose at +z
@@ -6882,7 +6890,7 @@ const ICON_SVG = {
     var tailPlane = new THREE.BoxGeometry(0.45, 0.025, 0.14); tailPlane.translate(0, 0, -0.45);
     var fin = new THREE.BoxGeometry(0.025, 0.2, 0.16); fin.translate(0, 0.1, -0.45);
     [fus, nose, wing, tailPlane, fin].forEach(function(geo){ g.add(new THREE.Mesh(geo, mat)); });
-    g.scale.set(1.3, 1.3, 1.3);
+    g.scale.set(0.65, 0.65, 0.65);
     g.visible = false; scene.add(g);
     return g;
   }
@@ -6940,7 +6948,8 @@ const ICON_SVG = {
   // Height above the ground below (metres), never negative. Only used to place
   // the marker/mesh relative to the terrain surface.
   function flightAglM3D(pos, groundTrueM){
-    return Math.max(0, flightAltMSL3D(pos.keys, pos.s) - groundTrueM);
+    var alt = (pos.altM !== undefined) ? pos.altM : flightAltMSL3D(pos.keys, pos.s);
+    return Math.max(0, alt - groundTrueM);
   }
   function flightAltMSL3D(keys, s){
     s = Math.max(0, Math.min(5, s));
@@ -6994,9 +7003,9 @@ const ICON_SVG = {
     el.style.filter = 'drop-shadow(0 2px 3px rgba(0,0,0,0.6))';
     return el;
   }
-  function makePlaneEl3D(){
+  function makePlaneEl3D(color){
     var el = document.createElement('div');
-    el.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 1 L15 9 L23 13 L15 13.3 L13.4 21.5 L12 18 L10.6 21.5 L9 13.3 L1 13 L9 9 Z" fill="var(--gold)" stroke="#3A1206" stroke-width="0.6"/></svg>';
+    el.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 1 L15 9 L23 13 L15 13.3 L13.4 21.5 L12 18 L10.6 21.5 L9 13.3 L1 13 L9 9 Z" fill="' + (color || 'var(--gold)') + '" stroke="#3A1206" stroke-width="0.6"/></svg>';
     el.style.cursor = 'pointer';
     el.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.7))';
     return el;
@@ -7025,6 +7034,78 @@ const ICON_SVG = {
   plane2El3D.addEventListener('click', function(e){ e.stopPropagation(); openAircraftPoi3D(plane2Marker3D.getLngLat()); });
   var liveMovingAdded = false;
 
+  // ---- International aircraft (KTM <-> BER / VIE / JFK) in the 3D views ----
+  // Same positions and timing as the 2D map (intlTickers), plus an altitude
+  // profile that depends only on progress along the route, never on the
+  // terrain: ground at KTM (1338 m) until the runway threshold, climb to
+  // ~3200 m by Dakshinkali, climb to a 11,000 m cruise over the first ~250 km,
+  // descend over the last ~250 km to the destination airport. Schematic, not
+  // real flight data.
+  var INTL_ELEV_M = { BER: 48, VIE: 183, JFK: 4 };
+  var INTL_CRUISE_M = 11000, INTL_DAK_ALT_M = 3200, INTL_RAMP_KM = 250;
+  function intlRouteKm(route){
+    var R = 6371, toR = Math.PI / 180;
+    var dLat = (route.lat - DAKSHINKALI_PT.lat) * toR, dLng = (route.lng - DAKSHINKALI_PT.lng) * toR;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(DAKSHINKALI_PT.lat*toR)*Math.cos(route.lat*toR)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+  function smooth3D(x){ x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  function intlAltMSL3D(sm, route){
+    if(sm.zone === 'corr'){
+      if(sm.dir > 0) return sm.c < 2 ? 1338 : 1338 + (INTL_DAK_ALT_M - 1338) * smooth3D(sm.c - 2);      // takeoff at the runway threshold (c=2)
+      return sm.c < 1 ? INTL_DAK_ALT_M + (1338 - INTL_DAK_ALT_M) * smooth3D(sm.c) : 1338;               // touchdown at the runway threshold (c=1)
+    }
+    var ramp = Math.min(0.3, INTL_RAMP_KM / intlRouteKm(route));
+    var dest = INTL_ELEV_M[route.code] || 0;
+    var a0 = sm.dir > 0 ? INTL_DAK_ALT_M : dest, a1 = sm.dir > 0 ? dest : INTL_DAK_ALT_M;
+    if(sm.t < ramp) return a0 + (INTL_CRUISE_M - a0) * smooth3D(sm.t / ramp);
+    if(sm.t > 1 - ramp) return a1 + (INTL_CRUISE_M - a1) * smooth3D((1 - sm.t) / ramp);
+    return INTL_CRUISE_M;
+  }
+  var INTL_FLEET_3D = [];
+  intlTickers.forEach(function(tk){ tk.fleetOffsets.forEach(function(off){ INTL_FLEET_3D.push({ tk: tk, off: off }); }); });
+  function intlSample3D(f, wallClock){
+    var sm = f.tk.sampleAt(f.off, wallClock);
+    return { lat: sm.pos.lat, lng: sm.pos.lng, altM: intlAltMSL3D(sm, f.tk.route), dir: sm.dir };
+  }
+  INTL_FLEET_3D.forEach(function(f){
+    var color = f.tk.route.color, code = f.tk.route.code;
+    f.mesh = buildPlaneMesh3D(new THREE.Color(color));
+    f.el = makePlaneEl3D(color);
+    f.label = document.createElement('span');
+    f.label.style.cssText = 'position:absolute;left:24px;top:8px;font:600 9px/1 sans-serif;letter-spacing:.04em;white-space:nowrap;pointer-events:none;color:' + color + ';text-shadow:0 0 3px #000,0 0 3px #000;';
+    f.el.appendChild(f.label);
+    f.marker = new maplibregl.Marker({ element: f.el, opacityWhenCovered: '1' }).setLngLat([DAKSHINKALI_PT.lng, DAKSHINKALI_PT.lat]);
+    f.shadowEl = makePlaneShadowEl3D();
+    f.shadow = new maplibregl.Marker({ element: f.shadowEl, opacityWhenCovered: '1' }).setLngLat([DAKSHINKALI_PT.lng, DAKSHINKALI_PT.lat]);
+    f.lastDir = 0;
+    f.el.addEventListener('click', function(e){
+      e.stopPropagation();
+      var ll = f.marker.getLngLat();
+      var outbound = f.tk.sampleAt(f.off, Date.now()).dir > 0;
+      var poi = outbound ? f.tk.poi : {
+        name: 'Flight in Progress \u2014 ' + f.tk.route.name + ' \u21E2 KTM',
+        blurb: 'One of the aircraft shuttling between ' + f.tk.route.name + ' (' + code + ') and Kathmandu (KTM), shown here on its way in. Route simplified, not the real flight path.',
+        media: aircraftPoi3D.media
+      };
+      pauseAutoRotate();
+      openSiteModal(Object.assign({}, poi, { lat: ll.lat, lng: ll.lng, skipFlyToward: true }));
+    });
+  });
+
+  // Place one wireframe aeroplane mesh at pa, pointing towards pb; hidden while
+  // outside the (Kathmandu-valley-only) wireframe terrain box.
+  function placeWirePlane3D(wm, pa, pb){
+    var ua = (pa.lng - LON_MIN) / (LON_MAX - LON_MIN), va = (LAT_MAX - pa.lat) / (LAT_MAX - LAT_MIN);
+    if(ua < -0.05 || ua > 1.05 || va < -0.05 || va > 1.05){ wm.visible = false; return; }
+    var sa = latLngToScene(pa.lat, pa.lng), sb = latLngToScene(pb.lat, pb.lng);
+    var ya = (sa.elev + flightAglM3D(pa, sa.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
+    var yb = (sb.elev + flightAglM3D(pb, sb.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
+    wm.position.set(sa.x, ya, sa.z);
+    if(Math.abs(sb.x - sa.x) + Math.abs(sb.z - sa.z) + Math.abs(yb - ya) > 1e-6){ wm.lookAt(sb.x, yb, sb.z); }
+    wm.visible = true;
+  }
+
   function updateMovingPois3D(dtSec){
     updateRoadComets(dtSec);
     ringCarProgress3D += RING_ROAD_SPEED_3D * dtSec;
@@ -7043,22 +7124,16 @@ const ICON_SVG = {
     if(currentMode === 'wire'){
       var offs = [0, AIRCRAFT_CYCLE_MS_3D / 2];
       for(var wi = 0; wi < 2; wi++){
-        var wm = planeMeshes3D[wi], pa = (wi === 0) ? p1 : p2, pb = aircraftPos3D(offs[wi], now + 1500);
-        var ua = (pa.lng - LON_MIN) / (LON_MAX - LON_MIN), va = (LAT_MAX - pa.lat) / (LAT_MAX - LAT_MIN);
-        if(ua < -0.05 || ua > 1.05 || va < -0.05 || va > 1.05){ wm.visible = false; continue; }
-        var sa = latLngToScene(pa.lat, pa.lng), sb = latLngToScene(pb.lat, pb.lng);
-        var ya = (sa.elev + flightAglM3D(pa, sa.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
-        var yb = (sb.elev + flightAglM3D(pb, sb.elev) - MIN_ELEV) * UNITS_PER_METER * threeExag;
-        wm.position.set(sa.x, ya, sa.z);
-        if(Math.abs(sb.x - sa.x) + Math.abs(sb.z - sa.z) + Math.abs(yb - ya) > 1e-6){ wm.lookAt(sb.x, yb, sb.z); }
-        wm.visible = true;
+        placeWirePlane3D(planeMeshes3D[wi], (wi === 0) ? p1 : p2, aircraftPos3D(offs[wi], now + 1500));
       }
+      INTL_FLEET_3D.forEach(function(f){ placeWirePlane3D(f.mesh, intlSample3D(f, now), intlSample3D(f, now + 1500)); });
     } else {
       planeMeshes3D[0].visible = false; planeMeshes3D[1].visible = false;
+      INTL_FLEET_3D.forEach(function(f){ f.mesh.visible = false; });
     }
 
     if(currentMode === 'live' && mapLoaded){
-      if(!liveMovingAdded){ carMarker3D.addTo(map); shadow1Marker3D.addTo(map); shadow2Marker3D.addTo(map); plane1Marker3D.addTo(map); plane2Marker3D.addTo(map); liveMovingAdded = true; }
+      if(!liveMovingAdded){ carMarker3D.addTo(map); shadow1Marker3D.addTo(map); shadow2Marker3D.addTo(map); plane1Marker3D.addTo(map); plane2Marker3D.addTo(map); INTL_FLEET_3D.forEach(function(f){ f.shadow.addTo(map); f.marker.addTo(map); }); liveMovingAdded = true; }
       carMarker3D.setLngLat([carLL.lng, carLL.lat]);
       var lift1 = planeLiftPx3D(p1), lift2 = planeLiftPx3D(p2);
       plane1Marker3D.setLngLat([p1.lng, p1.lat]).setOffset([0, -lift1]);
@@ -7067,6 +7142,13 @@ const ICON_SVG = {
       shadow2Marker3D.setLngLat([p2.lng, p2.lat]);
       shadow1El3D.firstChild.nextSibling.style.height = Math.max(0, lift1 - 8) + 'px';
       shadow2El3D.firstChild.nextSibling.style.height = Math.max(0, lift2 - 8) + 'px';
+      INTL_FLEET_3D.forEach(function(f){
+        var sm = intlSample3D(f, now), lift = planeLiftPx3D(sm);
+        f.marker.setLngLat([sm.lng, sm.lat]).setOffset([0, -lift]);
+        f.shadow.setLngLat([sm.lng, sm.lat]);
+        f.shadowEl.firstChild.nextSibling.style.height = Math.max(0, lift - 8) + 'px';
+        if(sm.dir !== f.lastDir){ f.lastDir = sm.dir; f.label.textContent = sm.dir > 0 ? 'KTM\u2013' + f.tk.route.code : f.tk.route.code + '\u2013KTM'; }
+      });
     }
   }
 
