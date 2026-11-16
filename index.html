@@ -231,6 +231,12 @@
     font-family:'Cormorant Garamond',serif;color:var(--parchment);display:none;min-width:230px;
   }
   #legend.show{display:block;}
+  #image-layers{
+    position:absolute;top:172px;right:24px;z-index:600;background:var(--panel-bg);
+    border:1px solid var(--border-c);border-radius:8px;padding:14px 16px;
+    font-family:'Cormorant Garamond',serif;color:var(--parchment);min-width:200px;
+  }
+  #image-layers .lg-title{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
   #legend .lg-title{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
   .lg-row{display:flex;align-items:center;gap:9px;padding:5px 0;cursor:pointer;user-select:none;font-size:14px;}
   .lg-dot{width:13px;height:13px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border-c);}
@@ -899,8 +905,12 @@
   </div>
 
   <div id="align-caption">Swayambhunath als gemeinsamer Ankerpunkt</div>
-  <div class="pill" id="btn-scholarly-image" style="position:absolute;left:24px;bottom:90px;z-index:600;">Scholarly Field Key</div>
-  <div class="pill" id="btn-sketch-toggle" style="position:absolute;left:24px;bottom:140px;z-index:600;">Sketch Overlay</div>
+  <div id="image-layers">
+    <div class="lg-title">Layers</div>
+    <div class="lg-row" data-ilayer="stories" title="The micro-story pins on the paubhā"><span class="lg-dot sacred"></span>Micro-Stories</div>
+    <div class="lg-row off" data-ilayer="fieldkey" title="Numbered field-grid key (Fig. 2) with a list of place names"><span class="lg-dot" style="background:none;border:1px dashed var(--gold);"></span>Field Key</div>
+    <div class="lg-row off" data-ilayer="sketch" title="Fade the sketch interpretation over the painting"><span class="lg-dot" style="background:var(--vermillion);"></span>Sketch Overlay</div>
+  </div>
 
   <img id="sketch-fig2" class="sketch-img" src="https://res.cloudinary.com/ymuo9aca/image/upload/v1789733481/Nepal/high-res%20paubha%20images%202021/paubha_map_interpretation2_gold_transparent.png" alt="Fig. 2 — field-grid key to the paubhā, served from Cloudinary">
 
@@ -1234,6 +1244,7 @@
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
   { date: "16 November 2026", items: [
+    "Paubhā map: the micro-story pins, the numbered Field Key and the sketch overlay now sit together in one Layers panel at the top right, and each can be switched on or off on its own. The Field Key list appears with its layer.",
     "Closing a window with Escape, or switching between the two maps, no longer moves the map back to the last story you opened. Escape now closes every window, including the Pokhara ticket counter, Now and Then and the flood help page.",
     "Stories open the same way from the map, from \"Don't miss\" and from related links: Chilancho shows its three films, and the Vienna and New York stories bring you back to Kathmandu when you close them.",
     "Skipping the landing approach can no longer interfere with the next film you open.",
@@ -3048,9 +3059,10 @@
   // still pan freely at that zoom to see anything just past the edges.
   mapImage.setView([imgH - swayambhu.py, swayambhu.px], Math.min(paubhaOverviewZoom + 1.8, mapImage.getMaxZoom()));
 
+  const poiLayerImage = L.layerGroup().addTo(mapImage);
   pois.forEach(p => {
     const y = imgH - p.py;
-    L.marker([y, p.px], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color) }).addTo(mapImage)
+    L.marker([y, p.px], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color) }).addTo(poiLayerImage)
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
       .on('click', () => activatePoi(p));
   });
@@ -3427,20 +3439,28 @@
     document.body.style.width = '';
     window.scrollTo(0, reliefScrollY);
   }
-  const btnScholarlyImage = document.getElementById('btn-scholarly-image');
-  let scholarlyImageOn = false;
-  btnScholarlyImage.addEventListener('click', () => {
-    scholarlyImageOn = !scholarlyImageOn;
-    if(scholarlyImageOn){ scholarlyLayerImage.addTo(mapImage); btnScholarlyImage.classList.add('active'); }
-    else { mapImage.removeLayer(scholarlyLayerImage); btnScholarlyImage.classList.remove('active'); }
-    document.getElementById('field-key-legend').classList.toggle('on', scholarlyImageOn);
+  // ---- Paubhā map layer panel (top right): Micro-Stories / Field Key / Sketch Overlay, each on its own ----
+  const imageLayersPanel = document.getElementById('image-layers');
+  function imageLayerRow(key){ return imageLayersPanel.querySelector('.lg-row[data-ilayer="' + key + '"]'); }
+  function setImageLayer(key, on){
+    imageLayerRow(key).classList.toggle('off', !on);
+    if(key === 'stories'){
+      if(on) poiLayerImage.addTo(mapImage); else mapImage.removeLayer(poiLayerImage);
+    } else if(key === 'fieldkey'){
+      if(on) scholarlyLayerImage.addTo(mapImage); else mapImage.removeLayer(scholarlyLayerImage);
+      document.getElementById('field-key-legend').classList.toggle('on', on);
+    } else if(key === 'sketch'){
+      if(on) showSketchOverlay(); else hideSketchOverlay();
+    }
+  }
+  imageLayersPanel.querySelectorAll('.lg-row[data-ilayer]').forEach(row => {
+    row.addEventListener('click', () => setImageLayer(row.dataset.ilayer, row.classList.contains('off')));
   });
 
   // ============ Sketch comparison overlay — anchored to the painting itself ============
   // Plain on/off now (no panel, no opacity/size/position controls) -- starts
   // at full opacity and fades in/out over 2s via the CSS transition on
   // .leaflet-sketch-overlay.
-  const btnSketchToggle = document.getElementById('btn-sketch-toggle');
   const sk2Src = document.getElementById('sketch-fig2').src;
   const sketchBounds = L.latLngBounds([-1809, -263], [4050, 6285]);
   let sketchOverlay = null;
@@ -3463,11 +3483,6 @@
     sketchOverlay = null;
     setTimeout(() => { mapImage.removeLayer(toRemove); }, 2000);
   }
-  btnSketchToggle.addEventListener('click', () => {
-    const on = !btnSketchToggle.classList.contains('active');
-    btnSketchToggle.classList.toggle('active', on);
-    if(on) showSketchOverlay(); else hideSketchOverlay();
-  });
 
   // ============ Field Key legend — lists the scholarly grid-key numbers next to their place names ============
   const fieldKeyLegend = document.getElementById('field-key-legend');
@@ -5619,10 +5634,10 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
       document.getElementById('basemap-row').classList.add('show');
       poiToolBtn.classList.add('show');
       document.getElementById('calendar-toggle').classList.add('show');
-      btnScholarlyImage.style.display = 'none';
-      btnSketchToggle.style.display = 'none';
-      btnSketchToggle.classList.remove('active');
+      imageLayersPanel.style.display = 'none';
+      imageLayerRow('sketch').classList.add('off');
       hideSketchOverlay();
+      document.getElementById('field-key-legend').classList.remove('on');
       currentMode = 'strasse'; busy = false;
       refreshMusic();
       updateWeatherWidget();
@@ -5641,8 +5656,8 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     document.getElementById('basemap-row').classList.remove('show');
     poiToolBtn.classList.remove('show'); poiToolSetActive(false);
     document.getElementById('calendar-toggle').classList.remove('show');
-    btnScholarlyImage.style.display = 'block';
-    btnSketchToggle.style.display = 'block';
+    imageLayersPanel.style.display = 'block';
+    document.getElementById('field-key-legend').classList.toggle('on', !imageLayerRow('fieldkey').classList.contains('off'));
     musicBtn.style.display = 'none';
     reliefWrap.style.display = 'none';
     if (currentMode === 'relief') { unlockPageScroll(); try { heroPlayer.play(); } catch(e) {} }
@@ -5734,10 +5749,10 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
     document.getElementById('basemap-row').classList.remove('show');
     poiToolBtn.classList.remove('show'); poiToolSetActive(false);
     document.getElementById('calendar-toggle').classList.remove('show');
-    btnScholarlyImage.style.display = 'none';
-    btnSketchToggle.style.display = 'none';
-    btnSketchToggle.classList.remove('active');
+    imageLayersPanel.style.display = 'none';
+    imageLayerRow('sketch').classList.add('off');
     hideSketchOverlay();
+    document.getElementById('field-key-legend').classList.remove('on');
     elGeo.style.display = 'none';
     elImage.style.display = 'none';
     lockPageScroll();
