@@ -157,6 +157,7 @@
   /* ================= ATLAS SECTION ================= */
   #atlas-section{position:relative;width:100%;height:100vh;overflow:hidden;}
   #app{position:relative;width:100%;height:100%;overflow:hidden;}
+  #boot-fail{display:none;position:absolute;inset:0;z-index:2000;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--ink);color:var(--gold);font-family:'Cinzel',serif;font-size:15px;letter-spacing:0.08em;}
 
   #topbar{
     position:absolute;top:0;left:0;right:0;z-index:500;
@@ -775,6 +776,7 @@
 
 <section id="atlas-section">
 <div id="app">
+  <div id="boot-fail">The map could not start. Please reload the page.</div>
 
   <div id="topbar">
     <div>
@@ -1195,6 +1197,25 @@
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+  if(!window.Vimeo || !window.Vimeo.Player){
+    (function(){
+      var ok = function(){ return Promise.resolve(); };
+      function StubPlayer(){}
+      ['ready','setVolume','setMuted','setCurrentTime','play','pause','unload','destroy'].forEach(function(m){ StubPlayer.prototype[m] = ok; });
+      StubPlayer.prototype.getDuration = function(){ return new Promise(function(){}); };
+      StubPlayer.prototype.on = function(){}; StubPlayer.prototype.off = function(){};
+      window.Vimeo = { Player: StubPlayer };
+    })();
+  }
+  // If the main script below stops early for any reason (a library that did
+  // not load, a data mistake), say so instead of leaving an empty atlas.
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      if(!window.__atlasReady){ var m = document.getElementById('boot-fail'); if(m) m.style.display = 'flex'; }
+    }, 0);
+  });
+</script>
+<script>
   // ---- Hero sound toggle ----
   const heroPlayer = new Vimeo.Player(document.getElementById('hero-video'));
   let heroMuted = true;
@@ -1212,6 +1233,13 @@
   // entry first) whenever a round of changes goes live -- keep entries
   // short and non-technical, this is for a general audience, not a dev log.
   const CHANGELOG = [
+  { date: "16 November 2026", items: [
+    "Closing a window with Escape, or switching between the two maps, no longer moves the map back to the last story you opened. Escape now closes every window, including the Pokhara ticket counter, Now and Then and the flood help page.",
+    "Stories open the same way from the map, from \"Don't miss\" and from related links: Chilancho shows its three films, and the Vienna and New York stories bring you back to Kathmandu when you close them.",
+    "Skipping the landing approach can no longer interfere with the next film you open.",
+    "The weather badge shows a dash instead of a wrong temperature when the weather service does not answer.",
+    "The atlas now starts even when a content blocker stops Vimeo's player script. If the map cannot start at all, a short message says so."
+  ]},
   { date: "15 November 2026", items: [
     "Corrected the name of Kutumba's sarangi player to Kiran Nepali (it was misspelled in the Kutumba rehearsal story).",
     "Project Sarangi: the \"related\" link to the Kutumba rehearsal story now works.",
@@ -1962,13 +1990,7 @@
     if(!target) return;
     closeSiteModal();
     setTimeout(() => {
-      if(target.airport) openAirportChooser(target);
-      else if(target.boatTicketCounter) openBoatTicketCounter(target);
-      else if(target.taragaonTicketCounter) openTaragaonTicketCounter(target);
-      else if(target.chilanchoTicketCounter) openChilanchoTicketCounter(target);
-      else if(target.pokharaTicketCounter) openPokharaTicketCounter(target);
-      else if(target.intlInterview) openInternationalPoi(target);
-      else openSiteModal((target.redirectTo && allPoisByName[target.redirectTo]) || target);
+      activatePoi(target);
     }, 450);
   }
 
@@ -2189,7 +2211,8 @@
     inFlightMode = false;
     sitemodal.classList.remove('open');
     if(smPlayer) fadeVimeoVolume(smPlayer, 1, 0, 350);
-    setTimeout(()=>{ smMedia.innerHTML=''; }, 350);
+    if(smMediaClearTimer) clearTimeout(smMediaClearTimer);
+    smMediaClearTimer = setTimeout(()=>{ smMedia.innerHTML=''; smMediaClearTimer = null; }, 350);
     unduckMusic();
   }
   function openFlightModal(title, blurb, skipLabel, onSkip, videoStartAt){
@@ -2559,7 +2582,9 @@
       '⏭ Skip to Airport', () => { mapGeo.flyTo([TERMINAL_STOP.lat, TERMINAL_STOP.lng], 17, { duration: 2.5 }); }, 271);
     // The hop needs a moment to land before the position-binding kicks in,
     // otherwise the first video-driven setView would fight the flyTo.
+    const myPlayer = smPlayer;
     setTimeout(() => {
+      if(smPlayer !== myPlayer || !inFlightMode) return;
       bindMapToVideoWaypoints(LANDING_LEG, () => closeFlightModal());
     }, 2900);
     });
@@ -2633,7 +2658,7 @@
   function openAirportChooser(poi){
     flyMapToward(poi, 1.2, 3.0); // a small, gentle approach while choosing
     airportModal.classList.add('open');
-    document.querySelectorAll('.ap-ticket').forEach(t => {
+    document.querySelectorAll('#airport-modal .ap-ticket').forEach(t => {
       t.onclick = () => {
         airportModal.classList.remove('open');
         const choice = t.dataset.choice;
@@ -2768,6 +2793,21 @@
   document.getElementById('chilancho-ticket-close').addEventListener('click', () => chilanchoTicketModal.classList.remove('open'));
   chilanchoTicketModal.addEventListener('click', e => { if(e.target === chilanchoTicketModal) chilanchoTicketModal.classList.remove('open'); });
 
+  function openPoiChooserIfAny(poi){
+    if(poi.airport) openAirportChooser(poi);
+    else if(poi.boatTicketCounter) openBoatTicketCounter(poi);
+    else if(poi.taragaonTicketCounter) openTaragaonTicketCounter(poi);
+    else if(poi.chilanchoTicketCounter) openChilanchoTicketCounter(poi);
+    else if(poi.pokharaTicketCounter) openPokharaTicketCounter(poi);
+    else return false;
+    return true;
+  }
+  function activatePoi(poi, _redirected){
+    if(openPoiChooserIfAny(poi)) return;
+    if(poi.intlInterview){ openInternationalPoi(poi); return; }
+    if(poi.redirectTo && !_redirected && allPoisByName[poi.redirectTo]){ activatePoi(allPoisByName[poi.redirectTo], true); return; }
+    openSiteModal(poi);
+  }
   // Smoothly ramps a Vimeo player's volume instead of the hard cut of
   // setVolume() called once -- used both when a video starts (fade in)
   // and right before we tear the iframe down (fade out).
@@ -2906,7 +2946,9 @@
     }
     sitemodal.classList.add('open');
   }
-  function closeSiteModal(){ var _c = document.getElementById('sm-cta'); if(_c) _c.innerHTML = '';
+  function closeSiteModal(){
+    if(!sitemodal.classList.contains('open')) return;
+    var _c = document.getElementById('sm-cta'); if(_c) _c.innerHTML = '';
     flightBindGen++; // stop following any in-progress video-bound flight
     sitemodal.classList.remove('open');
     if(smPlayer) fadeVimeoVolume(smPlayer, 1, 0, 350);
@@ -2978,7 +3020,8 @@
   }
   function closeInfoBar(){ infobar.classList.remove('open'); }
   document.getElementById('ib-close').addEventListener('click', closeInfoBar);
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeInfoBar(); closeSiteModal(); document.getElementById('airport-modal').classList.remove('open'); document.getElementById('boat-ticket-modal').classList.remove('open'); document.getElementById('taragaon-ticket-modal').classList.remove('open'); document.getElementById('chilancho-ticket-modal').classList.remove('open'); document.getElementById('paubha-lightbox').classList.remove('open'); document.getElementById('changelog-modal').classList.remove('open'); document.getElementById('calendar-modal').classList.remove('open'); } });
+  const OVERLAY_IDS = ['airport-modal','pokhara-ticket-modal','boat-ticket-modal','taragaon-ticket-modal','chilancho-ticket-modal','paubha-lightbox','changelog-modal','calendar-modal','nnt-modal','help-modal'];
+  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ OVERLAY_IDS.forEach(id => document.getElementById(id).classList.remove('open')); closeInfoBar(); closeSiteModal(); } });
 
   // ============ Map 1: Original Paubhā — fixed master ============
   // No blurred backdrop anymore (didn't read well, felt distracting).
@@ -3009,7 +3052,7 @@
     const y = imgH - p.py;
     L.marker([y, p.px], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color) }).addTo(mapImage)
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
-      .on('click', () => openSiteModal(p));
+      .on('click', () => activatePoi(p));
   });
 
   const scholarlyLayerImage = L.layerGroup();
@@ -3129,7 +3172,7 @@
   pois.concat(productionPois).forEach(p => {
     const marker = L.marker([p.lat, p.lng], { icon: makeIcon(p.type, null, categoryMeta[p.category]?.color, p.featured) })
       .bindTooltip(p.name, { direction:'top', offset:[0,-16], className:'poi-tooltip', opacity:0.97 })
-      .on('click', () => p.airport ? openAirportChooser(p) : p.boatTicketCounter ? openBoatTicketCounter(p) : p.taragaonTicketCounter ? openTaragaonTicketCounter(p) : p.chilanchoTicketCounter ? openChilanchoTicketCounter(p) : p.pokharaTicketCounter ? openPokharaTicketCounter(p) : p.intlInterview ? openInternationalPoi(p) : p.redirectTo ? openSiteModal(allPoisByName[p.redirectTo] || p) : openSiteModal(p));
+      .on('click', () => activatePoi(p));
     if(categoryLayers[p.category]) marker.addTo(categoryLayers[p.category]);
   });
   Object.values(categoryLayers).forEach(l => l.addTo(mapGeo));
@@ -3523,9 +3566,10 @@
     if(cached && now - cached.fetchedAt < WEATHER_CACHE_MS){ renderWeather(region); return; }
     renderWeather(region); // show the "…" loading state immediately
     Promise.all([
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${region.lat}&longitude=${region.lng}&current_weather=true`).then(r => r.json()),
-      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${region.lat}&longitude=${region.lng}&current=us_aqi`).then(r => r.json())
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${region.lat}&longitude=${region.lng}&current_weather=true`).then(r => r.ok ? r.json() : Promise.reject(new Error('weather ' + r.status))),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${region.lat}&longitude=${region.lng}&current=us_aqi`).then(r => r.ok ? r.json() : null).catch(() => null)
     ]).then(([w, a]) => {
+      if(!w || !w.current_weather || typeof w.current_weather.temperature !== 'number') throw new Error('weather payload');
       weatherCache[region.key] = {
         fetchedAt: Date.now(),
         data: {
@@ -5137,8 +5181,7 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
   featuredWidget.addEventListener('click', () => {
     const poi = featuredPois[featuredIndex];
     if(!poi) return;
-    if(poi.taragaonTicketCounter) openTaragaonTicketCounter(poi);
-    else openSiteModal(poi);
+    activatePoi(poi);
   });
   // Sit directly under the Layers panel wherever that ends up (its height
   // depends on the viewport and on which rows exist), instead of a fixed
@@ -5736,6 +5779,7 @@ The shaded corridor on the map is a schematic band (a few hundred metres either 
       }
     });
   });
+  window.__atlasReady = true; // read by the start-up check above; must stay the last statement of this script
 </script>
 
 <script>
@@ -5833,11 +5877,7 @@ const ICON_SVG = {
   // around the Leaflet map, not something worth rebuilding a second time
   // inside Three.js/MapLibre.
   function openReliefPoi(poi){
-    if (poi.srcPoi && poi.srcPoi.airport){ openAirportChooser(poi.srcPoi); return; }
-    if (poi.srcPoi && poi.srcPoi.boatTicketCounter){ openBoatTicketCounter(poi.srcPoi); return; }
-    if (poi.srcPoi && poi.srcPoi.taragaonTicketCounter){ openTaragaonTicketCounter(poi.srcPoi); return; }
-    if (poi.srcPoi && poi.srcPoi.chilanchoTicketCounter){ openChilanchoTicketCounter(poi.srcPoi); return; }
-    if (poi.srcPoi && poi.srcPoi.pokharaTicketCounter){ openPokharaTicketCounter(poi.srcPoi); return; }
+    if (poi.srcPoi && openPoiChooserIfAny(poi.srcPoi)) return;
     pauseAutoRotate(); // otherwise globalTick's per-frame auto-rotate setBearing()/theta update fights the camera move below and cancels it almost immediately
     if (currentMode === 'wire') panWireCameraTo(poi.lat, poi.lng);
     else if (currentMode === 'live' && mapLoaded) {
